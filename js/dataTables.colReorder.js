@@ -1138,7 +1138,7 @@ $.extend( ColReorder.prototype, {
 		var aoColumns = this.s.dt.aoColumns;
         var isLTR = this._fnIsLtr();
 		this.s.aoTargets.splice(0, this.s.aoTargets.length);
-		let lastBound = $(this.s.dt.nTable).offset().left;
+		var lastBound = $(this.s.dt.nTable).offset().left;
 
         var aoColumnBounds = [];
         $.each(aoColumns, function (i, column) {
