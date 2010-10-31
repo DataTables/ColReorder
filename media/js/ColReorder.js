@@ -396,10 +396,7 @@ ColReorder.prototype = {
 		{
 			if ( i > this.s.fixed-1 )
 			{
-				$(this.s.dt.aoColumns[i].nTh).bind( 'mousedown.ColReorder', function (e) {
-					that._fnMouseDown.call( that, e );
-					return false;
-				} );
+				this._fnMouseListener( i, this.s.dt.aoColumns[i].nTh );
 			}
 			
 			/* Mark the original column order for later reference */
@@ -573,26 +570,46 @@ ColReorder.prototype = {
 	 */
 	
 	/**
-	 * Mouse down on a TH element in the table header
-	 *  @method  _fnMouseDown
-	 *  @param   event e Mouse event
+	 * Add a mouse down listener to a particluar TH element
+	 *  @method  _fnMouseListener
+	 *  @param   int i Column index
+	 *  @param   element nTh TH element clicked on
 	 *  @returns void
 	 *  @private 
 	 */
-	"_fnMouseDown": function ( e )
+	"_fnMouseListener": function ( i, nTh )
+	{
+		var that = this;
+		$(nTh).bind( 'mousedown.ColReorder', function (e) {
+			that._fnMouseDown.call( that, e, nTh );
+			return false;
+		} );
+	},
+	
+	
+	/**
+	 * Mouse down on a TH element in the table header
+	 *  @method  _fnMouseDown
+	 *  @param   event e Mouse event
+	 *  @param   element nTh TH element to be dragged
+	 *  @returns void
+	 *  @private 
+	 */
+	"_fnMouseDown": function ( e, nTh )
 	{
 		var
 			that = this,
 			aoColumns = this.s.dt.aoColumns;
 		
 		/* Store information about the mouse position */
-		var offset = $(e.target).offset();
+		var nThTarget = e.target.nodeName == "TH" ? e.target : $(e.target).parent('TH')[0];
+		var offset = $(nThTarget).offset();
 		this.s.mouse.startX = e.pageX;
 		this.s.mouse.startY = e.pageY;
 		this.s.mouse.offsetX = e.pageX - offset.left;
 		this.s.mouse.offsetY = e.pageY - offset.top;
-		this.s.mouse.target = e.target;
-		this.s.mouse.targetIndex = $('th', e.target.parentNode).index( e.target );
+		this.s.mouse.target = nTh;
+		this.s.mouse.targetIndex = $('th', nTh.parentNode).index( nTh );
 		this.s.mouse.fromIndex = this.s.dt.oInstance.oApi._fnVisibleToColumnIndex( this.s.dt, 
 			this.s.mouse.targetIndex );
 		

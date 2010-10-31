@@ -7,21 +7,19 @@
 		<title>ColReorder example</title>
 		<style type="text/css" title="currentStyle">
 			@import "../../media/css/demo_page.css";
-			@import "../../media/css/demo_table.css";
+			@import "../../media/css/demo_table_jui.css";
+			@import "../../examples/examples_support/themes/smoothness/jquery-ui-1.8.4.custom.css";
 			@import "media/css/ColReorder.css";
-			@import "../ColVis/media/css/ColVis.css";
 		</style>
 		<script type="text/javascript" charset="utf-8" src="../../media/js/jquery.js"></script>
 		<script type="text/javascript" charset="utf-8" src="../../media/js/jquery.dataTables.js"></script>
 		<script type="text/javascript" charset="utf-8" src="media/js/ColReorder.js"></script>
-		<script type="text/javascript" charset="utf-8" src="../ColVis/media/js/ColVis.js"></script>
 		<script type="text/javascript" charset="utf-8">
 			$(document).ready( function () {
 				var oTable = $('#example').dataTable( {
-					"sDom": 'RC<"clear">lfrtip',
-					"aoColumnDefs": [
-						{ "bVisible": false, "aTargets": [ 1 ] }
-					]
+					"sDom": 'R<"H"lfr>t<"F"ip>',
+					"bJQueryUI": true,
+					"sPaginationType": "full_numbers"
 				} );
 			} );
 		</script>
@@ -29,13 +27,13 @@
 	<body id="dt_example">
 		<div id="container">
 			<div class="full_width big">
-				ColReorder example with ColVis
+				ColReorder example with jQuery UI theming
 			</div>
 			
 			<h1>Preamble</h1>
-			<p>The ColReorder plug-in interacts with the ColVis plug-in for DataTables by updating the
-				order of the list of columns whenever a reorder is done. This is shown in the example
-				below, where one column has been hidden by default to add extra emphasis to ColVis.</p>
+			<p>This example shows how the jQuery UI ThemeRoller option in DataTables can be used 
+				with ColReorder. The important thing to node here is how sDom is set up in order to 
+				include the required classes and elements.</p>
 			
 			<h1>Live example</h1>
 			<form>
@@ -485,10 +483,9 @@
 			<h1>Initialisation code</h1>
 			<pre>$(document).ready( function () {
 	var oTable = $('#example').dataTable( {
-		"sDom": 'RC&lt;"clear"&gt;lfrtip',
-		"aoColumnDefs": [
-			{ "bVisible": false, "aTargets": [ 1 ] }
-		]
+		"sDom": 'R&lt;"H"lfr&gt;t&lt;"F"ip&lt;',
+		"bJQueryUI": true,
+		"sPaginationType": "full_numbers"
 	} );
 } );</pre>
 			
