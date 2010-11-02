@@ -54,22 +54,28 @@ function fnArraySwitch( aArray, iFrom, iTo )
 
 /**
  * Switch the positions of nodes in a parent node (note this is specifically designed for 
- * table rows)
+ * table rows). Note this function considers all element nodes under the parent!
  *  @method  fnDomSwitch
- *  @param   node nParent Parent node (i.e. the TR)
  *  @param   string sTag Tag to consider
  *  @param   int iFrom Element to move
  *  @param   int Point to element the element to (before this point), can be null for append
  *  @returns void
  */
-function fnDomSwitch( nParent, sTag, iFrom, iTo )
+function fnDomSwitch( nParent, iFrom, iTo )
 {
-	var nTags = nParent.getElementsByTagName(sTag);
-	var nStore = nTags[ iFrom ];
+	var anTags = [];
+	for ( var i=0, iLen=nParent.childNodes.length ; i<iLen ; i++ )
+	{
+		if ( nParent.childNodes[i].nodeType == 1 )
+		{
+			anTags.push( nParent.childNodes[i] );
+		}
+	}
+	var nStore = anTags[ iFrom ];
 	
 	if ( iTo !== null )
 	{
-		nParent.insertBefore( nStore, nTags[iTo] );
+		nParent.insertBefore( nStore, anTags[iTo] );
 	}
 	else
 	{
@@ -98,7 +104,7 @@ function fnDomSwitch( nParent, sTag, iFrom, iTo )
  */
 $.fn.dataTableExt.oApi.fnColReorder = function ( oSettings, iFrom, iTo )
 {
-	var i, iLen, j, jLen, iCols=oSettings.aoColumns.length;
+	var i, iLen, j, jLen, iCols=oSettings.aoColumns.length, nTrs;
 	
 	/* Sanity check in the input */
 	if ( iFrom == iTo )
@@ -176,21 +182,26 @@ $.fn.dataTableExt.oApi.fnColReorder = function ( oSettings, iFrom, iTo )
 		}
 		
 		/* Header */
-		fnDomSwitch( oSettings.nTHead.getElementsByTagName('tr')[0], 'TH', 
-			iVisibleIndex, iInsertBeforeIndex );
+		nTrs = oSettings.nTHead.getElementsByTagName('tr');
+		for ( i=0, iLen=nTrs.length ; i<iLen ; i++ )
+		{
+			fnDomSwitch( nTrs[i], iVisibleIndex, iInsertBeforeIndex );
+		}
 		
 		/* Footer */
 		if ( oSettings.nTFoot !== null )
 		{
-			fnDomSwitch( oSettings.nTFoot.getElementsByTagName('tr')[0], 'TH', 
-			 	iVisibleIndex, iInsertBeforeIndex );
+			nTrs = oSettings.nTFoot.getElementsByTagName('tr');
+			for ( i=0, iLen=nTrs.length ; i<iLen ; i++ )
+			{
+				fnDomSwitch( nTrs[i], iVisibleIndex, iInsertBeforeIndex );
+			}
 		}
 		
 		/* Body */
 		for ( i=0, iLen=oSettings.aoData.length ; i<iLen ; i++ )
 		{
-			fnDomSwitch( oSettings.aoData[i].nTr, 'td', 
-			 	iVisibleIndex, iInsertBeforeIndex );
+			fnDomSwitch( oSettings.aoData[i].nTr, iVisibleIndex, iInsertBeforeIndex );
 		}
 	}
 	
@@ -775,7 +786,7 @@ ColReorder.prototype = {
 		$('thead tr:eq(0)', this.dom.drag).each( function () {
 			$('th:not(:eq('+that.s.mouse.targetIndex+'))', this).remove();
 		} );
-		$('tr', this.dom.drag).height( $(that.s.dt.nTHead).height() );
+		$('tr', this.dom.drag).height( $('tr:eq(0)', that.s.dt.nTHead).height() );
 		
 		$('thead tr:gt(0)', this.dom.drag).remove();
 		
