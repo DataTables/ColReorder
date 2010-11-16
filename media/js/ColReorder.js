@@ -613,7 +613,7 @@ ColReorder.prototype = {
 			aoColumns = this.s.dt.aoColumns;
 		
 		/* Store information about the mouse position */
-		var nThTarget = e.target.nodeName == "TH" ? e.target : $(e.target).parent('TH')[0];
+		var nThTarget = e.target.nodeName == "TH" ? e.target : $(e.target).parents('TH')[0];
 		var offset = $(nThTarget).offset();
 		this.s.mouse.startX = e.pageX;
 		this.s.mouse.startY = e.pageY;
