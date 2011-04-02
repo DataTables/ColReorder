@@ -7,7 +7,7 @@
  * Created:     Wed Sep 15 18:23:29 BST 2010
  * Modified:    $Date$ by $Author$
  * Language:    Javascript
- * License:     LGPL
+ * License:     GPL v2 or BSD 3 point style
  * Project:     DataTables
  * Contact:     www.sprymedia.co.uk/contact
  * 
