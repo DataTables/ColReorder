@@ -19,13 +19,13 @@
 					"sDom": 'Rlfrtip',
 					"bProcessing": true,
 					"bServerSide": true,
-					"sAjaxSource": "../../examples/examples_support/server_processing_ordering.php",
+					"sAjaxSource": "../../examples/server_side/scripts/objects.php",
 					"aoColumns": [
-						{ "sName": "engine" },
-						{ "sName": "browser" },
-						{ "sName": "platform" },
-						{ "sName": "version" },
-						{ "sName": "grade" }
+						{ "mDataProp": "engine" },
+						{ "mDataProp": "browser" },
+						{ "mDataProp": "platform" },
+						{ "mDataProp": "version" },
+						{ "mDataProp": "grade" }
 					]
 				} );
 			} );
@@ -41,10 +41,16 @@
 			<p>Server-side processing can be exceptionally useful in DataTables when dealing with 
 				massive data sets, and ColReorder works with this as would be expected. There must be
 				special consideration for the column ordering on the server-side script since the 
-				columns can be in an unexpected order. For this the sName parameter of each column 
-				<b>must</b> be specified and the server-side script take this into account (the parameter
-				'sColumns' is a comma separated string of these sName parameters). This is shown in this
-				example.</p>
+				columns can be in an unexpected order. For this you can either choose to use the 
+				<i>sName</i> parameter for each column and take this into account in the server-side
+				script (the parameter 'sColumns' is a comma separated string of these sName parameters).</p>
+			
+			</p>Alternatively use the more flexible <a href="http://datatables.net/usage/columns#mDataProp">mDataProp</a>
+				option for each column. This allows you to use JSON objects which DataTables, so order doesn't
+				matter like it would do in an array. Again the server-side script must take this into account
+				through the <i>mDataProp_{i}</i> which is sent for each column (so the server knows which
+				column is to be sorted on).</p>
+				
 			
 			<h1>Live example</h1>
 			<form>
@@ -99,16 +105,40 @@
 		"sDom": 'Rlfrtip',
 		"bProcessing": true,
 		"bServerSide": true,
-		"sAjaxSource": "../../examples/examples_support/server_processing_ordering.php",
+		"sAjaxSource": "../../examples/server_side/scripts/objects.php",
 		"aoColumns": [
-			{ "sName": "engine" },
-			{ "sName": "browser" },
-			{ "sName": "platform" },
-			{ "sName": "version" },
-			{ "sName": "grade" }
+			{ "mDataProp": "engine" },
+			{ "mDataProp": "browser" },
+			{ "mDataProp": "platform" },
+			{ "mDataProp": "version" },
+			{ "mDataProp": "grade" }
 		]
 	} );
 } );</pre>
+
+      <h1>Example JSON return from the server</h1>
+      <pre>{
+"sEcho": 1,
+"iTotalRecords": "57",
+"iTotalDisplayRecords": "57",
+"aaData": [
+    {
+        "engine": "Gecko",
+        "browser": "Firefox 1.0",
+        "platform": "Win 98+ / OSX.2+",
+        "version": "1.7",
+        "grade": "A"
+    },
+    {
+        "engine": "Gecko",
+        "browser": "Firefox 1.5",
+        "platform": "Win 98+ / OSX.2+",
+        "version": "1.8",
+        "grade": "A"
+    },
+    ...
+  ]
+}</pre>
 			
 			<div id="footer" style="text-align:center;">
 				<span style="font-size:10px;">
