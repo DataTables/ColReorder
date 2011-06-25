@@ -223,7 +223,9 @@ $.fn.dataTableExt.oApi.fnColReorder = function ( oSettings, iFrom, iTo )
 	/* Array array - internal data anodes cache */
 	for ( i=0, iLen=oSettings.aoData.length ; i<iLen ; i++ )
 	{
-		fnArraySwitch( oSettings.aoData[i]._aData, iFrom, iTo );
+		if ( $.isArray( oSettings.aoData[i]._aData ) ) {
+		  fnArraySwitch( oSettings.aoData[i]._aData, iFrom, iTo );
+		}
 		fnArraySwitch( oSettings.aoData[i]._anHidden, iFrom, iTo );
 	}
 	
