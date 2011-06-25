@@ -1,6 +1,6 @@
 /*
  * File:        ColReorder.js
- * Version:     1.0.2.dev
+ * Version:     1.0.2
  * CVS:         $Id$
  * Description: Controls for column visiblity in DataTables
  * Author:      Allan Jardine (www.sprymedia.co.uk)
@@ -905,9 +905,9 @@ ColReorder.prototype.CLASS = "ColReorder";
  * ColReorder version
  *  @constant  VERSION
  *  @type      String
- *  @default   1.0.2.dev
+ *  @default   1.0.2
  */
-ColReorder.VERSION = "1.0.2.dev";
+ColReorder.VERSION = "1.0.2";
 ColReorder.prototype.VERSION = ColReorder.VERSION;
 
 
