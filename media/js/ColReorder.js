@@ -1,6 +1,6 @@
 /*
  * File:        ColReorder.js
- * Version:     1.0.2
+ * Version:     1.0.3.dev
  * CVS:         $Id$
  * Description: Controls for column visiblity in DataTables
  * Author:      Allan Jardine (www.sprymedia.co.uk)
@@ -109,7 +109,7 @@ function fnDomSwitch( nParent, iFrom, iTo )
  */
 $.fn.dataTableExt.oApi.fnColReorder = function ( oSettings, iFrom, iTo )
 {
-	var i, iLen, j, jLen, iCols=oSettings.aoColumns.length, nTrs;
+	var i, iLen, j, jLen, iCols=oSettings.aoColumns.length, nTrs, oCol;
 	
 	/* Sanity check in the input */
 	if ( iFrom == iTo )
@@ -164,6 +164,17 @@ $.fn.dataTableExt.oApi.fnColReorder = function ( oSettings, iFrom, iTo )
 	for ( i=0, iLen=iCols ; i<iLen ; i++ )
 	{
 		oSettings.aoColumns[i].iDataSort = aiInvertMapping[ oSettings.aoColumns[i].iDataSort ];
+	}
+	
+	/* Update the Get and Set functions for each column */
+	for ( i=0, iLen=iCols ; i<iLen ; i++ )
+	{
+		oCol = oSettings.aoColumns[i];
+		if ( typeof oCol.mDataProp == 'number' ) {
+			oCol.mDataProp = aiInvertMapping[ oCol.mDataProp ];
+			oCol.fnGetData = oSettings.oApi._fnGetObjectDataFn( oCol.mDataProp );
+			oCol.fnSetData = oSettings.oApi._fnSetObjectDataFn( oCol.mDataProp );
+		}
 	}
 	
 	
@@ -905,9 +916,9 @@ ColReorder.prototype.CLASS = "ColReorder";
  * ColReorder version
  *  @constant  VERSION
  *  @type      String
- *  @default   1.0.2
+ *  @default   As code
  */
-ColReorder.VERSION = "1.0.2";
+ColReorder.VERSION = "1.0.3.dev";
 ColReorder.prototype.VERSION = ColReorder.VERSION;
 
 
