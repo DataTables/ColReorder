@@ -809,6 +809,10 @@ ColReorder.prototype = {
 		
 		this.dom.drag = $(this.s.dt.nTHead.parentNode).clone(true)[0];
 		this.dom.drag.className += " DTCR_clonedTable";
+		while ( this.dom.drag.getElementsByTagName('caption').length > 0 )
+		{
+			this.dom.drag.removeChild( this.dom.drag.getElementsByTagName('caption')[0] );
+		}
 		while ( this.dom.drag.getElementsByTagName('tbody').length > 0 )
 		{
 			this.dom.drag.removeChild( this.dom.drag.getElementsByTagName('tbody')[0] );
