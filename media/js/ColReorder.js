@@ -341,6 +341,14 @@ ColReorder = function( oTable, oOpts )
 		"fixed": 0,
 		
 		/**
+		 * Callback function for once the reorder has been done
+		 *  @property dropcallback
+		 *  @type     function
+		 *  @default  null
+		 */
+		"dropCallback": null,
+		
+		/**
 		 * @namespace Information used for the mouse drag
 		 */
 		"mouse": {
@@ -435,6 +443,12 @@ ColReorder.prototype = {
 		if ( typeof this.s.init.iFixedColumns != 'undefined' )
 		{
 			this.s.fixed = this.s.init.iFixedColumns;
+		}
+		
+		/* Drop callback initialisation option */
+		if ( typeof this.s.init.fnReorderCallback != 'undefined' )
+		{
+			this.s.dropCallback = this.s.init.fnReorderCallback;
 		}
 		
 		/* Add event handlers for the drag and drop, and also mark the original column order */
@@ -788,6 +802,11 @@ ColReorder.prototype = {
 			if ( this.s.dt.oScroll.sX !== "" || this.s.dt.oScroll.sY !== "" )
 			{
 				this.s.dt.oInstance.fnAdjustColumnSizing();
+			}
+			
+			if ( this.s.dropCallback !== null )
+			{
+				this.s.dropCallback.call( this );
 			}
 			
 			/* Save the state */
