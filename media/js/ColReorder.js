@@ -163,7 +163,11 @@ $.fn.dataTableExt.oApi.fnColReorder = function ( oSettings, iFrom, iTo )
 	/* Data column sorting (the column which the sort for a given column should take place on) */
 	for ( i=0, iLen=iCols ; i<iLen ; i++ )
 	{
-		oSettings.aoColumns[i].iDataSort = aiInvertMapping[ oSettings.aoColumns[i].iDataSort ];
+		oCol = oSettings.aoColumns[i];
+		for ( j=0, jLen=oCol.aDataSort.length ; j<jLen ; j++ )
+		{
+			oCol.aDataSort[j] = aiInvertMapping[ oCol.aDataSort[j] ];
+		}
 	}
 	
 	/* Update the Get and Set functions for each column */
