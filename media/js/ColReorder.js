@@ -527,7 +527,7 @@ ColReorder.prototype = {
 	{
 		if ( a.length != this.s.dt.aoColumns.length )
 		{
-			this.s.dt.oInstance.oApi._fnLog( oDTSettings, 1, "ColReorder - array reorder does not "+
+			this.s.dt.oInstance.oApi._fnLog( this.s.dt, 1, "ColReorder - array reorder does not "+
 			 	"match known number of columns. Skipping." );
 			return;
 		}
