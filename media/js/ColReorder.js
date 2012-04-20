@@ -1,6 +1,6 @@
 /*
  * File:        ColReorder.js
- * Version:     1.0.5
+ * Version:     1.0.6.dev
  * CVS:         $Id$
  * Description: Controls for column visiblity in DataTables
  * Author:      Allan Jardine (www.sprymedia.co.uk)
@@ -274,13 +274,10 @@ $.fn.dataTableExt.oApi.fnColReorder = function ( oSettings, iFrom, iTo )
 	}
 	
 	
-	/*
-	 * Any extra operations for the other plug-ins
-	 */
-	if ( typeof ColVis != 'undefined' )
-	{
-		ColVis.fnRebuild( oSettings.oInstance );
-	}
+	/* Fire an event so other plug-ins can update */
+	$(oSettings.oInstance).trigger( 'column-reorder', [ oSettings, {
+		"aiInvertMapping": aiInvertMapping
+	} ] );
 	
 	if ( typeof oSettings.oInstance._oPluginFixedHeader != 'undefined' )
 	{
@@ -914,7 +911,7 @@ ColReorder.prototype.CLASS = "ColReorder";
  *  @type      String
  *  @default   As code
  */
-ColReorder.VERSION = "1.0.5";
+ColReorder.VERSION = "1.0.6.dev";
 ColReorder.prototype.VERSION = ColReorder.VERSION;
 
 
