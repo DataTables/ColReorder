@@ -276,6 +276,8 @@ $.fn.dataTableExt.oApi.fnColReorder = function ( oSettings, iFrom, iTo )
 	
 	/* Fire an event so other plug-ins can update */
 	$(oSettings.oInstance).trigger( 'column-reorder', [ oSettings, {
+		"iFrom": iFrom,
+		"iTo": iTo,
 		"aiInvertMapping": aiInvertMapping
 	} ] );
 	
