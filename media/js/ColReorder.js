@@ -610,8 +610,8 @@ ColReorder.prototype = {
 	{
 		var that = this;
 		$(nTh).bind( 'mousedown.ColReorder', function (e) {
+			e.preventDefault();
 			that._fnMouseDown.call( that, e, nTh );
-			return false;
 		} );
 	},
 	
