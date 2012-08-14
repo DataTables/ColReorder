@@ -1,6 +1,6 @@
 /*
  * File:        ColReorder.js
- * Version:     1.0.6
+ * Version:     1.0.7.dev
  * CVS:         $Id$
  * Description: Controls for column visiblity in DataTables
  * Author:      Allan Jardine (www.sprymedia.co.uk)
@@ -174,10 +174,10 @@ $.fn.dataTableExt.oApi.fnColReorder = function ( oSettings, iFrom, iTo )
 	for ( i=0, iLen=iCols ; i<iLen ; i++ )
 	{
 		oCol = oSettings.aoColumns[i];
-		if ( typeof oCol.mDataProp == 'number' ) {
-			oCol.mDataProp = aiInvertMapping[ oCol.mDataProp ];
-			oCol.fnGetData = oSettings.oApi._fnGetObjectDataFn( oCol.mDataProp );
-			oCol.fnSetData = oSettings.oApi._fnSetObjectDataFn( oCol.mDataProp );
+		if ( typeof oCol.mData == 'number' ) {
+			oCol.mData = aiInvertMapping[ oCol.mData ];
+			oCol.fnGetData = oSettings.oApi._fnGetObjectDataFn( oCol.mData );
+			oCol.fnSetData = oSettings.oApi._fnSetObjectDataFn( oCol.mData );
 		}
 	}
 	
@@ -913,7 +913,7 @@ ColReorder.prototype.CLASS = "ColReorder";
  *  @type      String
  *  @default   As code
  */
-ColReorder.VERSION = "1.0.6";
+ColReorder.VERSION = "1.0.7.dev";
 ColReorder.prototype.VERSION = ColReorder.VERSION;
 
 
@@ -929,7 +929,7 @@ ColReorder.prototype.VERSION = ColReorder.VERSION;
  */
 if ( typeof $.fn.dataTable == "function" &&
      typeof $.fn.dataTableExt.fnVersionCheck == "function" &&
-     $.fn.dataTableExt.fnVersionCheck('1.9.0') )
+     $.fn.dataTableExt.fnVersionCheck('1.9.3') )
 {
 	$.fn.dataTableExt.aoFeatures.push( {
 		"fnInit": function( oDTSettings ) {
@@ -950,7 +950,7 @@ if ( typeof $.fn.dataTable == "function" &&
 }
 else
 {
-	alert( "Warning: ColReorder requires DataTables 1.9.0 or greater - www.datatables.net/download");
+	alert( "Warning: ColReorder requires DataTables 1.9.3 or greater - www.datatables.net/download");
 }
 
 })(jQuery, window, document);
