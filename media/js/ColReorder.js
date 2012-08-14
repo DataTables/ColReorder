@@ -2,7 +2,7 @@
  * File:        ColReorder.js
  * Version:     1.0.7.dev
  * CVS:         $Id$
- * Description: Controls for column visiblity in DataTables
+ * Description: Allow columns to be reordered in a DataTable
  * Author:      Allan Jardine (www.sprymedia.co.uk)
  * Created:     Wed Sep 15 18:23:29 BST 2010
  * Modified:    $Date$ by $Author$
