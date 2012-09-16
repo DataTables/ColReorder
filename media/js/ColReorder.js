@@ -294,10 +294,10 @@ $.fn.dataTableExt.oApi.fnColReorder = function ( oSettings, iFrom, iTo )
  * ColReorder provides column visiblity control for DataTables
  * @class ColReorder
  * @constructor
- * @param {object} DataTables object
+ * @param {object} DataTables settings object
  * @param {object} ColReorder options
  */
-ColReorder = function( oTable, oOpts )
+ColReorder = function( oDTSettings, oOpts )
 {
 	/* Santiy check that we are a new instance */
 	if ( !this.CLASS || this.CLASS != "ColReorder" )
@@ -400,9 +400,12 @@ ColReorder = function( oTable, oOpts )
 	
 	
 	/* Constructor logic */
-	this.s.dt = oTable.fnSettings();
+	this.s.dt = oDTSettings.oInstance.fnSettings();
 	this._fnConstruct();
-	
+
+	/* Add destroy callback */
+	oDTSettings.oApi._fnCallbackReg(oDTSettings, 'aoDestroyCallback', jQuery.proxy(this._fnDestroy, this), 'ColReorder');
+
 	/* Store the instance for later use */
 	ColReorder.aoInstances.push( this );
 	return this;
@@ -844,6 +847,29 @@ ColReorder.prototype = {
 	
 		document.body.appendChild( this.dom.pointer );
 		document.body.appendChild( this.dom.drag );
+	},
+
+	/**
+	 * Clean up ColReorder memory references and event handlers
+	 *  @method  _fnDestroy
+	 *  @returns void
+	 *  @private
+	 */
+	"_fnDestroy": function ()
+	{
+		for ( var i=0, iLen=ColReorder.aoInstances.length ; i<iLen ; i++ )
+		{
+			if ( ColReorder.aoInstances[i] === this )
+			{
+				ColReorder.aoInstances.splice( i, 1 );
+				break;
+			}
+		}
+
+		$(this.s.dt.nTHead).find( '*' ).unbind( '.ColReorder' );
+
+		this.s.dt.oInstance._oPluginColReorder = null;
+		this.s = null;
 	}
 };
 
@@ -937,7 +963,7 @@ if ( typeof $.fn.dataTable == "function" &&
 			if ( typeof oTable._oPluginColReorder == 'undefined' ) {
 				var opts = typeof oDTSettings.oInit.oColReorder != 'undefined' ? 
 					oDTSettings.oInit.oColReorder : {};
-				oTable._oPluginColReorder = new ColReorder( oDTSettings.oInstance, opts );
+				oTable._oPluginColReorder = new ColReorder( oDTSettings, opts );
 			} else {
 				oTable.oApi._fnLog( oDTSettings, 1, "ColReorder attempted to initialise twice. Ignoring second" );
 			}
