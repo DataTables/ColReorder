@@ -428,6 +428,16 @@ ColReorder.prototype = {
 		
 		this._fnOrderColumns( a );
 	},
+
+	"fnGetCurrentOrder": function ()
+	{
+		var a = [];
+		for ( var i=0, iLen=this.s.dt.aoColumns.length ; i<iLen ; i++ )
+		{
+			a.push( this.s.dt.aoColumns[i]._ColReorder_iOrigCol );
+		}
+		return a;
+	},
 	
 	
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
