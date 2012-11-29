@@ -428,6 +428,16 @@ ColReorder.prototype = {
 		
 		this._fnOrderColumns( a );
 	},
+
+	"fnGetCurrentOrder": function ()
+	{
+		var a = [];
+		for ( var i=0, iLen=this.s.dt.aoColumns.length ; i<iLen ; i++ )
+		{
+			a.push( this.s.dt.aoColumns[i]._ColReorder_iOrigCol );
+		}
+		return a;
+	},
 	
 	
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -857,6 +867,15 @@ ColReorder.prototype = {
 	 */
 	"_fnDestroy": function ()
 	{
+		for ( var i=0, iLen=this.s.dt.aoDrawCallback.length ; i<iLen ; i++ )
+		{
+			if ( this.s.dt.aoDrawCallback[i].sName === 'ColReorder_Pre' )
+			{
+				this.s.dt.aoDrawCallback.splice( i, 1 );
+				break;
+			}
+		}
+
 		for ( var i=0, iLen=ColReorder.aoInstances.length ; i<iLen ; i++ )
 		{
 			if ( ColReorder.aoInstances[i] === this )
