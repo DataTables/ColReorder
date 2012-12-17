@@ -1,6 +1,6 @@
 /*
  * File:        ColReorder.js
- * Version:     1.0.9
+ * Version:     1.0.8.dev
  * CVS:         $Id$
  * Description: Allow columns to be reordered in a DataTable
  * Author:      Allan Jardine (www.sprymedia.co.uk)
@@ -291,7 +291,7 @@ $.fn.dataTableExt.oApi.fnColReorder = function ( oSettings, iFrom, iTo )
 
 
 /**
- * ColReorder provides column visiblity control for DataTables
+ * ColReorder provides column visibility control for DataTables
  * @class ColReorder
  * @constructor
  * @param {object} DataTables settings object
@@ -557,7 +557,7 @@ ColReorder.prototype = {
 		if ( a.length != this.s.dt.aoColumns.length )
 		{
 			this.s.dt.oInstance.oApi._fnLog( this.s.dt, 1, "ColReorder - array reorder does not "+
-			 	"match known number of columns. Skipping." );
+				"match known number of columns. Skipping." );
 			return;
 		}
 
@@ -605,7 +605,7 @@ ColReorder.prototype = {
 			oState.aaSorting[i][0] = oSettings.aoColumns[ oState.aaSorting[i][0] ]._ColReorder_iOrigCol;
 		}
 
-		aSearchCopy = $.extend( true, [], oState.aoSearchCols );
+		var aSearchCopy = $.extend( true, [], oState.aoSearchCols );
 		oState.ColReorder = [];
 
 		for ( i=0, iLen=oSettings.aoColumns.length ; i<iLen ; i++ )
@@ -890,7 +890,9 @@ ColReorder.prototype = {
 	 */
 	"_fnDestroy": function ()
 	{
-		for ( var i=0, iLen=this.s.dt.aoDrawCallback.length ; i<iLen ; i++ )
+		var i, iLen;
+
+		for ( i=0, iLen=this.s.dt.aoDrawCallback.length ; i<iLen ; i++ )
 		{
 			if ( this.s.dt.aoDrawCallback[i].sName === 'ColReorder_Pre' )
 			{
@@ -899,7 +901,7 @@ ColReorder.prototype = {
 			}
 		}
 
-		for ( var i=0, iLen=ColReorder.aoInstances.length ; i<iLen ; i++ )
+		for ( i=0, iLen=ColReorder.aoInstances.length ; i<iLen ; i++ )
 		{
 			if ( ColReorder.aoInstances[i] === this )
 			{
@@ -981,7 +983,7 @@ ColReorder.prototype.CLASS = "ColReorder";
  *  @type      String
  *  @default   As code
  */
-ColReorder.VERSION = "1.0.9";
+ColReorder.VERSION = "1.0.8.dev";
 ColReorder.prototype.VERSION = ColReorder.VERSION;
 
 

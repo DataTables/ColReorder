@@ -9,7 +9,7 @@
 			@import "../../media/css/demo_page.css";
 			@import "../../media/css/demo_table.css";
 			@import "media/css/ColReorder.css";
-			.FixedColumns_Cloned th { background-color: white; }
+			.DTFC_Cloned th { background-color: white; }
 			td.index { background-color: white; border-right: 1px solid black; }
 			td.grade { background-color: white; border-left: 1px solid black; }
 			table.display th.sorting_disabled { border-bottom: 1px solid white; }
@@ -43,7 +43,10 @@
 						"iFixedColumnsRight": 1
 					}
 				} );
-				new FixedColumns( oTable );
+				new FixedColumns( oTable, {
+					"iLeftColumns": 1,
+					"iRightColumns": 1
+				} );
 			} );
 		</script>
 	</head>
