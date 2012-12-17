@@ -3,7 +3,7 @@
 	<head>
 		<meta http-equiv="content-type" content="text/html; charset=utf-8">
 		<link rel="shortcut icon" type="image/ico" href="http://www.sprymedia.co.uk/media/images/favicon.ico">
-		
+
 		<title>ColReorder example</title>
 		<style type="text/css" title="currentStyle">
 			@import "../../media/css/demo_page.css";
@@ -11,6 +11,7 @@
 			@import "media/css/ColReorder.css";
 			.FixedColumns_Cloned th { background-color: white; }
 			td.index { background-color: white; border-right: 1px solid black; }
+			td.grade { background-color: white; border-left: 1px solid black; }
 			table.display th.sorting_disabled { border-bottom: 1px solid white; }
 		</style>
 		<script type="text/javascript" charset="utf-8" src="../../media/js/jquery.js"></script>
@@ -33,11 +34,13 @@
 						}
 					},
 					"aoColumnDefs": [
-						{ "bSortable": false, "sClass": "index", "aTargets": [ 0 ] }
+						{ "bSortable": false, "sClass": "index", "aTargets": [ 0 ] },
+						{ "bSortable": false, "sClass": "grade", "aTargets": [ 5 ] }
 					],
 					"aaSorting": [[ 1, 'asc' ]],
 					"oColReorder": {
-						"iFixedColumns": 1
+						"iFixedColumns": 1,
+						"iFixedColumnsRight": 1
 					}
 				} );
 				new FixedColumns( oTable );
@@ -49,15 +52,15 @@
 			<div class="full_width big">
 				ColReorder example with FixedColumns
 			</div>
-			
+
 			<h1>Preamble</h1>
-			<p>While ColReorder works great with scrolling in DataTables (and thus FixedColumns), 
+			<p>While ColReorder works great with scrolling in DataTables (and thus FixedColumns),
 				it also presents an additional option called 'iFixedColumns' which allows you to not
 				let the user reorder certain columns (specific the number given, counting left to
 				right). So in the case of FixedColumns this is useful because you typically won't want
 				to let your fixed column be reordered. This is shown below in the FixedColumns index column
 				example.</p>
-			
+
 			<h1>Live example</h1>
 			<form>
 			<div id="demo">
@@ -548,8 +551,8 @@
 			</div>
 		</form>
 			<div class="spacer"></div>
-			
-			
+
+
 			<h1>Examples</h1>
 			<ul>
 				<li><a href="index.html">Basic initialisation</a></li>
@@ -565,8 +568,8 @@
 				<li><a href="state_save.html">State saving of the column position</a></li>
 				<li><a href="theme.html">jQuery UI theme integration</a></li>
 			</ul>
-			
-			
+
+
 			<h1>Initialisation code</h1>
 			<pre>$(document).ready( function () {
 	var oTable = $('#example').dataTable( {
@@ -592,7 +595,7 @@
 	} );
 	new FixedColumns( oTable );
 } );</pre>
-			
+
 			<div id="footer" style="text-align:center;">
 				<span style="font-size:10px;">
 					ColReorder and DataTables &copy; Allan Jardine 2010
