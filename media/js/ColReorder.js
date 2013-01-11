@@ -412,7 +412,7 @@ ColReorder = function( oDTSettings, oOpts )
 	this._fnConstruct();
 
 	/* Add destroy callback */
-	oDTSettings.oApi._fnCallbackReg(oDTSettings, 'aoDestroyCallback', jQuery.proxy(this._fnDestroy, this), 'ColReorder');
+	oDTSettings.oApi._fnCallbackReg(oDTSettings, 'aoDestroyCallback', $.proxy(this._fnDestroy, this), 'ColReorder');
 
 	/* Store the instance for later use */
 	ColReorder.aoInstances.push( this );
