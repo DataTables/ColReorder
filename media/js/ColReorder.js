@@ -477,7 +477,7 @@ ColReorder.prototype = {
 	 *    // Add click event to a button to reset the ordering
 	 *    $('#resetOrdering').click( function (e) {
 	 *        e.preventDefault();
-	 *        ColReorder( table ).fnReset();
+	 *        $.fn.dataTable.ColReorder( table ).fnReset();
 	 *    } );
 	 */
 	"fnReset": function ()
@@ -513,7 +513,7 @@ ColReorder.prototype = {
 	 *
 	 *  @example
 	 *    // Get column ordering for the table
-	 *    var order = ColReorder( dataTable ).fnOrder();
+	 *    var order = $.fn.dataTable.ColReorder( dataTable ).fnOrder();
 	 *//**
 	 * Set the order of the columns, from the positions identified in the
 	 * ordering array given. Note that ColReorder takes a brute force approach
@@ -525,19 +525,19 @@ ColReorder.prototype = {
 	 *
 	 *  @example
 	 *    // Swap the first and second columns
-	 *    ColReorder( dataTable ).fnOrder( [1, 0, 2, 3, 4] );
+	 *    $.fn.dataTable.ColReorder( dataTable ).fnOrder( [1, 0, 2, 3, 4] );
 	 *
 	 *  @example
 	 *    // Move the first column to the end for the table `#example`
-	 *    var curr = ColReorder( '#example' ).fnOrder();
+	 *    var curr = $.fn.dataTable.ColReorder( '#example' ).fnOrder();
 	 *    var first = curr.shift();
 	 *    curr.push( first );
-	 *    ColReorder( '#example' ).fnOrder( curr );
+	 *    $.fn.dataTable.ColReorder( '#example' ).fnOrder( curr );
 	 *
 	 *  @example
 	 *    // Reverse the table's order
-	 *    ColReorder( '#example' ).fnOrder(
-	 *      ColReorder( '#example' ).fnOrder().reverse()
+	 *    $.fn.dataTable.ColReorder( '#example' ).fnOrder(
+	 *      $.fn.dataTable.ColReorder( '#example' ).fnOrder().reverse()
 	 *    );
 	 */
 	"fnOrder": function ( set )
@@ -1136,6 +1136,7 @@ else
 
 
 window.ColReorder = ColReorder;
+$.fn.dataTable.ColReorder = ColReorder;
 
 
 })(jQuery, window, document);
