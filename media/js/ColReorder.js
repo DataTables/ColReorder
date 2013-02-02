@@ -269,7 +269,7 @@ $.fn.dataTableExt.oApi.fnColReorder = function ( oSettings, iFrom, iTo )
 	/* Sort listener */
 	for ( i=0, iLen=iCols ; i<iLen ; i++ )
 	{
-		$(oSettings.aoColumns[i].nTh).unbind('click');
+		$(oSettings.aoColumns[i].nTh).off('click');
 		this.oApi._fnSortAttachListener( oSettings, oSettings.aoColumns[i].nTh, i );
 	}
 
@@ -297,7 +297,7 @@ $.fn.dataTableExt.oApi.fnColReorder = function ( oSettings, iFrom, iTo )
  * @param {object} DataTables settings object
  * @param {object} ColReorder options
  */
-ColReorder = function( oDTSettings, oOpts )
+var ColReorder = function( oDTSettings, oOpts )
 {
 	/* Santiy check that we are a new instance */
 	if ( !this.CLASS || this.CLASS != "ColReorder" )
@@ -639,7 +639,7 @@ ColReorder.prototype = {
 	"_fnMouseListener": function ( i, nTh )
 	{
 		var that = this;
-		$(nTh).bind( 'mousedown.ColReorder', function (e) {
+		$(nTh).on( 'mousedown.ColReorder', function (e) {
 			e.preventDefault();
 			that._fnMouseDown.call( that, e, nTh );
 		} );
@@ -661,14 +661,22 @@ ColReorder.prototype = {
 			aoColumns = this.s.dt.aoColumns;
 
 		/* Store information about the mouse position */
-		var nThTarget = e.target.nodeName == "TH" ? e.target : $(e.target).parents('TH')[0];
-		var offset = $(nThTarget).offset();
+		var target = $(e.target).closest('th, td');
+		var offset = target.offset();
+		var idx = $.inArray(
+			target[0], $.map( aoColumns, function (o) {return o.nTh;} )
+		);
+		
+		if ( idx === -1 ) {
+			return;
+		}
+
 		this.s.mouse.startX = e.pageX;
 		this.s.mouse.startY = e.pageY;
 		this.s.mouse.offsetX = e.pageX - offset.left;
 		this.s.mouse.offsetY = e.pageY - offset.top;
-		this.s.mouse.target = nTh;
-		this.s.mouse.targetIndex = $('th', nTh.parentNode).index( nTh );
+		this.s.mouse.target = target[0];
+		this.s.mouse.targetIndex = idx;
 		this.s.mouse.fromIndex = this.s.dt.oInstance.oApi._fnVisibleToColumnIndex( this.s.dt,
 			this.s.mouse.targetIndex );
 
@@ -714,13 +722,13 @@ ColReorder.prototype = {
 		}
 
 		/* Add event handlers to the document */
-		$(document).bind( 'mousemove.ColReorder', function (e) {
-			that._fnMouseMove.call( that, e );
-		} );
-
-		$(document).bind( 'mouseup.ColReorder', function (e) {
-			that._fnMouseUp.call( that, e );
-		} );
+		$(document)
+			.on( 'mousemove.ColReorder', function (e) {
+				that._fnMouseMove.call( that, e );
+			} )
+			.on( 'mouseup.ColReorder', function (e) {
+				that._fnMouseUp.call( that, e );
+			} );
 	},
 
 
@@ -751,8 +759,10 @@ ColReorder.prototype = {
 		}
 
 		/* Position the element - we respect where in the element the click occured */
-		this.dom.drag.style.left = (e.pageX - this.s.mouse.offsetX) + "px";
-		this.dom.drag.style.top = (e.pageY - this.s.mouse.offsetY) + "px";
+		this.dom.drag.css( {
+			left: e.pageX - this.s.mouse.offsetX,
+			top: e.pageY - this.s.mouse.offsetY
+		} );
 
 		/* Based on the current mouse position, calculate where the insert should go */
 		var bSet = false;
@@ -760,7 +770,7 @@ ColReorder.prototype = {
 		{
 			if ( e.pageX < this.s.aoTargets[i-1].x + ((this.s.aoTargets[i].x-this.s.aoTargets[i-1].x)/2) )
 			{
-				this.dom.pointer.style.left = this.s.aoTargets[i-1].x +"px";
+				this.dom.pointer.css( 'left', this.s.aoTargets[i-1].x );
 				this.s.mouse.toIndex = this.s.aoTargets[i-1].to;
 				bSet = true;
 				break;
@@ -772,7 +782,7 @@ ColReorder.prototype = {
 		 */
 		if ( !bSet )
 		{
-			this.dom.pointer.style.left = this.s.aoTargets[this.s.aoTargets.length-1].x +"px";
+			this.dom.pointer.css( 'left', this.s.aoTargets[this.s.aoTargets.length-1].x );
 			this.s.mouse.toIndex = this.s.aoTargets[this.s.aoTargets.length-1].to;
 		}
 	},
@@ -789,14 +799,13 @@ ColReorder.prototype = {
 	{
 		var that = this;
 
-		$(document).unbind( 'mousemove.ColReorder' );
-		$(document).unbind( 'mouseup.ColReorder' );
+		$(document).off( 'mousemove.ColReorder mouseup.ColReorder' );
 
 		if ( this.dom.drag !== null )
 		{
 			/* Remove the guide elements */
-			document.body.removeChild( this.dom.drag );
-			document.body.removeChild( this.dom.pointer );
+			this.dom.drag.remove();
+			this.dom.pointer.remove();
 			this.dom.drag = null;
 			this.dom.pointer = null;
 
@@ -829,57 +838,47 @@ ColReorder.prototype = {
 	 */
 	"_fnCreateDragNode": function ()
 	{
-		var that = this;
+		var scrolling = this.s.dt.oScroll.sX !== "" || this.s.dt.oScroll.sY !== "";
 
-		this.dom.drag = $(this.s.dt.nTHead.parentNode).clone(true)[0];
-		this.dom.drag.className += " DTCR_clonedTable";
-		while ( this.dom.drag.getElementsByTagName('caption').length > 0 )
-		{
-			this.dom.drag.removeChild( this.dom.drag.getElementsByTagName('caption')[0] );
-		}
-		while ( this.dom.drag.getElementsByTagName('tbody').length > 0 )
-		{
-			this.dom.drag.removeChild( this.dom.drag.getElementsByTagName('tbody')[0] );
-		}
-		while ( this.dom.drag.getElementsByTagName('tfoot').length > 0 )
-		{
-			this.dom.drag.removeChild( this.dom.drag.getElementsByTagName('tfoot')[0] );
-		}
+		var origCell = this.s.dt.aoColumns[ this.s.mouse.targetIndex ].nTh;
+		var origTr = origCell.parentNode;
+		var origThead = origTr.parentNode;
+		var origTable = origThead.parentNode;
+		var cloneCell = $(origCell).clone();
 
-		$('thead tr:eq(0)', this.dom.drag).each( function () {
-			$('th', this).eq(that.s.mouse.targetIndex).siblings().remove();
-		} );
-		$('tr', this.dom.drag).height( $('tr:eq(0)', that.s.dt.nTHead).height() );
+		// This is a slightly odd combination of jQuery and DOM, but it is the
+		// fastest and least resource intensive way I could think of cloning
+		// the table with just a single header cell in it.
+		this.dom.drag = $(origTable.cloneNode(false))
+			.addClass( 'DTCR_clonedTable' )
+			.append(
+				origThead.cloneNode(false).appendChild(
+					origTr.cloneNode(false).appendChild(
+						cloneCell[0]
+					)
+				)
+			)
+			.css( {
+				position: 'absolute',
+				top: 0,
+				left: 0,
+				width: $(origCell).outerWidth(),
+				height: $(origCell).outerHeight()
+			} )
+			.appendTo( 'body' );
 
-		$('thead tr:gt(0)', this.dom.drag).remove();
-
-		$('thead th:eq(0)', this.dom.drag).each( function (i) {
-			this.style.width = $('th:eq('+that.s.mouse.targetIndex+')', that.s.dt.nTHead).width()+"px";
-		} );
-
-		this.dom.drag.style.position = "absolute";
-		this.dom.drag.style.top = "0px";
-		this.dom.drag.style.left = "0px";
-		this.dom.drag.style.width = $('th:eq('+that.s.mouse.targetIndex+')', that.s.dt.nTHead).outerWidth()+"px";
-
-
-		this.dom.pointer = document.createElement( 'div' );
-		this.dom.pointer.className = "DTCR_pointer";
-		this.dom.pointer.style.position = "absolute";
-
-		if ( this.s.dt.oScroll.sX === "" && this.s.dt.oScroll.sY === "" )
-		{
-			this.dom.pointer.style.top = $(this.s.dt.nTable).offset().top+"px";
-			this.dom.pointer.style.height = $(this.s.dt.nTable).height()+"px";
-		}
-		else
-		{
-			this.dom.pointer.style.top = $('div.dataTables_scroll', this.s.dt.nTableWrapper).offset().top+"px";
-			this.dom.pointer.style.height = $('div.dataTables_scroll', this.s.dt.nTableWrapper).height()+"px";
-		}
-
-		document.body.appendChild( this.dom.pointer );
-		document.body.appendChild( this.dom.drag );
+		this.dom.pointer = $('<div></div>')
+			.addClass( 'DTCR_pointer' )
+			.css( {
+				position: 'absolute',
+				top: scrolling ?
+					$('div.dataTables_scroll', this.s.dt.nTableWrapper).offset().top :
+					$(this.s.dt.nTable).offset().top,
+				height : scrolling ?
+					$('div.dataTables_scroll', this.s.dt.nTableWrapper).height() :
+					$(this.s.dt.nTable).height()
+			} )
+			.appendTo( 'body' );
 	},
 
 	/**
@@ -910,7 +909,7 @@ ColReorder.prototype = {
 			}
 		}
 
-		$(this.s.dt.nTHead).find( '*' ).unbind( '.ColReorder' );
+		$(this.s.dt.nTHead).find( '*' ).off( '.ColReorder' );
 
 		this.s.dt.oInstance._oPluginColReorder = null;
 		this.s = null;
