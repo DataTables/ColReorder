@@ -518,7 +518,7 @@
 	} );
 	
 	$('#reset').click( function () {
-		ColReorder.fnReset( oTable );
+		$.fn.dataTable.ColReorder( oTable ).fnReset();
 		return false;
 	} );
 } );</pre>
