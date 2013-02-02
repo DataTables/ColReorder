@@ -758,15 +758,13 @@ ColReorder.prototype = {
 	 */
 	"_fnMouseDown": function ( e, nTh )
 	{
-		var
-			that = this,
-			aoColumns = this.s.dt.aoColumns;
+		var that = this;
 
 		/* Store information about the mouse position */
 		var target = $(e.target).closest('th, td');
 		var offset = target.offset();
 		var idx = $.inArray(
-			target[0], $.map( aoColumns, function (o) {return o.nTh;} )
+			target[0], $.map( this.s.dt.aoColumns, function (o) {return o.nTh;} )
 		);
 		
 		if ( idx === -1 ) {
@@ -782,46 +780,7 @@ ColReorder.prototype = {
 		this.s.mouse.fromIndex = this.s.dt.oInstance.oApi._fnVisibleToColumnIndex( this.s.dt,
 			this.s.mouse.targetIndex );
 
-		/* Calculate a cached array with the points of the column inserts, and the 'to' points */
-		this.s.aoTargets.splice( 0, this.s.aoTargets.length );
-
-		this.s.aoTargets.push( {
-			"x":  $(this.s.dt.nTable).offset().left,
-			"to": 0
-		} );
-
-		var iToPoint = 0;
-		for ( var i=0, iLen=aoColumns.length ; i<iLen ; i++ )
-		{
-			/* For the column / header in question, we want it's position to remain the same if the
-			 * position is just to it's immediate left or right, so we only incremement the counter for
-			 * other columns
-			 */
-			if ( i != this.s.mouse.fromIndex )
-			{
-				iToPoint++;
-			}
-
-			if ( aoColumns[i].bVisible )
-			{
-				this.s.aoTargets.push( {
-					"x":  $(aoColumns[i].nTh).offset().left + $(aoColumns[i].nTh).outerWidth(),
-					"to": iToPoint
-				} );
-			}
-		}
-
-		/* Disallow columns for being reordered by drag and drop, counting right to left */
-		if ( this.s.fixedRight !== 0 )
-		{
-			this.s.aoTargets.splice( this.s.fixedRight + 1 );
-		}
-
-		/* Disallow columns for being reordered by drag and drop, counting left to right */
-		if ( this.s.fixed !== 0 )
-		{
-			this.s.aoTargets.splice( 0, this.s.fixed );
-		}
+		this._fnRegions();
 
 		/* Add event handlers to the document */
 		$(document)
@@ -868,6 +827,8 @@ ColReorder.prototype = {
 
 		/* Based on the current mouse position, calculate where the insert should go */
 		var bSet = false;
+		var lastToIndex = this.s.mouse.toIndex;
+
 		for ( var i=1, iLen=this.s.aoTargets.length ; i<iLen ; i++ )
 		{
 			if ( e.pageX < this.s.aoTargets[i-1].x + ((this.s.aoTargets[i].x-this.s.aoTargets[i-1].x)/2) )
@@ -879,13 +840,19 @@ ColReorder.prototype = {
 			}
 		}
 
-		/* The insert element wasn't positioned in the array (less than operator), so we put it at
-		 * the end
-		 */
+		// The insert element wasn't positioned in the array (less than
+		// operator), so we put it at the end
 		if ( !bSet )
 		{
 			this.dom.pointer.css( 'left', this.s.aoTargets[this.s.aoTargets.length-1].x );
 			this.s.mouse.toIndex = this.s.aoTargets[this.s.aoTargets.length-1].to;
+		}
+
+		// Perform reordering if realtime updating is on and the column has moved
+		if ( this.s.init.bRealtime && lastToIndex !== this.s.mouse.toIndex ) {
+			this.s.dt.oInstance.fnColReorder( this.s.mouse.fromIndex, this.s.mouse.toIndex );
+			this.s.mouse.fromIndex = this.s.mouse.toIndex;
+			this._fnRegions();
 		}
 	},
 
@@ -927,6 +894,59 @@ ColReorder.prototype = {
 
 			/* Save the state */
 			this.s.dt.oInstance.oApi._fnSaveState( this.s.dt );
+		}
+	},
+
+
+	/**
+	 * Calculate a cached array with the points of the column inserts, and the
+	 * 'to' points
+	 *  @method  _fnRegions
+	 *  @returns void
+	 *  @private
+	 */
+	"_fnRegions": function ()
+	{
+		var aoColumns = this.s.dt.aoColumns;
+
+		this.s.aoTargets.splice( 0, this.s.aoTargets.length );
+
+		this.s.aoTargets.push( {
+			"x":  $(this.s.dt.nTable).offset().left,
+			"to": 0
+		} );
+
+		var iToPoint = 0;
+		for ( var i=0, iLen=aoColumns.length ; i<iLen ; i++ )
+		{
+			/* For the column / header in question, we want it's position to remain the same if the
+			 * position is just to it's immediate left or right, so we only incremement the counter for
+			 * other columns
+			 */
+			if ( i != this.s.mouse.fromIndex )
+			{
+				iToPoint++;
+			}
+
+			if ( aoColumns[i].bVisible )
+			{
+				this.s.aoTargets.push( {
+					"x":  $(aoColumns[i].nTh).offset().left + $(aoColumns[i].nTh).outerWidth(),
+					"to": iToPoint
+				} );
+			}
+		}
+
+		/* Disallow columns for being reordered by drag and drop, counting right to left */
+		if ( this.s.fixedRight !== 0 )
+		{
+			this.s.aoTargets.splice( this.s.fixedRight + 1 );
+		}
+
+		/* Disallow columns for being reordered by drag and drop, counting left to right */
+		if ( this.s.fixed !== 0 )
+		{
+			this.s.aoTargets.splice( 0, this.s.fixed );
 		}
 	},
 
@@ -1068,6 +1088,34 @@ ColReorder.defaults = {
 	 *      } );
 	 */
 	aiOrder: null,
+
+	/**
+	 * Redraw the table's column ordering as the end user draws the column
+	 * (`true`) or wait until the mouse is released (`false` - default). Note
+	 * that this will perform a redraw on each reordering, which involves an
+	 * Ajax request each time if you are using server-side processing in
+	 * DataTables.
+	 *  @type boolean
+	 *  @default false
+	 *  @static
+	 *  @example
+	 *      // Using the `oColReorder` option in the DataTables options object
+	 *      $('#example').dataTable( {
+	 *          "sDom": 'Rlfrtip',
+	 *          "oColReorder": {
+	 *              "bRealtime": true
+	 *          }
+	 *      } );
+	 *
+	 *  @example
+	 *      // Using `new` constructor
+	 *      $('#example').dataTable()
+	 *
+	 *      new $.fn.dataTable.ColReorder( '#example', {
+	 *          "bRealtime": true
+	 *      } );
+	 */
+	bRealtime: false,
 
 	/**
 	 * Indicate how many columns should be fixed in position (counting from the
