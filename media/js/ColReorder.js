@@ -1,6 +1,6 @@
 /*
  * File:        ColReorder.js
- * Version:     1.1.0.dev
+ * Version:     1.1.0-dev
  * CVS:         $Id$
  * Description: Allow columns to be reordered in a DataTable
  * Author:      Allan Jardine (www.sprymedia.co.uk)
@@ -1094,7 +1094,7 @@ ColReorder.prototype.CLASS = "ColReorder";
  *  @type      String
  *  @default   As code
  */
-ColReorder.VERSION = "1.1.0.dev";
+ColReorder.VERSION = "1.1.0-dev";
 ColReorder.prototype.VERSION = ColReorder.VERSION;
 
 
