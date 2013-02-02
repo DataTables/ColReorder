@@ -1208,17 +1208,21 @@ if ( typeof $.fn.dataTable == "function" &&
      $.fn.dataTableExt.fnVersionCheck('1.9.3') )
 {
 	$.fn.dataTableExt.aoFeatures.push( {
-		"fnInit": function( oDTSettings ) {
-			var oTable = oDTSettings.oInstance;
-			if ( typeof oTable._oPluginColReorder == 'undefined' ) {
-				var opts = typeof oDTSettings.oInit.oColReorder != 'undefined' ?
-					oDTSettings.oInit.oColReorder : {};
-				oTable._oPluginColReorder = new ColReorder( oDTSettings, opts );
-			} else {
-				oTable.oApi._fnLog( oDTSettings, 1, "ColReorder attempted to initialise twice. Ignoring second" );
+		"fnInit": function( settings ) {
+			var table = settings.oInstance;
+
+			if ( table._oPluginColReorder === undefined ) {
+				var opts = settings.oInit.oColReorder !== undefined ?
+					settings.oInit.oColReorder :
+					{};
+
+				table._oPluginColReorder = new ColReorder( settings, opts );
+			}
+			else {
+				table.oApi._fnLog( settings, 1, "ColReorder attempted to initialise twice. Ignoring second" );
 			}
 
-			return null; /* No node to insert */
+			return null; /* No node for DataTables to insert */
 		},
 		"cFeature": "R",
 		"sFeature": "ColReorder"
