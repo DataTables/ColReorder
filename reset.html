@@ -23,13 +23,13 @@
 				} );
 				
 				$('#reset').click( function () {
-					ColReorder.fnReset( oTable );
+					ColReorder( oTable ).fnReset();
 					return false;
 				} );
 			} );
 			
 			/*
-			 * Alternative intialisation using 'new'
+			 * Alternative initialisation using 'new'
 			
 			$(document).ready( function () {
 				var oTable = $('#example').dataTable();

@@ -1,6 +1,6 @@
 /*
  * File:        ColReorder.js
- * Version:     1.0.8.dev
+ * Version:     1.1.0.dev
  * CVS:         $Id$
  * Description: Allow columns to be reordered in a DataTable
  * Author:      Allan Jardine (www.sprymedia.co.uk)
@@ -294,20 +294,57 @@ $.fn.dataTableExt.oApi.fnColReorder = function ( oSettings, iFrom, iTo )
  * ColReorder provides column visibility control for DataTables
  * @class ColReorder
  * @constructor
- * @param {object} DataTables settings object
- * @param {object} ColReorder options
+ * @param {object} dt DataTables settings object
+ * @param {object} opts ColReorder options
  */
-var ColReorder = function( oDTSettings, oOpts )
+var ColReorder = function( dt, opts )
 {
-	/* Santiy check that we are a new instance */
-	if ( !this.CLASS || this.CLASS != "ColReorder" )
-	{
-		alert( "Warning: ColReorder must be initialised with the keyword 'new'" );
+	var oDTSettings;
+
+	// @todo - This should really be a static method offered by DataTables
+	if ( dt.fnSettings ) {
+		// DataTables object, convert to the settings object
+		oDTSettings = dt.fnSettings();
+	}
+	else if ( typeof dt === 'string' ) {
+		// jQuery selector
+		if ( $.fn.dataTable.fnIsDataTable( $(dt)[0] ) ) {
+			oDTSettings = $(dt).eq(0).dataTable().fnSettings();
+		}
+	}
+	else if ( dt.nodeName && dt.nodeName.toLowerCase() === 'table' ) {
+		// Table node
+		if ( $.fn.dataTable.fnIsDataTable( dt.nodeName ) ) {
+			oDTSettings = $(dt.nodeName).dataTable().fnSettings();
+		}
+	}
+	else if ( dt instanceof jQuery ) {
+		// jQuery object
+		if ( $.fn.dataTable.fnIsDataTable( dt[0] ) ) {
+			oDTSettings = dt.eq(0).dataTable().fnSettings();
+		}
+	}
+	else {
+		// DataTables settings object
+		oDTSettings = dt;
 	}
 
-	if ( typeof oOpts == 'undefined' )
+	if ( this instanceof ColReorder === false ) {
+		// Get a ColReorder instance - effectively a static method
+		for ( var i=0, iLen=ColReorder.aoInstances.length ; i<iLen ; i++ )
+		{
+			if ( ColReorder.aoInstances[i].s.dt == oDTSettings )
+			{
+				return ColReorder.aoInstances[i];
+			}
+		}
+
+		return null;
+	}
+
+	if ( typeof opts == 'undefined' )
 	{
-		oOpts = {};
+		opts = {};
 	}
 
 
@@ -333,7 +370,7 @@ var ColReorder = function( oDTSettings, oOpts )
 		 *  @type     object
 		 *  @default  {}
 		 */
-		"init": oOpts,
+		"init": opts,
 
 		/**
 		 * Number of columns to fix (not allow to be reordered)
@@ -426,6 +463,23 @@ ColReorder.prototype = {
 	 * Public methods
 	 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	/**
+	 * Reset the column ordering to the original ordering that was detected on
+	 * start up.
+	 *  @return {this} Returns `this` for chaining.
+	 *
+	 *  @example
+	 *    // DataTables initialisation with ColReorder
+	 *    var table = $('#example').dataTable( {
+	 *        "sDom": 'Rlfrtip'
+	 *    } );
+	 *
+	 *    // Add click event to a button to reset the ordering
+	 *    $('#resetOrdering').click( function (e) {
+	 *        e.preventDefault();
+	 *        ColReorder( table ).fnReset();
+	 *    } );
+	 */
 	"fnReset": function ()
 	{
 		var a = [];
@@ -435,16 +489,72 @@ ColReorder.prototype = {
 		}
 
 		this._fnOrderColumns( a );
+
+		return this;
 	},
 
+	/**
+	 * `Deprecated` - Get the current order of the columns, as an array.
+	 *  @return {array} Array of column identifiers
+	 *  @deprecated `fnOrder` should be used in preference to this method.
+	 *      `fnOrder` acts as a getter/setter.
+	 */
 	"fnGetCurrentOrder": function ()
 	{
-		var a = [];
-		for ( var i=0, iLen=this.s.dt.aoColumns.length ; i<iLen ; i++ )
+		return this.fnOrder();
+	},
+
+	/**
+	 * Get the current order of the columns, as an array. Note that the values
+	 * given in the array are unique identifiers for each column. Currently
+	 * these are the original ordering of the columns that was detected on
+	 * start up, but this could potentially change in future.
+	 *  @return {array} Array of column identifiers
+	 *
+	 *  @example
+	 *    // Get column ordering for the table
+	 *    var order = ColReorder( dataTable ).fnOrder();
+	 *//**
+	 * Set the order of the columns, from the positions identified in the
+	 * ordering array given. Note that ColReorder takes a brute force approach
+	 * to reordering, so it is possible multiple reordering events will occur
+	 * before the final order is settled upon.
+	 *  @param {array} [set] Array of column identifiers in the new order. Note
+	 *    that every column must be included, uniquely, in this array.
+	 *  @return {this} Returns `this` for chaining.
+	 *
+	 *  @example
+	 *    // Swap the first and second columns
+	 *    ColReorder( dataTable ).fnOrder( [1, 0, 2, 3, 4] );
+	 *
+	 *  @example
+	 *    // Move the first column to the end for the table `#example`
+	 *    var curr = ColReorder( '#example' ).fnOrder();
+	 *    var first = curr.shift();
+	 *    curr.push( first );
+	 *    ColReorder( '#example' ).fnOrder( curr );
+	 *
+	 *  @example
+	 *    // Reverse the table's order
+	 *    ColReorder( '#example' ).fnOrder(
+	 *      ColReorder( '#example' ).fnOrder().reverse()
+	 *    );
+	 */
+	"fnOrder": function ( set )
+	{
+		if ( set === undefined )
 		{
-			a.push( this.s.dt.aoColumns[i]._ColReorder_iOrigCol );
+			var a = [];
+			for ( var i=0, iLen=this.s.dt.aoColumns.length ; i<iLen ; i++ )
+			{
+				a.push( this.s.dt.aoColumns[i]._ColReorder_iOrigCol );
+			}
+			return a;
 		}
-		return a;
+
+		this._fnOrderColumns( fnInvertKeyValues( set ) );
+
+		return this;
 	},
 
 
@@ -942,11 +1052,12 @@ ColReorder.aoInstances = [];
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 /**
- * Reset the column ordering for a DataTables instance
+ * `Deprecated` Reset the column ordering for a DataTables instance
  *  @method  ColReorder.fnReset
  *  @param   object oTable DataTables instance to consider
  *  @returns void
  *  @static
+ *  @deprecated Use `ColReorder( table ).fnReset()` instead.
  */
 ColReorder.fnReset = function ( oTable )
 {
@@ -958,6 +1069,7 @@ ColReorder.fnReset = function ( oTable )
 		}
 	}
 };
+
 
 
 
@@ -982,7 +1094,7 @@ ColReorder.prototype.CLASS = "ColReorder";
  *  @type      String
  *  @default   As code
  */
-ColReorder.VERSION = "1.0.8.dev";
+ColReorder.VERSION = "1.1.0.dev";
 ColReorder.prototype.VERSION = ColReorder.VERSION;
 
 
@@ -1021,5 +1133,9 @@ else
 {
 	alert( "Warning: ColReorder requires DataTables 1.9.3 or greater - www.datatables.net/download");
 }
+
+
+window.ColReorder = ColReorder;
+
 
 })(jQuery, window, document);
