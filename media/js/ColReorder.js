@@ -342,11 +342,6 @@ var ColReorder = function( dt, opts )
 		return null;
 	}
 
-	if ( typeof opts == 'undefined' )
-	{
-		opts = {};
-	}
-
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 	 * Public class variables
@@ -370,7 +365,7 @@ var ColReorder = function( dt, opts )
 		 *  @type     object
 		 *  @default  {}
 		 */
-		"init": opts,
+		"init": $.extend( true, {}, ColReorder.defaults, opts ),
 
 		/**
 		 * Number of columns to fix (not allow to be reordered)
@@ -575,21 +570,18 @@ ColReorder.prototype = {
 		var i;
 
 		/* Columns discounted from reordering - counting left to right */
-		if ( typeof this.s.init.iFixedColumns != 'undefined' )
+		if ( this.s.init.iFixedColumns )
 		{
 			this.s.fixed = this.s.init.iFixedColumns;
 		}
 
 		/* Columns discounted from reordering - counting right to left */
-		if ( typeof this.s.init.iFixedColumnsRight != 'undefined' )
-		{
-			this.s.fixedRight = iLen - this.s.init.iFixedColumnsRight;
-		} else {
-			this.s.fixedRight = iLen;
-		}
+		this.s.fixedRight = this.s.init.iFixedColumnsRight ?
+			iLen - this.s.init.iFixedColumnsRight :
+			iLen;
 
 		/* Drop callback initialisation option */
-		if ( typeof this.s.init.fnReorderCallback != 'undefined' )
+		if ( this.s.init.fnReorderCallback )
 		{
 			this.s.dropCallback = this.s.init.fnReorderCallback;
 		}
@@ -613,7 +605,7 @@ ColReorder.prototype = {
 
 		/* An initial column order has been specified */
 		var aiOrder = null;
-		if ( typeof this.s.init.aiOrder != 'undefined' )
+		if ( this.s.init.aiOrder )
 		{
 			aiOrder = this.s.init.aiOrder.slice();
 		}
@@ -1040,8 +1032,120 @@ ColReorder.prototype = {
  *  @type     array
  *  @default  []
  *  @static
+ *  @private
  */
 ColReorder.aoInstances = [];
+
+
+/**
+ * ColReorder default settings for initialisation
+ *  @namespace
+ *  @static
+ */
+ColReorder.defaults = {
+	/**
+	 * Predefined ordering for the columns that will be applied automatically
+	 * on initialisation. If not specified then the order that the columns are
+	 * found to be in the HTML is the order used.
+	 *  @type array
+	 *  @default null
+	 *  @static
+	 *  @example
+	 *      // Using the `oColReorder` option in the DataTables options object
+	 *      $('#example').dataTable( {
+	 *          "sDom": 'Rlfrtip',
+	 *          "oColReorder": {
+	 *              "aiOrder": [ 4, 3, 2, 1, 0 ]
+	 *          }
+	 *      } );
+	 *
+	 *  @example
+	 *      // Using `new` constructor
+	 *      $('#example').dataTable()
+	 *
+	 *      new $.fn.dataTable.ColReorder( '#example', {
+	 *          "aiOrder": [ 4, 3, 2, 1, 0 ]
+	 *      } );
+	 */
+	aiOrder: null,
+
+	/**
+	 * Indicate how many columns should be fixed in position (counting from the
+	 * left). This will typically be 1 if used, but can be as high as you like.
+	 *  @type int
+	 *  @default 0
+	 *  @static
+	 *  @example
+	 *      // Using the `oColReorder` option in the DataTables options object
+	 *      $('#example').dataTable( {
+	 *          "sDom": 'Rlfrtip',
+	 *          "oColReorder": {
+	 *              "iFixedColumns": 1
+	 *          }
+	 *      } );
+	 *
+	 *  @example
+	 *      // Using `new` constructor
+	 *      $('#example').dataTable()
+	 *
+	 *      new $.fn.dataTable.ColReorder( '#example', {
+	 *          "iFixedColumns": 1
+	 *      } );
+	 */
+	iFixedColumns: 0,
+
+	/**
+	 * As `iFixedColumnsRight` but counting from the right.
+	 *  @type int
+	 *  @default 0
+	 *  @static
+	 *  @example
+	 *      // Using the `oColReorder` option in the DataTables options object
+	 *      $('#example').dataTable( {
+	 *          "sDom": 'Rlfrtip',
+	 *          "oColReorder": {
+	 *              "iFixedColumnsRight": 1
+	 *          }
+	 *      } );
+	 *
+	 *  @example
+	 *      // Using `new` constructor
+	 *      $('#example').dataTable()
+	 *
+	 *      new $.fn.dataTable.ColReorder( '#example', {
+	 *          "iFixedColumnsRight": 1
+	 *      } );
+	 */
+	iFixedColumnsRight: 0,
+
+	/**
+	 * Callback function that is fired when columns are reordered
+	 *  @type function():void
+	 *  @default null
+	 *  @static
+	 *  @example
+	 *      // Using the `oColReorder` option in the DataTables options object
+	 *      $('#example').dataTable( {
+	 *          "sDom": 'Rlfrtip',
+	 *          "oColReorder": {
+	 *              "fnReorderCallback": function () {
+	 *                  alert( 'Columns reordered' );
+	 *              }
+	 *          }
+	 *      } );
+	 *
+	 *  @example
+	 *      // Using `new` constructor
+	 *      $('#example').dataTable()
+	 *
+	 *      new $.fn.dataTable.ColReorder( '#example', {
+	 *          "fnReorderCallback": function () {
+	 *              alert( 'Columns reordered' );
+	 *          }
+	 *      } );
+	 */
+	fnReorderCallback: null
+};
 
 
 
@@ -1078,15 +1182,6 @@ ColReorder.fnReset = function ( oTable )
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * Constants
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-/**
- * Name of this class
- *  @constant CLASS
- *  @type     String
- *  @default  ColReorder
- */
-ColReorder.prototype.CLASS = "ColReorder";
-
 
 /**
  * ColReorder version
