@@ -170,17 +170,6 @@ $.fn.dataTableExt.oApi.fnColReorder = function ( oSettings, iFrom, iTo )
 		}
 	}
 
-	/* Update the Get and Set functions for each column */
-	for ( i=0, iLen=iCols ; i<iLen ; i++ )
-	{
-		oCol = oSettings.aoColumns[i];
-		if ( typeof oCol.mData == 'number' ) {
-			oCol.mData = aiInvertMapping[ oCol.mData ];
-			oCol.fnGetData = oSettings.oApi._fnGetObjectDataFn( oCol.mData );
-			oCol.fnSetData = oSettings.oApi._fnSetObjectDataFn( oCol.mData );
-		}
-	}
-
 
 	/*
 	 * Move the DOM elements
@@ -241,9 +230,6 @@ $.fn.dataTableExt.oApi.fnColReorder = function ( oSettings, iFrom, iTo )
 	/* Array array - internal data anodes cache */
 	for ( i=0, iLen=oSettings.aoData.length ; i<iLen ; i++ )
 	{
-		if ( $.isArray( oSettings.aoData[i]._aData ) ) {
-		  fnArraySwitch( oSettings.aoData[i]._aData, iFrom, iTo );
-		}
 		fnArraySwitch( oSettings.aoData[i]._anHidden, iFrom, iTo );
 	}
 
@@ -777,7 +763,8 @@ ColReorder.prototype = {
 		this.s.mouse.offsetY = e.pageY - offset.top;
 		this.s.mouse.target = target[0];
 		this.s.mouse.targetIndex = idx;
-		this.s.mouse.fromIndex = idx;
+		this.s.mouse.fromIndex = this.s.dt.oInstance.oApi._fnVisibleToColumnIndex( this.s.dt,
+			this.s.mouse.targetIndex );
 
 		this._fnRegions();
 
