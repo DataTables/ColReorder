@@ -763,8 +763,7 @@ ColReorder.prototype = {
 		this.s.mouse.offsetY = e.pageY - offset.top;
 		this.s.mouse.target = target[0];
 		this.s.mouse.targetIndex = idx;
-		this.s.mouse.fromIndex = this.s.dt.oInstance.oApi._fnVisibleToColumnIndex( this.s.dt,
-			this.s.mouse.targetIndex );
+		this.s.mouse.fromIndex = idx;
 
 		this._fnRegions();
 
