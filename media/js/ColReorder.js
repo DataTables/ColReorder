@@ -563,8 +563,8 @@ ColReorder.prototype = {
 
 		/* Columns discounted from reordering - counting right to left */
 		this.s.fixedRight = this.s.init.iFixedColumnsRight ?
-			iLen - this.s.init.iFixedColumnsRight :
-			iLen;
+			this.s.init.iFixedColumnsRight :
+			0;
 
 		/* Drop callback initialisation option */
 		if ( this.s.init.fnReorderCallback )
@@ -575,7 +575,7 @@ ColReorder.prototype = {
 		/* Add event handlers for the drag and drop, and also mark the original column order */
 		for ( i = 0; i < iLen; i++ )
 		{
-			if ( i > this.s.fixed-1 && i < this.s.fixedRight )
+			if ( i > this.s.fixed-1 && i < iLen - this.s.fixedRight )
 			{
 				this._fnMouseListener( i, this.s.dt.aoColumns[i].nTh );
 			}
@@ -925,7 +925,7 @@ ColReorder.prototype = {
 		/* Disallow columns for being reordered by drag and drop, counting right to left */
 		if ( this.s.fixedRight !== 0 )
 		{
-			this.s.aoTargets.splice( this.s.fixedRight + 1 );
+			this.s.aoTargets.splice( this.s.aoTargets.length - this.s.fixedRight );
 		}
 
 		/* Disallow columns for being reordered by drag and drop, counting left to right */
