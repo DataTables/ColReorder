@@ -230,7 +230,14 @@ $.fn.dataTableExt.oApi.fnColReorder = function ( oSettings, iFrom, iTo )
 	/* Array array - internal data anodes cache */
 	for ( i=0, iLen=oSettings.aoData.length ; i<iLen ; i++ )
 	{
-		fnArraySwitch( oSettings.aoData[i]._anHidden, iFrom, iTo );
+		if ( oSettings.aoData[i].anCells ) {
+			// DataTables 1.10+
+			fnArraySwitch( oSettings.aoData[i].anCells, iFrom, iTo );
+		}
+		else {
+			// DataTables 1.9-
+			fnArraySwitch( oSettings.aoData[i]._anHidden, iFrom, iTo );
+		}
 	}
 
 	/* Reposition the header elements in the header layout array */
@@ -266,11 +273,6 @@ $.fn.dataTableExt.oApi.fnColReorder = function ( oSettings, iFrom, iTo )
 		"iTo": iTo,
 		"aiInvertMapping": aiInvertMapping
 	} ] );
-
-	if ( typeof oSettings.oInstance._oPluginFixedHeader != 'undefined' )
-	{
-		oSettings.oInstance._oPluginFixedHeader.fnUpdate();
-	}
 };
 
 
@@ -630,6 +632,9 @@ ColReorder.prototype = {
 				that._fnOrderColumns.call( that, resort );
 			}
 		}
+		else {
+			this._fnSetColumnIndexes();
+		}
 	},
 
 
@@ -670,6 +675,8 @@ ColReorder.prototype = {
 
 		/* Save the state */
 		this.s.dt.oInstance.oApi._fnSaveState( this.s.dt );
+
+		this._fnSetColumnIndexes();
 	},
 
 
@@ -749,11 +756,9 @@ ColReorder.prototype = {
 		/* Store information about the mouse position */
 		var target = $(e.target).closest('th, td');
 		var offset = target.offset();
-		var idx = $.inArray(
-			target[0], $.map( this.s.dt.aoColumns, function (o) {return o.nTh;} )
-		);
-		
-		if ( idx === -1 ) {
+		var idx = parseInt( $(nTh).attr('data-column-index'), 10 );
+
+		if ( idx === undefined ) {
 			return;
 		}
 
@@ -761,7 +766,7 @@ ColReorder.prototype = {
 		this.s.mouse.startY = e.pageY;
 		this.s.mouse.offsetX = e.pageX - offset.left;
 		this.s.mouse.offsetY = e.pageY - offset.top;
-		this.s.mouse.target = target[0];
+		this.s.mouse.target = this.s.dt.aoColumns[ idx ].nTh;//target[0];
 		this.s.mouse.targetIndex = idx;
 		this.s.mouse.fromIndex = idx;
 
@@ -865,6 +870,7 @@ ColReorder.prototype = {
 
 			/* Actually do the reorder */
 			this.s.dt.oInstance.fnColReorder( this.s.mouse.fromIndex, this.s.mouse.toIndex );
+			this._fnSetColumnIndexes();
 
 			/* When scrolling we need to recalculate the column sizes to allow for the shift */
 			if ( this.s.dt.oScroll.sX !== "" || this.s.dt.oScroll.sY !== "" )
@@ -1018,9 +1024,27 @@ ColReorder.prototype = {
 
 		$(this.s.dt.nTHead).find( '*' ).off( '.ColReorder' );
 
+		$.each( this.s.dt.aoColumns, function (i, column) {
+			$(column.nTh).removeAttr('data-column-index');
+		} );
+
 		this.s.dt.oInstance._oPluginColReorder = null;
 		this.s = null;
-	}
+	},
+
+
+	/**
+	 * Add a data attribute to the column headers, so we know the index of
+	 * the row to be reordered. This allows fast detection of the index, and
+	 * for this plug-in to work with FixedHeader which clones the nodes.
+	 *  @private
+	 */
+	"_fnSetColumnIndexes": function ()
+	{
+		$.each( this.s.dt.aoColumns, function (i, column) {
+			$(column.nTh).attr('data-column-index', i);
+		} );
+	},
 };
 
 
