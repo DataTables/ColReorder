@@ -1268,7 +1268,7 @@ if ( typeof $.fn.dataTable == "function" &&
 		"fnInit": function( settings ) {
 			var table = settings.oInstance;
 
-			if ( table._oPluginColReorder === undefined ) {
+			if ( table._oPluginColReorder === undefined || table._oPluginColReorder === null ) {
 				var opts = settings.oInit.oColReorder !== undefined ?
 					settings.oInit.oColReorder :
 					{};
