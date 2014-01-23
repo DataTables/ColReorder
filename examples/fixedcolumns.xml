@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<dt-example table-type="html-wide" order="5">
+<dt-example table-type="html-wide" order="10">
 
 <css lib="datatables colreorder fixedcolumns" />
 <js lib="jquery datatables colreorder fixedcolumns">
