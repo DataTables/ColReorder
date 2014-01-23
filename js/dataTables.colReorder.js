@@ -21,7 +21,7 @@
  */
 
 
-(function($, window, document) {
+(function(window, document, undefined) {
 
 
 /**
@@ -309,6 +309,8 @@ $.fn.dataTableExt.oApi.fnColReorder = function ( oSettings, iFrom, iTo )
 
 
 
+var factory = function( $, DataTable ) {
+"use strict";
 
 /**
  * ColReorder provides column visibility control for DataTables
@@ -1227,14 +1229,16 @@ ColReorder.version = "1.1.0-dev";
 
 
 
-
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- * Initialisation
+ * DataTables interfaces
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/*
- * Register a new feature with DataTables
- */
+// Expose
+$.fn.dataTable.ColReorder = ColReorder;
+$.fn.DataTable.ColReorder = ColReorder;
+
+
+// Register a new feature with DataTables
 if ( typeof $.fn.dataTable == "function" &&
      typeof $.fn.dataTableExt.fnVersionCheck == "function" &&
      $.fn.dataTableExt.fnVersionCheck('1.9.3') )
@@ -1259,19 +1263,12 @@ if ( typeof $.fn.dataTable == "function" &&
 		"sFeature": "ColReorder"
 	} );
 }
-else
-{
+else {
 	alert( "Warning: ColReorder requires DataTables 1.9.3 or greater - www.datatables.net/download");
 }
 
 
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- * DataTables interface
- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-$.fn.dataTable.ColReorder = ColReorder;
-
-
+// API augmentation
 if ( $.fn.dataTable.Api ) {
 	$.fn.dataTable.Api.register( 'colReorder.reset()', function () {
 		return this.iterator( 'table', function ( ctx ) {
@@ -1292,6 +1289,18 @@ if ( $.fn.dataTable.Api ) {
 	} );
 }
 
+return ColReorder;
+}; // /factory
 
 
-})(jQuery, window, document);
+// Define as an AMD module if possible
+if ( typeof define === 'function' && define.amd ) {
+	define( 'datatables-colreorder', ['jquery', 'datatables'], factory );
+}
+else if ( jQuery && !jQuery.fn.dataTable.ColReorder ) {
+	// Otherwise simply initialise as normal, stopping multiple evaluation
+	factory( jQuery, jQuery.fn.dataTable );
+}
+
+
+})(window, document);
