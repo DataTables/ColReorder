@@ -1,11 +1,11 @@
-/*! ColReorder 1.1.0
+/*! ColReorder 1.1.1-dev
  * ©2010-2014 SpryMedia Ltd - datatables.net/license
  */
 
 /**
  * @summary     ColReorder
  * @description Provide the ability to reorder columns in a DataTable
- * @version     1.1.0
+ * @version     1.1.1-dev
  * @file        dataTables.colReorder.js
  * @author      SpryMedia Ltd (www.sprymedia.co.uk)
  * @contact     www.sprymedia.co.uk/contact
@@ -254,16 +254,25 @@ $.fn.dataTableExt.oApi.fnColReorder = function ( oSettings, iFrom, iTo )
 	/* Array array - internal data anodes cache */
 	for ( i=0, iLen=oSettings.aoData.length ; i<iLen ; i++ )
 	{
+		var data = oSettings.aoData[i];
+
 		if ( v110 ) {
 			// DataTables 1.10+
-			fnArraySwitch( oSettings.aoData[i].anCells, iFrom, iTo );
+			fnArraySwitch( data.anCells, iFrom, iTo );
+
+			// For DOM sourced data, the invalidate will reread the cell into
+			// the data array, but for data sources as an array, they need to
+			// be flipped
+			if ( data.src !== 'dom' && $.isArray( data._aData ) ) {
+				fnArraySwitch( data._aData, iFrom, iTo );
+			}
 		}
 		else {
 			// DataTables 1.9-
-			if ( $.isArray( oSettings.aoData[i]._aData ) ) {
-				fnArraySwitch( oSettings.aoData[i]._aData, iFrom, iTo );
+			if ( $.isArray( data._aData ) ) {
+				fnArraySwitch( data._aData, iFrom, iTo );
 			}
-			fnArraySwitch( oSettings.aoData[i]._anHidden, iFrom, iTo );
+			fnArraySwitch( data._anHidden, iFrom, iTo );
 		}
 	}
 
@@ -1225,7 +1234,7 @@ ColReorder.defaults = {
  *  @type      String
  *  @default   As code
  */
-ColReorder.version = "1.1.0";
+ColReorder.version = "1.1.1-dev";
 
 
 
