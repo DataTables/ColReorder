@@ -8,7 +8,7 @@
 $(document).ready(function() {
 	var table = $('#example').dataTable();
 
-	new $.fn.dataTable.colReorder( table );
+	new $.fn.dataTable.ColReorder( table );
 } );
 
 ]]>
@@ -20,7 +20,7 @@ $(document).ready(function() {
 
 This example shows how the jQuery UI ThemeRoller option in DataTables can be used with ColReorder.
 
-The important thing to note here is that it is easier to use `new $.fn.dataTable.colReorder()` to add ColReorder to the table rather than `dt-init dom` as the jQuery UI integration uses a complex expression for `dt-init dom`.
+The important thing to note here is that it is easier to use `new $.fn.dataTable.ColReorder()` to add ColReorder to the table rather than `dt-init dom` as the jQuery UI integration uses a complex expression for `dt-init dom`.
 
 ]]></info>
 
