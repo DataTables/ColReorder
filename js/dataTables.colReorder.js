@@ -1,11 +1,11 @@
-/*! ColReorder 1.1.1
+/*! ColReorder 1.1.2-dev
  * ©2010-2014 SpryMedia Ltd - datatables.net/license
  */
 
 /**
  * @summary     ColReorder
  * @description Provide the ability to reorder columns in a DataTable
- * @version     1.1.1
+ * @version     1.1.2-dev
  * @file        dataTables.colReorder.js
  * @author      SpryMedia Ltd (www.sprymedia.co.uk)
  * @contact     www.sprymedia.co.uk/contact
@@ -1236,7 +1236,7 @@ ColReorder.defaults = {
  *  @type      String
  *  @default   As code
  */
-ColReorder.version = "1.1.1";
+ColReorder.version = "1.1.2-dev";
 
 
 
@@ -1306,7 +1306,11 @@ return ColReorder;
 
 // Define as an AMD module if possible
 if ( typeof define === 'function' && define.amd ) {
-	define( 'datatables-colreorder', ['jquery', 'datatables'], factory );
+	define( ['jquery', 'datatables'], factory );
+}
+else if ( typeof exports === 'object' ) {
+    // Node/CommonJS
+    factory( require('jquery'), require('datatables') );
 }
 else if ( jQuery && !jQuery.fn.dataTable.ColReorder ) {
 	// Otherwise simply initialise as normal, stopping multiple evaluation
