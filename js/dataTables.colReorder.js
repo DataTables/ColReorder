@@ -732,28 +732,51 @@ ColReorder.prototype = {
 	{
 		var i, iLen, aCopy, iOrigColumn;
 		var oSettings = this.s.dt;
+		var columns = oSettings.aoColumns;
 
-		/* Sorting */
-		for ( i=0 ; i<oState.aaSorting.length ; i++ )
-		{
-			oState.aaSorting[i][0] = oSettings.aoColumns[ oState.aaSorting[i][0] ]._ColReorder_iOrigCol;
-		}
-
-		var aSearchCopy = $.extend( true, [], oState.aoSearchCols );
 		oState.ColReorder = [];
 
-		for ( i=0, iLen=oSettings.aoColumns.length ; i<iLen ; i++ )
-		{
-			iOrigColumn = oSettings.aoColumns[i]._ColReorder_iOrigCol;
+		/* Sorting */
+		if ( oState.aaSorting ) {
+			// 1.10.0-
+			for ( i=0 ; i<oState.aaSorting.length ; i++ ) {
+				oState.aaSorting[i][0] = columns[ oState.aaSorting[i][0] ]._ColReorder_iOrigCol;
+			}
 
-			/* Column filter */
-			oState.aoSearchCols[ iOrigColumn ] = aSearchCopy[i];
+			var aSearchCopy = $.extend( true, [], oState.aoSearchCols );
 
-			/* Visibility */
-			oState.abVisCols[ iOrigColumn ] = oSettings.aoColumns[i].bVisible;
+			for ( i=0, iLen=columns.length ; i<iLen ; i++ )
+			{
+				iOrigColumn = columns[i]._ColReorder_iOrigCol;
 
-			/* Column reordering */
-			oState.ColReorder.push( iOrigColumn );
+				/* Column filter */
+				oState.aoSearchCols[ iOrigColumn ] = aSearchCopy[i];
+
+				/* Visibility */
+				oState.abVisCols[ iOrigColumn ] = columns[i].bVisible;
+
+				/* Column reordering */
+				oState.ColReorder.push( iOrigColumn );
+			}
+		}
+		else if ( oState.order ) {
+			// 1.10.1+
+			for ( i=0 ; i<oState.order.length ; i++ ) {
+				oState.order[i][0] = columns[ oState.order[i][0] ]._ColReorder_iOrigCol;
+			}
+
+			var stateColumnsCopy = $.extend( true, [], oState.columns );
+
+			for ( i=0, iLen=columns.length ; i<iLen ; i++ )
+			{
+				iOrigColumn = columns[i]._ColReorder_iOrigCol;
+
+				/* Columns */
+				oState.columns[ iOrigColumn ] = stateColumnsCopy[i];
+
+				/* Column reordering */
+				oState.ColReorder.push( iOrigColumn );
+			}
 		}
 	},
 
