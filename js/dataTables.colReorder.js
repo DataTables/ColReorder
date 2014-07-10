@@ -366,8 +366,10 @@ var ColReorder = function( dt, opts )
 	}
 
 	// Convert from camelCase to Hungarian, just as DataTables does
-	if ( $.fn.dataTable.camelToHungarian ) {
-		$.fn.dataTable.camelToHungarian( ColReorder.defaults, opts || {} );
+	var camelToHungarian = $.fn.dataTable.camelToHungarian;
+	if ( camelToHungarian ) {
+		camelToHungarian( ColReorder.defaults, ColReorder.defaults, true );
+		camelToHungarian( ColReorder.defaults, opts || {} );
 	}
 
 
