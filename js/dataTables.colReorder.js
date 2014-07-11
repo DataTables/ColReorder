@@ -111,6 +111,20 @@ $.fn.dataTableExt.oApi.fnColReorder = function ( oSettings, iFrom, iTo )
 {
 	var v110 = $.fn.dataTable.Api ? true : false;
 	var i, iLen, j, jLen, iCols=oSettings.aoColumns.length, nTrs, oCol;
+	var attrMap = function ( obj, prop, mapping ) {
+		if ( ! obj[ prop ] ) {
+			return;
+		}
+
+		var a = obj[ prop ].split('.');
+		var num = a.shift();
+
+		if ( isNaN( num*1 ) ) {
+			return;
+		}
+
+		obj[ prop ] = mapping[ num*1 ]+'.'+a.join('.');
+	};
 
 	/* Sanity check in the input */
 	if ( iFrom == iTo )
@@ -187,8 +201,19 @@ $.fn.dataTableExt.oApi.fnColReorder = function ( oSettings, iFrom, iTo )
 	for ( i=0, iLen=iCols ; i<iLen ; i++ )
 	{
 		oCol = oSettings.aoColumns[i];
+
 		if ( typeof oCol.mData == 'number' ) {
 			oCol.mData = aiInvertMapping[ oCol.mData ];
+
+			// regenerate the get / set functions
+			oSettings.oApi._fnColumnOptions( oSettings, i, {} );
+		}
+		else if ( $.isPlainObject( oCol.mData ) ) {
+			// HTML5 data sourced
+			attrMap( oCol.mData, '_',      aiInvertMapping );
+			attrMap( oCol.mData, 'filter', aiInvertMapping );
+			attrMap( oCol.mData, 'sort',   aiInvertMapping );
+			attrMap( oCol.mData, 'type',   aiInvertMapping );
 
 			// regenerate the get / set functions
 			oSettings.oApi._fnColumnOptions( oSettings, i, {} );
