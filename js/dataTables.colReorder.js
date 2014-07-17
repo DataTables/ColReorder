@@ -343,7 +343,225 @@ $.fn.dataTableExt.oApi.fnColReorder = function ( oSettings, iFrom, iTo )
 	} ] );
 };
 
+$.fn.dataTableExt.oApi.fnColReorderArray = function ( oSettings, a )
+{
+	var v110 = $.fn.dataTable.Api ? true : false;
+	var i, iLen, j, jLen, iCols=oSettings.aoColumns.length, nTrs, oCol;
 
+	var aiMapping = [];
+	for ( i=0, iLen=iCols ; i<iLen ; i++ )
+	{
+		aiMapping[i] = i;
+	}
+
+	var didReorder = false;
+	for ( var iTo=0, iLen=a.length ; iTo<iLen ; iTo++ )
+	{
+		var iFrom = $.inArray( iTo, a );
+		if ( iTo != iFrom )
+		{
+			/* Sanity check in the input */
+			if ( iFrom < 0 || iFrom >= iCols )
+			{
+				this.oApi._fnLog( oSettings, 1, "ColReorder 'from' index is out of bounds: "+iFrom );
+				continue;
+			}
+
+			if ( iTo < 0 || iTo >= iCols )
+			{
+				this.oApi._fnLog( oSettings, 1, "ColReorder 'to' index is out of bounds: "+iTo );
+				continue;
+			}
+
+			/* Reorder our switching array */
+			fnArraySwitch( a, iFrom, iTo );
+
+			/*
+			 * Calculate the new column array index, so we have a mapping between the old and new
+			 */
+			fnArraySwitch( aiMapping, iFrom, iTo );
+
+			/*
+			 * Move the DOM elements
+			 */
+			if ( oSettings.aoColumns[iFrom].bVisible )
+			{
+				/* Calculate the current visible index and the point to insert the node before. The insert
+				 * before needs to take into account that there might not be an element to insert before,
+				 * in which case it will be null, and an appendChild should be used
+				 */
+				var iVisibleIndex = this.oApi._fnColumnIndexToVisible( oSettings, iFrom );
+				var iInsertBeforeIndex = null;
+
+				i = iTo < iFrom ? iTo : iTo + 1;
+				while ( iInsertBeforeIndex === null && i < iCols )
+				{
+					iInsertBeforeIndex = this.oApi._fnColumnIndexToVisible( oSettings, i );
+					i++;
+				}
+
+				/* Header */
+				nTrs = oSettings.nTHead.getElementsByTagName('tr');
+				for ( i=0, iLen=nTrs.length ; i<iLen ; i++ )
+				{
+					fnDomSwitch( nTrs[i], iVisibleIndex, iInsertBeforeIndex );
+				}
+
+				/* Footer */
+				if ( oSettings.nTFoot !== null )
+				{
+					nTrs = oSettings.nTFoot.getElementsByTagName('tr');
+					for ( i=0, iLen=nTrs.length ; i<iLen ; i++ )
+					{
+						fnDomSwitch( nTrs[i], iVisibleIndex, iInsertBeforeIndex );
+					}
+				}
+
+				/* Body */
+				for ( i=0, iLen=oSettings.aoData.length ; i<iLen ; i++ )
+				{
+					if ( oSettings.aoData[i].nTr !== null )
+					{
+						fnDomSwitch( oSettings.aoData[i].nTr, iVisibleIndex, iInsertBeforeIndex );
+					}
+				}
+			}
+
+			/*
+			 * Move the internal array elements
+			 */
+			/* Columns */
+			fnArraySwitch( oSettings.aoColumns, iFrom, iTo );
+
+			/* Search columns */
+			fnArraySwitch( oSettings.aoPreSearchCols, iFrom, iTo );
+
+			/* Array array - internal data anodes cache */
+			for ( i=0, iLen=oSettings.aoData.length ; i<iLen ; i++ )
+			{
+				var data = oSettings.aoData[i];
+
+				if ( v110 ) {
+					// DataTables 1.10+
+					if ( data.anCells ) {
+						fnArraySwitch( data.anCells, iFrom, iTo );
+					}
+
+					// For DOM sourced data, the invalidate will reread the cell into
+					// the data array, but for data sources as an array, they need to
+					// be flipped
+					if ( data.src !== 'dom' && $.isArray( data._aData ) ) {
+						fnArraySwitch( data._aData, iFrom, iTo );
+					}
+				}
+				else {
+					// DataTables 1.9-
+					if ( $.isArray( data._aData ) ) {
+						fnArraySwitch( data._aData, iFrom, iTo );
+					}
+					fnArraySwitch( data._anHidden, iFrom, iTo );
+				}
+			}
+
+			/* Reposition the header elements in the header layout array */
+			for ( i=0, iLen=oSettings.aoHeader.length ; i<iLen ; i++ )
+			{
+				fnArraySwitch( oSettings.aoHeader[i], iFrom, iTo );
+			}
+
+			if ( oSettings.aoFooter !== null )
+			{
+				for ( i=0, iLen=oSettings.aoFooter.length ; i<iLen ; i++ )
+				{
+					fnArraySwitch( oSettings.aoFooter[i], iFrom, iTo );
+				}
+			}
+
+			didReorder = true;
+		}
+	}
+	if(didReorder)
+	{
+		var aiInvertMapping = fnInvertKeyValues( aiMapping );
+
+		/*
+		 * Convert all internal indexing to the new column order indexes
+		 */
+		/* Sorting */
+		for ( i=0, iLen=oSettings.aaSorting.length ; i<iLen ; i++ )
+		{
+			oSettings.aaSorting[i][0] = aiInvertMapping[ oSettings.aaSorting[i][0] ];
+		}
+
+		/* Fixed sorting */
+		if ( oSettings.aaSortingFixed !== null )
+		{
+			for ( i=0, iLen=oSettings.aaSortingFixed.length ; i<iLen ; i++ )
+			{
+				oSettings.aaSortingFixed[i][0] = aiInvertMapping[ oSettings.aaSortingFixed[i][0] ];
+			}
+		}
+
+		/* Data column sorting (the column which the sort for a given column should take place on) */
+		for ( i=0, iLen=iCols ; i<iLen ; i++ )
+		{
+			oCol = oSettings.aoColumns[i];
+			for ( j=0, jLen=oCol.aDataSort.length ; j<jLen ; j++ )
+			{
+				oCol.aDataSort[j] = aiInvertMapping[ oCol.aDataSort[j] ];
+			}
+
+			// Update the column indexes
+			if ( v110 ) {
+				oCol.idx = aiInvertMapping[ oCol.idx ];
+			}
+		}
+
+		if ( v110 ) {
+			// Update 1.10 optimised sort class removal variable
+			$.each( oSettings.aLastSort, function (i, val) {
+				oSettings.aLastSort[i].src = aiInvertMapping[ val.src ];
+			} );
+		}
+
+		/* Update the Get and Set functions for each column */
+		for ( i=0, iLen=iCols ; i<iLen ; i++ )
+		{
+			oCol = oSettings.aoColumns[i];
+			if ( typeof oCol.mData == 'number' ) {
+				oCol.mData = aiInvertMapping[ oCol.mData ];
+
+				// regenerate the get / set functions
+				oSettings.oApi._fnColumnOptions( oSettings, i, {} );
+			}
+		}
+
+		// In 1.10 we need to invalidate row cached data for sorting, filtering etc
+		if ( v110 ) {
+			var api = new $.fn.dataTable.Api( oSettings );
+			api.rows().invalidate();
+		}
+
+		/*
+		 * Update DataTables' event handlers
+		 */
+
+		/* Sort listener */
+		for ( i=0, iLen=iCols ; i<iLen ; i++ )
+		{
+			$(oSettings.aoColumns[i].nTh).off('click.DT');
+			this.oApi._fnSortAttachListener( oSettings, oSettings.aoColumns[i].nTh, i );
+		}
+
+
+		/* Fire an event so other plug-ins can update */
+		$(oSettings.oInstance).trigger( 'column-reorder', [ oSettings, {
+			"iFrom": iFrom,
+			"iTo": iTo,
+			"aiInvertMapping": aiInvertMapping
+		} ] );
+	}
+};
 
 var factory = function( $, DataTable ) {
 "use strict";
@@ -720,18 +938,9 @@ ColReorder.prototype = {
 			return;
 		}
 
-		for ( var i=0, iLen=a.length ; i<iLen ; i++ )
-		{
-			var currIndex = $.inArray( i, a );
-			if ( i != currIndex )
-			{
-				/* Reorder our switching array */
-				fnArraySwitch( a, currIndex, i );
+		var i, iLen;
 
-				/* Do the column reorder in the table */
-				this.s.dt.oInstance.fnColReorder( currIndex, i );
-			}
-		}
+		this.s.dt.oInstance.fnColReorderArray( a );
 
 		/* When scrolling we need to recalculate the column sizes to allow for the shift */
 		if ( this.s.dt.oScroll.sX !== "" || this.s.dt.oScroll.sY !== "" )
