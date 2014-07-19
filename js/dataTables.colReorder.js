@@ -90,6 +90,11 @@ function fnDomSwitch( nParent, iFrom, iTo )
 
 
 
+
+var factory = function( $, DataTable ) {
+"use strict";
+
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * DataTables plug-in API functions
  *
@@ -344,9 +349,6 @@ $.fn.dataTableExt.oApi.fnColReorder = function ( oSettings, iFrom, iTo )
 };
 
 
-
-var factory = function( $, DataTable ) {
-"use strict";
 
 /**
  * ColReorder provides column visibility control for DataTables
