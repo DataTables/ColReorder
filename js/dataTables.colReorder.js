@@ -1,11 +1,11 @@
-/*! ColReorder 1.1.2
+/*! ColReorder 1.1.3-dev
  * ©2010-2014 SpryMedia Ltd - datatables.net/license
  */
 
 /**
  * @summary     ColReorder
  * @description Provide the ability to reorder columns in a DataTable
- * @version     1.1.2
+ * @version     1.1.3-dev
  * @file        dataTables.colReorder.js
  * @author      SpryMedia Ltd (www.sprymedia.co.uk)
  * @contact     www.sprymedia.co.uk/contact
@@ -90,13 +90,8 @@ function fnDomSwitch( nParent, iFrom, iTo )
 
 
 
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- * DataTables plug-in API functions
- *
- * This are required by ColReorder in order to perform the tasks required, and also keep this
- * code portable, to be used for other column reordering projects with DataTables, if needed.
- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
+var factory = function( $, DataTable ) {
+"use strict";
 
 /**
  * Plug-in for DataTables which will reorder the internal column structure by taking the column
@@ -343,10 +338,6 @@ $.fn.dataTableExt.oApi.fnColReorder = function ( oSettings, iFrom, iTo )
 	} ] );
 };
 
-
-
-var factory = function( $, DataTable ) {
-"use strict";
 
 /**
  * ColReorder provides column visibility control for DataTables
@@ -1286,7 +1277,7 @@ ColReorder.defaults = {
  *  @type      String
  *  @default   As code
  */
-ColReorder.version = "1.1.2";
+ColReorder.version = "1.1.3-dev";
 
 
 
