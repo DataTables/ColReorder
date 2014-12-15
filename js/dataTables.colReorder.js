@@ -381,6 +381,11 @@ var ColReorder = function( dt, opts )
 		oDTSettings = dt;
 	}
 
+	// Ensure that we can't initialise on the same table twice
+	if ( oDTSettings._colReorder ) {
+		throw "ColReorder already initialised on table #"+oDTSettings.nTable.id;
+	}
+
 	// Convert from camelCase to Hungarian, just as DataTables does
 	var camelToHungarian = $.fn.dataTable.camelToHungarian;
 	if ( camelToHungarian ) {
@@ -486,7 +491,7 @@ var ColReorder = function( dt, opts )
 
 
 	/* Constructor logic */
-	this.s.dt = oDTSettings.oInstance.fnSettings();
+	this.s.dt = oDTSettings;
 	this.s.dt._colReorder = this;
 	this._fnConstruct();
 
