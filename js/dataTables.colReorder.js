@@ -732,7 +732,7 @@ ColReorder.prototype = {
 		/* When scrolling we need to recalculate the column sizes to allow for the shift */
 		if ( this.s.dt.oScroll.sX !== "" || this.s.dt.oScroll.sY !== "" )
 		{
-			this.s.dt.oInstance.fnAdjustColumnSizing();
+			this.s.dt.oInstance.fnAdjustColumnSizing( false );
 		}
 
 		/* Save the state */
@@ -960,7 +960,7 @@ ColReorder.prototype = {
 			/* When scrolling we need to recalculate the column sizes to allow for the shift */
 			if ( this.s.dt.oScroll.sX !== "" || this.s.dt.oScroll.sY !== "" )
 			{
-				this.s.dt.oInstance.fnAdjustColumnSizing();
+				this.s.dt.oInstance.fnAdjustColumnSizing( false );
 			}
 
 			if ( this.s.dropCallback !== null )
