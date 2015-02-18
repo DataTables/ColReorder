@@ -965,7 +965,12 @@ ColReorder.prototype = {
 
 			if ( this.s.dropCallback !== null )
 			{
-				this.s.dropCallback.call( this );
+				var returnValues = {
+					tableId : this.s.dt.sTableId,
+					fromIndex : this.s.mouse.fromIndex,
+					toIndex : this.s.mouse.toIndex	
+				};
+				this.s.dropCallback.call( this, returnValues );
 			}
 
 			/* Save the state */
