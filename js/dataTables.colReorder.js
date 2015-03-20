@@ -436,11 +436,11 @@ var ColReorder = function( dt, opts )
 
 		/**
 		 * Callback function for once the reorder has been done
-		 *  @property dropcallback
+		 *  @property reorderCallback
 		 *  @type     function
 		 *  @default  null
 		 */
-		"dropCallback": null,
+		"reorderCallback": null,
 
 		/**
 		 * @namespace Information used for the mouse drag
@@ -633,7 +633,7 @@ ColReorder.prototype = {
 		/* Drop callback initialisation option */
 		if ( this.s.init.fnReorderCallback )
 		{
-			this.s.dropCallback = this.s.init.fnReorderCallback;
+			this.s.reorderCallback = this.s.init.fnReorderCallback;
 		}
 
 		/* Add event handlers for the drag and drop, and also mark the original column order */
@@ -739,6 +739,11 @@ ColReorder.prototype = {
 		this.s.dt.oInstance.oApi._fnSaveState( this.s.dt );
 
 		this._fnSetColumnIndexes();
+		
+		if ( this.s.reorderCallback !== null )
+		{
+			this.s.reorderCallback.call( this );
+		}
 	},
 
 
@@ -963,13 +968,13 @@ ColReorder.prototype = {
 				this.s.dt.oInstance.fnAdjustColumnSizing( false );
 			}
 
-			if ( this.s.dropCallback !== null )
-			{
-				this.s.dropCallback.call( this );
-			}
-
 			/* Save the state */
 			this.s.dt.oInstance.oApi._fnSaveState( this.s.dt );
+
+			if ( this.s.reorderCallback !== null )
+			{
+				this.s.reorderCallback.call( this );
+			}
 		}
 	},
 
