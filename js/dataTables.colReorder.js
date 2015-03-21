@@ -1052,23 +1052,23 @@ ColReorder.prototype = {
 		// This is a slightly odd combination of jQuery and DOM, but it is the
 		// fastest and least resource intensive way I could think of cloning
 		// the table with just a single header cell in it.
-		this.dom.drag = $(origTable.cloneNode(false))
-			.addClass( 'DTCR_clonedTable' )
-			.append(
-				origThead.cloneNode(false).appendChild(
-					origTr.cloneNode(false).appendChild(
-						cloneCell[0]
-					)
-				)
-			)
-			.css( {
-				position: 'absolute',
-				top: 0,
-				left: 0,
-				width: $(origCell).outerWidth(),
-				height: $(origCell).outerHeight()
-			} )
-			.appendTo( 'body' );
+        this.dom.drag = $(origTable.cloneNode(false))
+            .addClass( 'DTCR_clonedTable' )
+            .append(
+            origThead.cloneNode(false)
+                .appendChild(origTr.cloneNode(false))
+                .appendChild(cloneCell.css({height: $(origCell).height()})[0])
+                .parentNode.parentNode
+        )
+            .css( {
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                minWidth: 0,
+                width: $(origCell).outerWidth(),
+                height: $(origCell).outerHeight()
+            } )
+            .appendTo( 'body' );
 
 		this.dom.pointer = $('<div></div>')
 			.addClass( 'DTCR_pointer' )
