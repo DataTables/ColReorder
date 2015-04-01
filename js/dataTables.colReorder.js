@@ -1055,8 +1055,8 @@ ColReorder.prototype = {
 		this.dom.drag = $(origTable.cloneNode(false))
 			.addClass( 'DTCR_clonedTable' )
 			.append(
-				origThead.cloneNode(false).appendChild(
-					origTr.cloneNode(false).appendChild(
+				$(origThead.cloneNode(false)).append(
+					$(origTr.cloneNode(false)).append(
 						cloneCell[0]
 					)
 				)
