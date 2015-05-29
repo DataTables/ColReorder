@@ -76,6 +76,10 @@ function fnDomSwitch( nParent, iFrom, iTo )
 			anTags.push( nParent.childNodes[i] );
 		}
 	}
+
+    if(typeof anTags[ iFrom ] === 'undefined'){
+        return;
+    }
 	var nStore = anTags[ iFrom ];
 
 	if ( iTo !== null )
