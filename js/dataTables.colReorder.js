@@ -495,9 +495,6 @@ var ColReorder = function( dt, opts )
 	this.s.dt._colReorder = this;
 	this._fnConstruct();
 
-	/* Add destroy callback */
-	oDTSettings.oApi._fnCallbackReg(oDTSettings, 'aoDestroyCallback', $.proxy(this._fnDestroy, this), 'ColReorder');
-
 	return this;
 };
 
@@ -617,6 +614,7 @@ ColReorder.prototype = {
 	{
 		var that = this;
 		var iLen = this.s.dt.aoColumns.length;
+		var table = this.s.dt.nTable;
 		var i;
 
 		/* Columns discounted from reordering - counting left to right */
@@ -676,16 +674,13 @@ ColReorder.prototype = {
 			if ( !that.s.dt._bInitComplete )
 			{
 				var bDone = false;
-				this.s.dt.aoDrawCallback.push( {
-					"fn": function () {
-						if ( !that.s.dt._bInitComplete && !bDone )
-						{
-							bDone = true;
-							var resort = fnInvertKeyValues( aiOrder );
-							that._fnOrderColumns.call( that, resort );
-						}
-					},
-					"sName": "ColReorder_Pre"
+				$(table).on( 'draw.dt.colReorder', function () {
+					if ( !that.s.dt._bInitComplete && !bDone )
+					{
+						bDone = true;
+						var resort = fnInvertKeyValues( aiOrder );
+						that._fnOrderColumns.call( that, resort );
+					}
 				} );
 			}
 			else
@@ -697,6 +692,19 @@ ColReorder.prototype = {
 		else {
 			this._fnSetColumnIndexes();
 		}
+
+		// Destroy clean up
+		$(table).on( 'destroy.dt.colReorder', function () {
+			$(table).off( 'destroy.dt.colReorder draw.dt.colReorder' );
+			$(that.s.dt.nTHead).find( '*' ).off( '.ColReorder' );
+
+			$.each( that.s.dt.aoColumns, function (i, column) {
+				$(column.nTh).removeAttr('data-column-index');
+			} );
+
+			that.s.dt._colReorder = null;
+			that.s = null;
+		} );
 	},
 
 
@@ -1082,35 +1090,6 @@ ColReorder.prototype = {
 					$(this.s.dt.nTable).height()
 			} )
 			.appendTo( 'body' );
-	},
-
-	/**
-	 * Clean up ColReorder memory references and event handlers
-	 *  @method  _fnDestroy
-	 *  @returns void
-	 *  @private
-	 */
-	"_fnDestroy": function ()
-	{
-		var i, iLen;
-
-		for ( i=0, iLen=this.s.dt.aoDrawCallback.length ; i<iLen ; i++ )
-		{
-			if ( this.s.dt.aoDrawCallback[i].sName === 'ColReorder_Pre' )
-			{
-				this.s.dt.aoDrawCallback.splice( i, 1 );
-				break;
-			}
-		}
-
-		$(this.s.dt.nTHead).find( '*' ).off( '.ColReorder' );
-
-		$.each( this.s.dt.aoColumns, function (i, column) {
-			$(column.nTh).removeAttr('data-column-index');
-		} );
-
-		this.s.dt._colReorder = null;
-		this.s = null;
 	},
 
 
