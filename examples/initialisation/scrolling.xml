@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<dt-example table-type="html" order="6">
+<dt-example table-type="html" order="2">
 
 <css lib="datatables colreorder" />
 <js lib="jquery datatables colreorder">
@@ -7,9 +7,9 @@
 
 $(document).ready(function() {
 	$('#example').dataTable( {
-		dom:     'Rlfrtip',
-		scrollY: '200px',
-		paging:  false
+		scrollY:    '200px',
+		paging:     false,
+		colReorder: true
 	} );
 } );
 

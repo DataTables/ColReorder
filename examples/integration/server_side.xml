@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<dt-example table-type="ajax" order="14">
+<dt-example table-type="ajax" order="4">
 
 <css lib="datatables colreorder" />
 <js lib="jquery datatables colreorder">
@@ -7,10 +7,9 @@
 
 $(document).ready(function() {
 	$('#example').dataTable( {
-		dom: 'Rlfrtip',
 		processing: true,
 		serverSide: true,
-		ajax: "../../../examples/server_side/scripts/objects.php",
+		ajax: "../../../../examples/server_side/scripts/objects.php",
 		columns: [
 			{ data: "first_name" },
 			{ data: "last_name" },
@@ -18,7 +17,8 @@ $(document).ready(function() {
 			{ data: "office" },
 			{ data: "start_date" },
 			{ data: "salary" }
-		]
+		],
+		colReorder: true
 	} );
 } );
 

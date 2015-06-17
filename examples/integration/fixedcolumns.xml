@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<dt-example table-type="html-wide" table-class="display nowrap" order="10">
+<dt-example table-type="html-wide" table-class="display nowrap" order="2">
 
 <css lib="datatables colreorder fixedcolumns" />
 <js lib="jquery datatables colreorder fixedcolumns">
 <![CDATA[
 
 $(document).ready(function() {
-	window.table = $('#example').DataTable( {
-		dom: 'Rlfrtip',
+	var table = $('#example').DataTable( {
 		scrollX: true,
 		scrollCollapse: true,
 		columnDefs: [
@@ -21,7 +20,7 @@ $(document).ready(function() {
 		}
 	} );
 
-	window.fc = new $.fn.dataTable.FixedColumns( table, {
+	new $.fn.dataTable.FixedColumns( table, {
 		leftColumns: 1,
 		rightColumns: 1
 	} );

@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<dt-example table-type="html" order="9">
+<dt-example table-type="html" order="1">
 
-<css lib="datatables colreorder colvis" />
-<js lib="jquery datatables colreorder colvis">
+<css lib="datatables colreorder buttons colvis" />
+<js lib="jquery datatables colreorder buttons colvis">
 <![CDATA[
 $(document).ready(function() {
     var table = $('#example').DataTable( {
-        dom: 'RC<"clear">lfrtip',
-        columnDefs: [
-            { visible: false, targets: 1 }
+        dom: 'Bfrtip',
+        colReorder: true,
+        buttons: [
+        	'colvis'
         ]
 	} );
 } );

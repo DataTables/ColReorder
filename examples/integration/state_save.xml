@@ -7,8 +7,8 @@
 
 $(document).ready(function() {
 	$('#example').dataTable( {
-		dom: 'Rlfrtip',
-		stateSave: true
+		colReorder: true,
+		stateSave:  true
 	} );
 } );
 
