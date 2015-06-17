@@ -314,10 +314,15 @@ $.fn.dataTableExt.oApi.fnColReorder = function ( oSettings, iFrom, iTo )
 
 
 	/* Fire an event so other plug-ins can update */
-	$(oSettings.oInstance).trigger( 'column-reorder', [ oSettings, {
-		"iFrom": iFrom,
-		"iTo": iTo,
-		"aiInvertMapping": aiInvertMapping
+	$(oSettings.oInstance).trigger( 'column-reorder.dt', [ oSettings, {
+		from: iFrom,
+		to: iTo,
+		mapping: aiInvertMapping,
+
+		// Old style parameters for compatibility
+		iFrom: iFrom,
+		iTo: iTo,
+		aiInvertMapping: aiInvertMapping
 	} ] );
 };
 
@@ -1124,7 +1129,8 @@ ColReorder.defaults = {
 	iFixedColumnsRight: 0,
 
 	/**
-	 * Callback function that is fired when columns are reordered
+	 * Callback function that is fired when columns are reordered. The `column-
+	 * reorder` event is preferred over this callback
 	 *  @type function():void
 	 *  @default null
 	 *  @static
