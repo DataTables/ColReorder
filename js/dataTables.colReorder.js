@@ -580,6 +580,11 @@ ColReorder.prototype = {
 			this.s.fixed = this.s.init.iFixedColumns;
 		}
 
+		if ( this.s.init.iFixedColumnsLeft )
+		{
+			this.s.fixed = this.s.init.iFixedColumnsLeft;
+		}
+
 		/* Columns discounted from reordering - counting right to left */
 		this.s.fixedRight = this.s.init.iFixedColumnsRight ?
 			this.s.init.iFixedColumnsRight :
@@ -1108,7 +1113,7 @@ ColReorder.defaults = {
 	 *  @default 0
 	 *  @static
 	 */
-	iFixedColumns: 0,
+	iFixedColumnsLeft: 0,
 
 	/**
 	 * As `iFixedColumnsRight` but counting from the right.
