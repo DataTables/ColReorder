@@ -8,5 +8,6 @@
 	"dependencies": {
 		"jquery": ">=1.7.0",
 		"datatables": ">=1.9.3"
-	}
+	},
+	"license": "MIT"
 }
