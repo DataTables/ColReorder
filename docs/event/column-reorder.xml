@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<dt-event>
+<dt-event group="colreorder">
 	<name>column-reorder</name>
 	<summary>Columns have been reordered by the end user or API</summary>
 	<since>1.3.0</since>

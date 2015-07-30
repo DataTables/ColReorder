@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<dt-option group="colReorder">
+<dt-option group="colreorder">
 	<name>colReorder.fixedColumnsRight</name>
 	<summary>Disallow _x_ columns from reordering (counting from the right)</summary>
 
