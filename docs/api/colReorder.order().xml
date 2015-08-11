@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<dt-api group="colreorder">
+<dt-api library="ColReorder">
 	<name>colReorder.order()</name>
 	<summary>Get / set column order</summary>
 	<since>1.2.0</since>

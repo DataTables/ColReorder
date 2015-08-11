@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<dt-option group="colreorder">
+<dt-option library="ColReorder">
 	<name>colReorder</name>
 	<summary>Enable and configure the ColReorder extension for DataTables</summary>
 
