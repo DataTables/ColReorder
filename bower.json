@@ -1,13 +1,13 @@
 {
 	"name": "datatables-colreorder",
-	"version": "1.1.3",
+	"version": "1.2.0",
 	"main": [
 		"js/dataTables.colReorder.js",
-		"css/dataTables.colReorder.css"
+		"css/colReorder.dataTables.scss"
 	],
 	"dependencies": {
 		"jquery": ">=1.7.0",
-		"datatables": ">=1.9.3"
+		"datatables": ">=1.10.8"
 	},
 	"license": "MIT"
 }
