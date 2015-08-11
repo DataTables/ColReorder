@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <dt-example table-type="html" order="1">
 
-<css lib="datatables colreorder buttons colvis" />
-<js lib="jquery datatables colreorder buttons colvis">
+<css lib="datatables colreorder buttons buttons-colvis" />
+<js lib="jquery datatables colreorder buttons buttons-colvis">
 <![CDATA[
 $(document).ready(function() {
     var table = $('#example').DataTable( {
@@ -16,11 +16,11 @@ $(document).ready(function() {
 ]]>
 </js>
 
-<title lib="ColReorder">ColVis integration</title>
+<title lib="ColReorder">Column visibility integration</title>
 
 <info><![CDATA[
 
-ColReorder interfaces with the [ColVis extension](//datatables.net/extensions/colvis) for DataTables by updating the order of the list of columns whenever a reorder is done. This is shown in the example below, where one column has been initially hidden to add extra emphasis to ColVis.
+ColReorder interfaces with the [Button's column visibility module](//datatables.net/extensions/buttons) for DataTables by updating the order of the list of columns whenever a reorder is done. This is shown in the example below.
 
 ]]></info>
 
