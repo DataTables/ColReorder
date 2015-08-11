@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <dt-example table-type="html" order="1">
 
-<css lib="datatables colreorder buttons buttons-colvis" />
+<css lib="datatables colreorder buttons" />
 <js lib="jquery datatables colreorder buttons buttons-colvis">
 <![CDATA[
 $(document).ready(function() {
