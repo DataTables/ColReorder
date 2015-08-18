@@ -1,11 +1,11 @@
-/*! ColReorder 1.2.0
+/*! ColReorder 1.2.1-dev
  * ©2010-2014 SpryMedia Ltd - datatables.net/license
  */
 
 /**
  * @summary     ColReorder
  * @description Provide the ability to reorder columns in a DataTable
- * @version     1.2.0
+ * @version     1.2.1-dev
  * @file        dataTables.colReorder.js
  * @author      SpryMedia Ltd (www.sprymedia.co.uk)
  * @contact     www.sprymedia.co.uk/contact
@@ -684,6 +684,8 @@ ColReorder.prototype = {
 	 */
 	"_fnOrderColumns": function ( a )
 	{
+		var changed = false;
+
 		if ( a.length != this.s.dt.aoColumns.length )
 		{
 			this.s.dt.oInstance.oApi._fnLog( this.s.dt, 1, "ColReorder - array reorder does not "+
@@ -701,7 +703,16 @@ ColReorder.prototype = {
 
 				/* Do the column reorder in the table */
 				this.s.dt.oInstance.fnColReorder( currIndex, i );
+
+				changed = true;
 			}
+		}
+
+		this._fnSetColumnIndexes();
+
+		// Has anything actually changed? If not, then nothing else to do
+		if ( ! changed ) {
+			return;
 		}
 
 		/* When scrolling we need to recalculate the column sizes to allow for the shift */
@@ -712,8 +723,6 @@ ColReorder.prototype = {
 
 		/* Save the state */
 		this.s.dt.oInstance.oApi._fnSaveState( this.s.dt );
-
-		this._fnSetColumnIndexes();
 		
 		if ( this.s.reorderCallback !== null )
 		{
@@ -1150,7 +1159,7 @@ ColReorder.defaults = {
  *  @type      String
  *  @default   As code
  */
-ColReorder.version = "1.2.0";
+ColReorder.version = "1.2.1-dev";
 
 
 
