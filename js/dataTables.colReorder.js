@@ -462,7 +462,7 @@ var ColReorder = function( dt, opts )
 
 
 
-ColReorder.prototype = {
+$.extend( ColReorder.prototype, {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 	 * Public methods
 	 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -1081,7 +1081,7 @@ ColReorder.prototype = {
 			$(column.nTh).attr('data-column-index', i);
 		} );
 	}
-};
+} );
 
 
 
