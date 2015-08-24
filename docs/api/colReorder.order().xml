@@ -24,7 +24,7 @@
 
 			Feedback is welcome on this (and all) APIs - if there is demand to add a method that uses the original column indexes, please let me know.
 		</parameter>
-		<returns type="DataTable.Api">
+		<returns type="DataTables.Api">
 			DataTables API instance for chaining
 		</returns>
 	</type>
