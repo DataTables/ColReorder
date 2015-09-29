@@ -100,9 +100,11 @@ var factory = function( $, DataTable ) {
  *  @param   object oSettings DataTables settings object - automatically added by DataTables!
  *  @param   int iFrom Take the column to be repositioned from this point
  *  @param   int iTo and insert it into this point
+ *  @param   bool drop Indicate if the reorder is the final one (i.e. a drop)
+ *    not a live reorder
  *  @returns void
  */
-$.fn.dataTableExt.oApi.fnColReorder = function ( oSettings, iFrom, iTo )
+$.fn.dataTableExt.oApi.fnColReorder = function ( oSettings, iFrom, iTo, drop )
 {
 	var i, iLen, j, jLen, iCols=oSettings.aoColumns.length, nTrs, oCol;
 	var attrMap = function ( obj, prop, mapping ) {
@@ -318,6 +320,7 @@ $.fn.dataTableExt.oApi.fnColReorder = function ( oSettings, iFrom, iTo )
 		from: iFrom,
 		to: iTo,
 		mapping: aiInvertMapping,
+		drop: drop,
 
 		// Old style parameters for compatibility
 		iFrom: iFrom,
@@ -702,7 +705,7 @@ $.extend( ColReorder.prototype, {
 				fnArraySwitch( a, currIndex, i );
 
 				/* Do the column reorder in the table */
-				this.s.dt.oInstance.fnColReorder( currIndex, i );
+				this.s.dt.oInstance.fnColReorder( currIndex, i, true );
 
 				changed = true;
 			}
@@ -914,7 +917,7 @@ $.extend( ColReorder.prototype, {
 
 		// Perform reordering if realtime updating is on and the column has moved
 		if ( this.s.init.bRealtime && lastToIndex !== this.s.mouse.toIndex ) {
-			this.s.dt.oInstance.fnColReorder( this.s.mouse.fromIndex, this.s.mouse.toIndex );
+			this.s.dt.oInstance.fnColReorder( this.s.mouse.fromIndex, this.s.mouse.toIndex, false );
 			this.s.mouse.fromIndex = this.s.mouse.toIndex;
 			this._fnRegions();
 		}
@@ -943,7 +946,7 @@ $.extend( ColReorder.prototype, {
 			this.dom.pointer = null;
 
 			/* Actually do the reorder */
-			this.s.dt.oInstance.fnColReorder( this.s.mouse.fromIndex, this.s.mouse.toIndex );
+			this.s.dt.oInstance.fnColReorder( this.s.mouse.fromIndex, this.s.mouse.toIndex, true );
 			this._fnSetColumnIndexes();
 
 			/* When scrolling we need to recalculate the column sizes to allow for the shift */
@@ -982,10 +985,12 @@ $.extend( ColReorder.prototype, {
 		} );
 
 		var iToPoint = 0;
+		var total = $(aoColumns[0].nTh).offset().left; // Offset of the first column
+
 		for ( var i=0, iLen=aoColumns.length ; i<iLen ; i++ )
 		{
 			/* For the column / header in question, we want it's position to remain the same if the
-			 * position is just to it's immediate left or right, so we only incremement the counter for
+			 * position is just to it's immediate left or right, so we only increment the counter for
 			 * other columns
 			 */
 			if ( i != this.s.mouse.fromIndex )
@@ -995,8 +1000,10 @@ $.extend( ColReorder.prototype, {
 
 			if ( aoColumns[i].bVisible )
 			{
+				total += $(aoColumns[i].nTh).outerWidth();
+
 				this.s.aoTargets.push( {
-					"x":  $(aoColumns[i].nTh).offset().left + $(aoColumns[i].nTh).outerWidth(),
+					"x":  total,
 					"to": iToPoint
 				} );
 			}
