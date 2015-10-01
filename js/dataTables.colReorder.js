@@ -1057,8 +1057,7 @@ $.extend( ColReorder.prototype, {
 				top: 0,
 				left: 0,
 				width: $(origCell).outerWidth(),
-				height: $(origCell).outerHeight(),
-				zIndex: $(origCell).zIndex()
+				height: $(origCell).outerHeight()
 			} )
 			.appendTo( 'body' );
 
