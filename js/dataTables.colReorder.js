@@ -504,13 +504,7 @@ $.extend( ColReorder.prototype, {
 	 */
 	"fnReset": function ()
 	{
-		var a = [];
-		for ( var i=0, iLen=this.s.dt.aoColumns.length ; i<iLen ; i++ )
-		{
-			a.push( this.s.dt.aoColumns[i]._ColReorder_iOrigCol );
-		}
-
-		this._fnOrderColumns( a );
+		this._fnOrderColumns( this.fnOrder() );
 
 		return this;
 	},
@@ -562,16 +556,30 @@ $.extend( ColReorder.prototype, {
 	 *      $.fn.dataTable.ColReorder( '#example' ).fnOrder().reverse()
 	 *    );
 	 */
-	"fnOrder": function ( set )
+	"fnOrder": function ( set, original )
 	{
-		if ( set === undefined )
-		{
-			var a = [];
-			for ( var i=0, iLen=this.s.dt.aoColumns.length ; i<iLen ; i++ )
-			{
-				a.push( this.s.dt.aoColumns[i]._ColReorder_iOrigCol );
+		var a = [], i, ien, j, jen;
+		var columns = this.s.dt.aoColumns;
+
+		if ( set === undefined ){
+			for ( i=0, ien=columns.length ; i<ien ; i++ ) {
+				a.push( columns[i]._ColReorder_iOrigCol );
 			}
+
 			return a;
+		}
+
+		// The order given is based on the original indexes, rather than the
+		// existing ones, so we need to translate from the original to current
+		// before then doing the order
+		if ( original ) {
+			var order = this.fnOrder();
+
+			for ( i=0, ien=set.length ; i<ien ; i++ ) {
+				a.push( $.inArray( set[i], order ) );
+			}
+
+			set = a;
 		}
 
 		this._fnOrderColumns( fnInvertKeyValues( set ) );
@@ -1251,10 +1259,10 @@ $.fn.dataTable.Api.register( 'colReorder.reset()', function () {
 	} );
 } );
 
-$.fn.dataTable.Api.register( 'colReorder.order()', function ( set ) {
+$.fn.dataTable.Api.register( 'colReorder.order()', function ( set, original ) {
 	if ( set ) {
 		return this.iterator( 'table', function ( ctx ) {
-			ctx._colReorder.fnOrder( set );
+			ctx._colReorder.fnOrder( set, original );
 		} );
 	}
 
