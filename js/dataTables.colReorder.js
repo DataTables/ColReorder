@@ -592,23 +592,35 @@ $.extend( ColReorder.prototype, {
 	 * Convert from the original column index, to the original
 	 *
 	 * @param  {int|array} idx Index(es) to convert
+	 * @param  {string} dir Transpose direction - `fromOriginal` / `toCurrent`
+	 *   or `'toOriginal` / `fromCurrent`
 	 * @return {int|array}     Converted values
 	 */
-	fnTranspose: function ( idx )
+	fnTranspose: function ( idx, dir )
 	{
+		if ( ! dir ) {
+			dir = 'toCurrent';
+		}
+
 		var order = this.fnOrder();
+		var columns = this.s.dt.aoColumns;
 
-		if ( ! $.isArray( idx ) ) {
-			return $.inArray( idx, order );
+		if ( dir === 'toCurrent' ) {
+			// Given an original index, want the current
+			return ! $.isArray( idx ) ?
+				$.inArray( idx, order ) :
+				$.map( idx, function ( index ) {
+					return $.inArray( index, order );
+				} );
 		}
-
-		var out = [];
-
-		for ( var i=0, ien=idx.length ; i<ien ; i++ ) {
-			out.push( $.inArray( idx[i], order ) );
+		else {
+			// Given a current index, want the original
+			return ! $.isArray( idx ) ?
+				columns[idx]._ColReorder_iOrigCol :
+				$.map( idx, function ( index ) {
+					return columns[index]._ColReorder_iOrigCol;
+				} );
 		}
-
-		return out;
 	},
 
 
@@ -1295,9 +1307,9 @@ $.fn.dataTable.Api.register( 'colReorder.order()', function ( set, original ) {
 		null;
 } );
 
-$.fn.dataTable.Api.register( 'colReorder.transpose()', function ( idx ) {
+$.fn.dataTable.Api.register( 'colReorder.transpose()', function ( idx, dir ) {
 	return this.context.length && this.context[0]._colReorder ?
-		this.context[0]._colReorder.fnTranspose( idx ) :
+		this.context[0]._colReorder.fnTranspose( idx, dir ) :
 		idx;
 } );
 
