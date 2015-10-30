@@ -588,6 +588,30 @@ $.extend( ColReorder.prototype, {
 	},
 
 
+	/**
+	 * Convert from the original column index, to the original
+	 *
+	 * @param  {int|array} idx Index(es) to convert
+	 * @return {int|array}     Converted values
+	 */
+	fnTranspose: function ( idx )
+	{
+		var order = this.fnOrder();
+
+		if ( ! $.isArray( idx ) ) {
+			return $.inArray( idx, order );
+		}
+
+		var out = [];
+
+		for ( var i=0, ien=idx.length ; i<ien ; i++ ) {
+			out.push( $.inArray( idx[i], order ) );
+		}
+
+		return out;
+	},
+
+
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 	 * Private methods (they are of course public in JS, but recommended as private)
 	 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -1269,6 +1293,12 @@ $.fn.dataTable.Api.register( 'colReorder.order()', function ( set, original ) {
 	return this.context.length ?
 		this.context[0]._colReorder.fnOrder() :
 		null;
+} );
+
+$.fn.dataTable.Api.register( 'colReorder.transpose()', function ( idx ) {
+	return this.context.length && this.context[0]._colReorder ?
+		this.context[0]._colReorder.fnTranspose( idx ) :
+		idx;
 } );
 
 

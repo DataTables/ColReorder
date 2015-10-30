@@ -6,7 +6,12 @@
 <![CDATA[
 $(document).ready(function() {
 	$('#example').DataTable( {
-		colReorder: true
+		stateSave: true,
+		colReorder: {
+			reorderCallback: function () {
+				console.log( 'callback' );
+			}
+		}
 	} );
 } );
 ]]>
