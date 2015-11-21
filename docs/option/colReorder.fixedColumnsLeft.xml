@@ -16,7 +16,7 @@
 	<description>
 		When allowing reordering of columns in a table, you may often wish to disallow reordering of certain columns (for example locking an index, select or action column to the start of a table). This option provides that ability, locking columns counting from the left (`cr-init colReorder.fixedColumnsRight` provides the option to count from the right).
 
-		This can be particularly useful if using ColReorder with the [FixedColumns extension](https://datatables.net/extensions/FixedColumns).
+		This can be particularly useful if using ColReorder with the [FixedColumns extension](https://datatables.net/extensions/fixedcolumns).
 	</description>
 
 	<example title="Disallow the first column in a table from being reorderable"><![CDATA[
