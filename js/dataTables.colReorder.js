@@ -218,9 +218,6 @@ $.fn.dataTableExt.oApi.fnColReorder = function ( oSettings, iFrom, iTo, drop )
 
 		if ( typeof oCol.mData == 'number' ) {
 			oCol.mData = aiInvertMapping[ oCol.mData ];
-
-			// regenerate the get / set functions
-			oSettings.oApi._fnColumnOptions( oSettings, i, {} );
 		}
 		else if ( $.isPlainObject( oCol.mData ) ) {
 			// HTML5 data sourced
@@ -229,9 +226,14 @@ $.fn.dataTableExt.oApi.fnColReorder = function ( oSettings, iFrom, iTo, drop )
 			attrMap( oCol.mData, 'sort',   aiInvertMapping );
 			attrMap( oCol.mData, 'type',   aiInvertMapping );
 
-			// regenerate the get / set functions
-			oSettings.oApi._fnColumnOptions( oSettings, i, {} );
 		}
+
+		// wipe cached '._setter()' used _fnGetRowElements() --
+		// bound to colIdx, but will be regenerated.
+		oCol._setter = null;
+
+		// regenerate the get / set functions
+		oSettings.oApi._fnColumnOptions( oSettings, i, {} );
 	}
 
 
