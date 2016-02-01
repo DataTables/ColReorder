@@ -1064,7 +1064,7 @@ $.extend( ColReorder.prototype, {
 				iToPoint++;
 			}
 
-			if ( aoColumns[i].bVisible )
+			if ( aoColumns[i].bVisible && aoColumns[i].sClass.indexOf("never") === -1 )
 			{
 				total += $(aoColumns[i].nTh).outerWidth();
 
