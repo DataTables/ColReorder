@@ -128,7 +128,7 @@ function fnDomSwitch( nParent, iFrom, iTo )
  */
 $.fn.dataTableExt.oApi.fnColReorder = function ( oSettings, iFrom, iTo, drop )
 {
-	var i, iLen, j, jLen, iCols=oSettings.aoColumns.length, nTrs, oCol;
+	var i, iLen, j, jLen, jen, iCols=oSettings.aoColumns.length, nTrs, oCol;
 	var attrMap = function ( obj, prop, mapping ) {
 		if ( ! obj[ prop ] || typeof obj[ prop ] === 'function' ) {
 			return;
@@ -292,9 +292,18 @@ $.fn.dataTableExt.oApi.fnColReorder = function ( oSettings, iFrom, iTo, drop )
 	for ( i=0, iLen=oSettings.aoData.length ; i<iLen ; i++ )
 	{
 		var data = oSettings.aoData[i];
+		var cells = data.anCells;
 
-		if ( data.anCells ) {
-			fnArraySwitch( data.anCells, iFrom, iTo );
+		if ( cells ) {
+			fnArraySwitch( cells, iFrom, iTo );
+
+			// Longer term, should this be moved into the DataTables' invalidate
+			// methods?
+			for ( j=0, jen=cells.length ; j<jen ; j++ ) {
+				if ( cells[j] && cells[j]._DT_CellIndex ) {
+					cells[j]._DT_CellIndex.column = j;
+				}
+			}
 		}
 
 		// For DOM sourced data, the invalidate will reread the cell into
