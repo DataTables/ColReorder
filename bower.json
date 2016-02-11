@@ -1,6 +1,5 @@
 {
 	"name": "datatables-colreorder",
-	"version": "1.2.0",
 	"main": [
 		"js/dataTables.colReorder.js",
 		"css/colReorder.dataTables.scss"
