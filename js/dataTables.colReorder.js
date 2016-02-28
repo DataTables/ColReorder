@@ -744,7 +744,7 @@ $.extend( ColReorder.prototype, {
 			$.each( that.s.dt.aoColumns, function (i, column) {
 				$(column.nTh).removeAttr('data-column-index');
 
-				if( column.nTf !== null )
+				if ( column.nTf !== null )
 				{
 					$(column.nTf).removeAttr('data-column-index');
 				}
@@ -1165,7 +1165,7 @@ $.extend( ColReorder.prototype, {
 		$.each( this.s.dt.aoColumns, function (i, column) {
 			$(column.nTh).attr('data-column-index', i);
 
-			if( column.nTf !== null )
+			if ( column.nTf !== null )
 			{
 				$(column.nTf).attr('data-column-index', i);
 			}
