@@ -1165,7 +1165,7 @@ $.extend( ColReorder.prototype, {
 		$.each( this.s.dt.aoColumns, function (i, column) {
 			$(column.nTh).attr('data-column-index', i);
 
-			if ( column.nTf !== null )
+			if( column.nTf !== null )
 			{
 				$(column.nTf).attr('data-column-index', i);
 			}
