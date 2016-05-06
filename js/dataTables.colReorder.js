@@ -124,11 +124,15 @@ function fnDomSwitch( nParent, iFrom, iTo )
  *  @param   int iTo and insert it into this point
  *  @param   bool drop Indicate if the reorder is the final one (i.e. a drop)
  *    not a live reorder
+ *  @param   bool invalidateRows speeds up processing if false passed
  *  @returns void
  */
-$.fn.dataTableExt.oApi.fnColReorder = function ( oSettings, iFrom, iTo, drop )
+$.fn.dataTableExt.oApi.fnColReorder = function ( oSettings, iFrom, iTo, drop, invalidateRows )
 {
 	var i, iLen, j, jLen, jen, iCols=oSettings.aoColumns.length, nTrs, oCol;
+	if(typeof(invalidateRows) === 'undefined') {
+		invalidateRows = true;
+	}
 	var attrMap = function ( obj, prop, mapping ) {
 		if ( ! obj[ prop ] || typeof obj[ prop ] === 'function' ) {
 			return;
@@ -328,9 +332,9 @@ $.fn.dataTableExt.oApi.fnColReorder = function ( oSettings, iFrom, iTo, drop )
 		}
 	}
 
-	// Invalidate row cached data for sorting, filtering etc
-	var api = new $.fn.dataTable.Api( oSettings );
-	api.rows().invalidate();
+	if(invalidateRows === true) {
+		this.oApi.fnColRowsInvalidate();
+	}
 
 	/*
 	 * Update DataTables' event handlers
@@ -356,6 +360,13 @@ $.fn.dataTableExt.oApi.fnColReorder = function ( oSettings, iFrom, iTo, drop )
 		iTo: iTo,
 		aiInvertMapping: aiInvertMapping
 	} ] );
+};
+
+$.fn.dataTableExt.oApi.fnColRowsInvalidate = function ( oSettings )
+{
+	// Invalidate row cached data for sorting, filtering etc
+	var api = new $.fn.dataTable.Api( oSettings );
+	api.rows().invalidate();
 };
 
 
@@ -778,11 +789,13 @@ $.extend( ColReorder.prototype, {
 				fnArraySwitch( a, currIndex, i );
 
 				/* Do the column reorder in the table */
-				this.s.dt.oInstance.fnColReorder( currIndex, i, true );
+				this.s.dt.oInstance.fnColReorder( currIndex, i, true, false );
 
 				changed = true;
 			}
 		}
+
+		this.s.dt.oInstance.fnColRowsInvalidate();
 
 		this._fnSetColumnIndexes();
 
@@ -799,7 +812,7 @@ $.extend( ColReorder.prototype, {
 
 		/* Save the state */
 		this.s.dt.oInstance.oApi._fnSaveState( this.s.dt );
-		
+
 		if ( this.s.reorderCallback !== null )
 		{
 			this.s.reorderCallback.call( this );
@@ -1058,7 +1071,7 @@ $.extend( ColReorder.prototype, {
 		} );
 
 		var iToPoint = 0;
-		var total = this.s.aoTargets[0].x;
+		var total = $(aoColumns[0].nTh).offset().left; // Offset of the first column
 
 		for ( var i=0, iLen=aoColumns.length ; i<iLen ; i++ )
 		{
