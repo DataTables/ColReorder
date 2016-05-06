@@ -1071,7 +1071,7 @@ $.extend( ColReorder.prototype, {
 		} );
 
 		var iToPoint = 0;
-		var total = $(aoColumns[0].nTh).offset().left; // Offset of the first column
+		var total = this.s.aoTargets[0].x;
 
 		for ( var i=0, iLen=aoColumns.length ; i<iLen ; i++ )
 		{
