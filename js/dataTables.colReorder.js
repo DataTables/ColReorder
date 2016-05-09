@@ -130,9 +130,6 @@ function fnDomSwitch( nParent, iFrom, iTo )
 $.fn.dataTableExt.oApi.fnColReorder = function ( oSettings, iFrom, iTo, drop, invalidateRows )
 {
 	var i, iLen, j, jLen, jen, iCols=oSettings.aoColumns.length, nTrs, oCol;
-	if(typeof(invalidateRows) === 'undefined') {
-		invalidateRows = true;
-	}
 	var attrMap = function ( obj, prop, mapping ) {
 		if ( ! obj[ prop ] || typeof obj[ prop ] === 'function' ) {
 			return;
@@ -332,8 +329,9 @@ $.fn.dataTableExt.oApi.fnColReorder = function ( oSettings, iFrom, iTo, drop, in
 		}
 	}
 
-	if(invalidateRows === true) {
-		this.oApi.fnColRowsInvalidate();
+	if ( invalidateRows || invalidateRows === undefined )
+	{
+		$.fn.dataTable.Api( oSettings ).rows().invalidate();
 	}
 
 	/*
@@ -361,14 +359,6 @@ $.fn.dataTableExt.oApi.fnColReorder = function ( oSettings, iFrom, iTo, drop, in
 		aiInvertMapping: aiInvertMapping
 	} ] );
 };
-
-$.fn.dataTableExt.oApi.fnColRowsInvalidate = function ( oSettings )
-{
-	// Invalidate row cached data for sorting, filtering etc
-	var api = new $.fn.dataTable.Api( oSettings );
-	api.rows().invalidate();
-};
-
 
 /**
  * ColReorder provides column visibility control for DataTables
@@ -795,7 +785,7 @@ $.extend( ColReorder.prototype, {
 			}
 		}
 
-		this.s.dt.oInstance.fnColRowsInvalidate();
+		$.fn.dataTable.Api( this.s.dt ).rows().invalidate();
 
 		this._fnSetColumnIndexes();
 
