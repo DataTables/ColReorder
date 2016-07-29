@@ -329,7 +329,7 @@ $.fn.dataTableExt.oApi.fnColReorder = function ( oSettings, iFrom, iTo, drop, in
 		}
 	}
 
-	if ( invalidateRows || invalidateRows === undefined )
+	if ( invalidateRows )
 	{
 		$.fn.dataTable.Api( oSettings ).rows().invalidate();
 	}
