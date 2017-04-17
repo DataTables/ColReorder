@@ -1181,7 +1181,7 @@ $.extend( ColReorder.prototype, {
 			return e.originalEvent.touches[0][ prop ];
 		}
 		return e[ prop ];
-	},
+	}
 } );
 
 
