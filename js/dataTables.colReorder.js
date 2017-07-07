@@ -889,7 +889,6 @@ $.extend( ColReorder.prototype, {
 		var that = this;
 		$(nTh)
 			.on( 'mousedown.ColReorder', function (e) {
-				e.preventDefault();
 				that._fnMouseDown.call( that, e, nTh );
 			} )
 			.on( 'touchstart.ColReorder', function (e) {
