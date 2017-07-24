@@ -1348,9 +1348,10 @@ $.fn.dataTable.Api.register( 'colReorder.transpose()', function ( idx, dir ) {
 } );
 
 $.fn.dataTable.Api.register( 'colReorder.move()', function( from, to, drop, invalidateRows ) {
-	return this.context.length ?
-		this.context[0]._colReorder.s.dt.oInstance.fnColReorder( from, to, drop, invalidateRows ) :
-		null;
+	if (this.context.length) {
+		this.context[0]._colReorder.s.dt.oInstance.fnColReorder( from, to, drop, invalidateRows );
+	}
+	return this;
 } );
 
 
