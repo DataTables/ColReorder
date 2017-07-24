@@ -1347,6 +1347,13 @@ $.fn.dataTable.Api.register( 'colReorder.transpose()', function ( idx, dir ) {
 		idx;
 } );
 
+$.fn.dataTable.Api.register( 'colReorder.move()', function( from, to, drop, invalidateRows ) {
+	if (this.context.length) {
+		this.context[0]._colReorder.s.dt.oInstance.fnColReorder( from, to, drop, invalidateRows );
+	}
+	return this;
+} );
+
 
 return ColReorder;
 }));
