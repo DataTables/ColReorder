@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dt-api library="ColReorder">
+	<name>colReorder.move()</name>
+	<summary>Programmatically move columns</summary>
+	<since>1.4.0</since>
+
+	<type type="function">
+		<signature>colReorder.move( from, to [, drop [, invalidate ] ] )</signature>
+		<description>
+			Programmatically reorder columns
+		</description>
+		<parameter name="from" type="integer">
+			Column index to move.
+		</parameter>
+		<parameter name="to" type="integer">
+			New index to move the column to.
+		</parameter>
+		<parameter name="drop" type="boolean" default="true">
+			Indicate that this the final move. It can be useful to set this to `false` if you are performing multiple moves.
+		</parameter>
+		<parameter name="invalidate" type="boolean" default="true">
+			Invalidate the row data. As with `drop` it can be useful to set this to `false` if performing multiple moves. Otherwise allow it to default which will ensure that the table's data is fully insync with the column order.
+		</parameter>
+		<returns type="DataTables.Api">
+			Unmodified API instance.
+		</returns>
+	</type>
+
+	<description>
+		This method provides the ability to programmatically change the order of one column at a time (while `-api colReorder.order()` will set the order of all columns together).
+	</description>
+
+	<example title="Move the first column in the table to the second position"><![CDATA[
+
+var table = $('#example').DataTable( {
+	colReorder: true
+} );
+
+table.colReorder.move( 0, 1 );
+
+]]></example>
+</dt-api>
