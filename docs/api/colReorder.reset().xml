@@ -13,7 +13,7 @@
 	</type>
 
 	<description>
-		This method provides the ability to restore the original order of the columns, as was defined in the HTML during the table's initialisation. This will undo any reordering changes that the end user or API has made prior to calling this method.
+		This method provides the ability to restore the original order of the columns, as was defined in the HTML during the table's initialisation. This will undo any reordering changes that the end user or the API has made prior to calling this method.
 
 		The reorder triggered by this method is immediate and there is no requirement to redraw the table.
 	</description>

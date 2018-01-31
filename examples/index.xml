@@ -6,7 +6,7 @@
 <js lib="jquery" />
 <info><![CDATA[
 
-ColReorder adds the ability for the end user to click and drag column headers to reorder a table as they see fit, to DataTables. Key features include:
+ColReorder allows the end user to click and drag DataTables column headers to reorder a table as they see fit. Key features include:
 
 * Very easy integration with DataTables
 * Tight integration with all other DataTables plug-ins

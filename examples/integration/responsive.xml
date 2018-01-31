@@ -23,7 +23,7 @@ $(document).ready(function() {
 
 <info><![CDATA[
 
-This example shows ColReorder being used with the [Responsive extension for DataTables](https://datatables.net/extensions/colreorder). The _"Position"_ column is the first to be hidden through the use of the `r-init columns.responsivePriority` option, and you'll be able to notice that the hidden column is automatically taken account of by ColReorder as the columns are reordered.
+This example shows ColReorder being used with the [Responsive extension for DataTables](https://datatables.net/extensions/colreorder). The _"Position"_ column is the first to be hidden through the use of the `r-init columns.responsivePriority` option, and you'll notice that the hidden column is automatically accounted for by ColReorder as the columns are reordered.
 
 ]]></info>
 
