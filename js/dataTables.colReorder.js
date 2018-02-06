@@ -785,14 +785,14 @@ $.extend( ColReorder.prototype, {
 			}
 		}
 
-		$.fn.dataTable.Api( this.s.dt ).rows().invalidate();
-
-		this._fnSetColumnIndexes();
-
 		// Has anything actually changed? If not, then nothing else to do
 		if ( ! changed ) {
 			return;
 		}
+
+		$.fn.dataTable.Api( this.s.dt ).rows().invalidate();
+
+		this._fnSetColumnIndexes();
 
 		/* When scrolling we need to recalculate the column sizes to allow for the shift */
 		if ( this.s.dt.oScroll.sX !== "" || this.s.dt.oScroll.sY !== "" )
