@@ -32,7 +32,7 @@
 			1. The **current** column index (i.e. even if column reordering has already happened)
 			2. The **original** column index (i.e. the original index of the column before ColReorder has done any reordering)
 
-			Set to be `true` to indicate that the indexes passed in are the original indexes. `false` or `undefined` (default) will treat them as the original index.
+			Set to be `true` to indicate that the indexes passed in are the original indexes. `false` or `undefined` (default) will treat them as the current indexes.
 		</parameter>
 		<returns type="DataTables.Api">
 			DataTables API instance for chaining
