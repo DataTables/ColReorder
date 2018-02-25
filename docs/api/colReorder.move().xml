@@ -16,7 +16,7 @@
 			New index to move the column to.
 		</parameter>
 		<parameter name="drop" type="boolean" default="true">
-			Indicate that this the final move. It can be useful to set this to `false` if you are performing multiple moves.
+			Indicate that this is the final move. Set this to `false` if you are performing multiple moves.
 		</parameter>
 		<parameter name="invalidate" type="boolean" default="true">
 			Invalidate the row data. As with `drop` it can be useful to set this to `false` if performing multiple moves. Otherwise allow it to default which will ensure that the table's data is fully insync with the column order.
