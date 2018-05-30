@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dt-option library="ColReorder">
+	<name>colReorder.enable</name>
+	<summary>Initial enablement state of ColReorder</summary>
+	<since>1.5.0</since>
+
+	<type type="boolean">
+		<description>
+			* `true` - ColReorder is enabled when the DataTable is created
+			* `false` - ColReorder is not enabled, and can later be enabled via the API.
+		</description>
+	</type>
+
+	<default value="true">
+		ColReorder is enabled
+	</default>
+
+	<description>
+		It can be useful to disable ColReorder's user input controls at certain times, depending on the state of your application. This option provides that ability when the table is initially created, while the `-api colReorder.enable()` and `-api colReorder.disable()` methods provide the option to enabling the user interaction after the table has been created.
+	</description>
+
+	<example title="Disable ColReorder on initialisation"><![CDATA[
+
+$('#example').DataTable( {
+	colReorder: {
+		enable: false
+	}
+} );
+
+]]></example>
+
+	<related>-init colReorder.enable</related>
+	<related>-api colReorder().enable()</related>
+	<related>-api colReorder().disable()</related>
+</dt-option>

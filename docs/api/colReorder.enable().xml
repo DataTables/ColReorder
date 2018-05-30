@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dt-api library="ColReorder">
+	<name>colReorder().enable()</name>
+	<summary>Enable or disable ColReorder's interactions</summary>
+	<since>1.5.0</since>
+
+	<type type="function">
+	<name>colReorder().enable()</name>
+		<signature>colReorder().enable( [ flag ] )</signature>
+		<description>
+			Enable and disable user ability to reorder columns in a table.
+		</description>
+		<parameter name="flag" type="string|boolean" default="true">
+			This option can be given as the following values:
+
+			* `true` - Enable ColReorder
+			* `false` - Disable ColReorder
+		</parameter>
+		<returns type="DataTables.Api">DataTables API instance</returns>
+	</type>
+
+	<description>
+		This method can be used to enable and disable the ColReorder end user interaction with a DataTable. In its simplest form it can be used to enable ColReorder, but it can also be used to disable it using the optional parameter. This is useful to be able to toggle the enablement state using a ternary operator or some external variable.
+
+		Please note that in order to be able to enable ColReorder, the `-init colReorder` option _must_ be specified in the DataTable initialisation. This method cannot be used to enable ColReorder if `-init colReorder` has not be used.
+	</description>
+
+	<example title="Enable / disable column reordering using buttons"><![CDATA[
+
+var table = $('#example').DataTable( {
+	colReorder: true
+} );
+
+$('#enableReordering').on( 'click', function () {
+	table.colReorder().enable( true );
+} );
+
+$('#disableReordering').on( 'click', function () {
+	table.colReorder().enable( false );
+} );
+
+]]></example>
+
+	<related>-init colReorder.enable</related>
+	<related>-api colReorder().enable()</related>
+	<related>-api colReorder().disable()</related>
+</dt-api>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dt-example table-type="html" order="8">
+
+<css lib="datatables buttons colreorder" />
+<js lib="jquery datatables buttons colreorder">
+<![CDATA[
+$(document).ready(function() {
+	$('#example').DataTable( {
+		dom: 'Bfrtip',
+		colReorder: {
+			enable: false
+		},
+		buttons: [
+			{
+				text: "Enable column reordering",
+				action: function ( e, dt ) {
+					dt.colReorder.enable();
+				}
+			},
+			{
+				text: "Disable column reordering",
+				action: function ( e, dt ) {
+					dt.colReorder.disable();
+				}
+			}
+		]
+	} );
+} );
+]]>
+</js>
+
+<title lib="ColReorder">Enable / disable API</title>
+
+<info><![CDATA[
+
+This example demonstrates ColReorder's ability to be dynamically enabled and disabled. The `-init colReorder.enable` option is used to initialise ColReorder on the table, but having it initially disabled.
+
+[Custom Buttons](https://www.datatables.net/extensions/buttons/custom) (not required for the ColReorder API, but useful here!) are used to allow you to dynamically call the `-api colReorder.enable()` and `-api colReorder.disable()` methods, enabling and disabling column reordering.
+
+]]></info>
+
+</dt-example>
