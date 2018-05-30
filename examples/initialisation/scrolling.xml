@@ -20,7 +20,7 @@ $(document).ready(function() {
 
 <info><![CDATA[
 
-This is a simple example to show ColReorder working with DataTables scrolling (`dt-init scrollY` and `dt-init scrollX`).
+This is a simple example to show ColReorder working with DataTables vertical scrolling (`dt-init scrollY`).
 
 ]]></info>
 
