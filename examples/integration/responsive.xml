@@ -8,11 +8,7 @@
 $(document).ready(function() {
 	var table = $('#example').dataTable( {
 		colReorder: true,
-		responsive: true,
-		columnDefs: [ {
-			targets: 2,
-			responsivePriority: 10001
-		} ]
+		responsive: true
 	} );
 } );
 
@@ -23,7 +19,7 @@ $(document).ready(function() {
 
 <info><![CDATA[
 
-This example shows ColReorder being used with the [Responsive extension for DataTables](https://datatables.net/extensions/colreorder). The _"Position"_ column is the first to be hidden through the use of the `r-init columns.responsivePriority` option, and you'll notice that the hidden column is automatically accounted for by ColReorder as the columns are reordered.
+This example shows ColReorder being used with the [Responsive extension for DataTables](https://datatables.net/extensions/colreorder). At this time, only the column headers shown in the table can be used for reordering, but the ability to reorder using the headers in the Responsive view are something that will be added in future.
 
 ]]></info>
 
