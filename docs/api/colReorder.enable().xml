@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <dt-api library="ColReorder">
-	<name>colReorder().enable()</name>
+	<name>colReorder.enable()</name>
 	<summary>Enable or disable ColReorder's interactions</summary>
 	<since>1.5.0</since>
 
