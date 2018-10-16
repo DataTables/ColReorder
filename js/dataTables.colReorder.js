@@ -1004,39 +1004,35 @@ $.extend( ColReorder.prototype, {
 		} );
 
 		/* Based on the current mouse position, calculate where the insert should go */
-		var bSet = false;
+		var target;
 		var lastToIndex = this.s.mouse.toIndex;
         var cursorXPosiotion = this._fnCursorPosition(e, 'pageX');
 
         for (var i = 1; i < this.s.aoTargets.length; i++) {
-            var target;
-
             var prevTarget = this.s.aoTargets[i - 1];
             var prevTargetMiddle = prevTarget.x + (this.s.aoTargets[i].x - prevTarget.x) / 2;
 
             if (this._fnIsLtr()) {
                 if (cursorXPosiotion < prevTargetMiddle ) {
                     target = prevTarget;
+                    break;
                 }
             }
             else {
                 if (cursorXPosiotion > prevTargetMiddle) {
                     target = prevTarget;
+                    break;
                 }
-            }
-
-            if (target) {
-                this.dom.pointer.css('left', target.x);
-                this.s.mouse.toIndex = target.to;
-                bSet = true;
-                break;
             }
         }
 
+        if (target) {
+            this.dom.pointer.css('left', target.x);
+            this.s.mouse.toIndex = target.to;
+        }
+        else {
 		// The insert element wasn't positioned in the array (less than
 		// operator), so we put it at the end
-		if ( !bSet )
-		{
 			this.dom.pointer.css( 'left', this.s.aoTargets[this.s.aoTargets.length-1].x );
 			this.s.mouse.toIndex = this.s.aoTargets[this.s.aoTargets.length-1].to;
 		}
