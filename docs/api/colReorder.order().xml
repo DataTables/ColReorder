@@ -22,9 +22,7 @@
 		<parameter name="order" type="array">
 			Array of column indexes that define where the columns should be placed after the reorder. 
 
-			Please note that by default the column indexes given by this array are assumed to be the **current** column indexes. The optional second parameter can be used to indicate that they should actually be treated as the original indexes.
-
-			Please note that the column indexes in the array are _not_ the original column index, but rather than _current_ column index. i.e. `0` will always refer to the first column in the table, regardless of the table ordering.
+			Please note that by default the column indexes given by this array are assumed to be the **current** column indexes, i.e. `0` will always refer to the first column in the table, regardless of the table ordering. The optional second parameter can be used to indicate that they should actually be treated as the original indexes.
 		</parameter>
 		<parameter name="originalIndexes" type="boolean" since="1.3.0" default="false">
 			The order array defines the positions that columns should be shown through column indexes but these indexes can be one of:
