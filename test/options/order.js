@@ -19,7 +19,7 @@ describe('colReorder - order', function() {
 	it('Order complied with', function() {
 		table = $('#example').DataTable({
 			colReorder: {
-				order: [5,4,3,2,1,0]
+				order: [5, 4, 3, 2, 1, 0]
 			}
 		});
 		expect($('thead tr th').text()).toBe('SalaryStart dateAgeOfficePositionName');
