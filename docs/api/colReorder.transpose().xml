@@ -15,7 +15,7 @@
 			* `-string toCurrent` - the input value is an original index and you wish to know its current index
 			* `-string toOriginal` - the input value is the current index and you wish to know its original index
 			* `-string fromOriginal` - As `-string toCurrent`
-			* `-string toOriginal` - As `-string fromCurrent`.
+			* `-string fromCurrent` - As `-string toOriginal`.
 		</parameter>
 		<description>
 			Get one or more current column indexes form their original index.
