@@ -917,7 +917,7 @@ $.extend( ColReorder.prototype, {
 		var that = this;
 		$(nTh)
 			.on( 'mousedown.ColReorder', function (e) {
-				if ( that.s.enable ) {
+				if ( that.s.enable && e.which === 1 ) {
 					that._fnMouseDown.call( that, e, nTh );
 				}
 			} )
