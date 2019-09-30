@@ -1,11 +1,11 @@
-/*! ColReorder 1.5.1
+/*! ColReorder 1.5.2-dev
  * ©2010-2018 SpryMedia Ltd - datatables.net/license
  */
 
 /**
  * @summary     ColReorder
  * @description Provide the ability to reorder columns in a DataTable
- * @version     1.5.1
+ * @version     1.5.2-dev
  * @file        dataTables.colReorder.js
  * @author      SpryMedia Ltd (www.sprymedia.co.uk)
  * @contact     www.sprymedia.co.uk/contact
@@ -1006,11 +1006,42 @@ $.extend( ColReorder.prototype, {
 		/* Based on the current mouse position, calculate where the insert should go */
 		var target;
 		var lastToIndex = this.s.mouse.toIndex;
-        var cursorXPosiotion = this._fnCursorPosition(e, 'pageX');
+		var cursorXPosiotion = this._fnCursorPosition(e, 'pageX');
+		var targetsPrev = function (i) {
+			while (i >= 0) {
+				i--;
+
+				if (i <= 0) {
+					return null;
+				}
+
+				if (that.s.aoTargets[i+1].x !== that.s.aoTargets[i].x) {
+					return that.s.aoTargets[i];
+				}
+			}
+		};
+		var firstNotHidden = function () {
+			for (var i=0 ; i<that.s.aoTargets.length-1 ; i++) {
+				if (that.s.aoTargets[i].x !== that.s.aoTargets[i+1].x) {
+					return that.s.aoTargets[i];
+				}
+			}
+		};
+		var lastNotHidden = function () {
+			for (var i=that.s.aoTargets.length-1 ; i>0 ; i--) {
+				if (that.s.aoTargets[i].x !== that.s.aoTargets[i-1].x) {
+					return that.s.aoTargets[i];
+				}
+			}
+		};
 
         for (var i = 1; i < this.s.aoTargets.length; i++) {
-            var prevTarget = this.s.aoTargets[i - 1];
-            var prevTargetMiddle = prevTarget.x + (this.s.aoTargets[i].x - prevTarget.x) / 2;
+			var prevTarget = targetsPrev(i);
+			if (! prevTarget) {
+				prevTarget = firstNotHidden();
+			}
+
+			var prevTargetMiddle = prevTarget.x + (this.s.aoTargets[i].x - prevTarget.x) / 2;
 
             if (this._fnIsLtr()) {
                 if (cursorXPosiotion < prevTargetMiddle ) {
@@ -1024,17 +1055,17 @@ $.extend( ColReorder.prototype, {
                     break;
                 }
             }
-        }
+		}
 
         if (target) {
             this.dom.pointer.css('left', target.x);
             this.s.mouse.toIndex = target.to;
         }
         else {
-		// The insert element wasn't positioned in the array (less than
-		// operator), so we put it at the end
-			this.dom.pointer.css( 'left', this.s.aoTargets[this.s.aoTargets.length-1].x );
-			this.s.mouse.toIndex = this.s.aoTargets[this.s.aoTargets.length-1].to;
+			// The insert element wasn't positioned in the array (less than
+			// operator), so we put it at the end
+			this.dom.pointer.css( 'left', lastNotHidden().x );
+			this.s.mouse.toIndex = lastNotHidden().to;
 		}
 
 		// Perform reordering if realtime updating is on and the column has moved
@@ -1106,31 +1137,40 @@ $.extend( ColReorder.prototype, {
 	{
 		var aoColumns = this.s.dt.aoColumns;
         var isLTR = this._fnIsLtr();
-        this.s.aoTargets.splice(0, this.s.aoTargets.length);
+		this.s.aoTargets.splice(0, this.s.aoTargets.length);
+		let lastBound = $(this.s.dt.nTable).offset().left;
 
         var aoColumnBounds = [];
         $.each(aoColumns, function (i, column) {
             if (column.bVisible && column.nTh.style.display !== 'none') {
                 var nth = $(column.nTh);
-                var bound = nth.offset().left;
+				var bound = nth.offset().left;
 
                 if (isLTR) {
                     bound += nth.outerWidth();
                 }
 
                 aoColumnBounds.push({
-                    "index": i,
-                    "bound": bound
+                    index: i,
+                    bound: bound,
+				});
+
+				lastBound = bound;
+			}
+			else {
+                aoColumnBounds.push({
+					index: i,
+					bound: lastBound,
                 });
-            }
-        });
+			}
+		});
 
         var firstColumn = aoColumnBounds[0];
-        var firstColumnWidth = $(aoColumns[firstColumn.index].nTh).outerWidth();
+		var firstColumnWidth = $(aoColumns[firstColumn.index].nTh).outerWidth();
 
         this.s.aoTargets.push({
-            "x": firstColumn.bound - firstColumnWidth,
-            "to": 0
+            to: 0,
+			x: firstColumn.bound - firstColumnWidth
         });
 
         for (var i = 0; i < aoColumnBounds.length; i++) {
@@ -1146,8 +1186,8 @@ $.extend( ColReorder.prototype, {
             }
 
             this.s.aoTargets.push({
-                "x": columnBound.bound,
-                "to": iToPoint
+				to: iToPoint,
+                x: columnBound.bound
             });
         }
 
@@ -1334,7 +1374,7 @@ ColReorder.defaults = {
  *  @type      String
  *  @default   As code
  */
-ColReorder.version = "1.5.1";
+ColReorder.version = "1.5.2-dev";
 
 
 
