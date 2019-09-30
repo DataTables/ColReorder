@@ -1152,7 +1152,7 @@ $.extend( ColReorder.prototype, {
 
                 aoColumnBounds.push({
                     index: i,
-                    bound: bound,
+                    bound: bound
 				});
 
 				lastBound = bound;
@@ -1160,7 +1160,7 @@ $.extend( ColReorder.prototype, {
 			else {
                 aoColumnBounds.push({
 					index: i,
-					bound: lastBound,
+					bound: lastBound
                 });
 			}
 		});
