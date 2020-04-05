@@ -30,6 +30,6 @@ $('#example').DataTable( {
 ]]></example>
 
 	<related>-init colReorder.enable</related>
-	<related>-api colReorder().enable()</related>
-	<related>-api colReorder().disable()</related>
+	<related>-api colReorder.enable()</related>
+	<related>-api colReorder.disable()</related>
 </dt-option>

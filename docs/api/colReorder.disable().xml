@@ -5,8 +5,8 @@
 	<since>1.5.0</since>
 
 	<type type="function">
-	<name>colReorder().disable()</name>
-		<signature>colReorder().disable()</signature>
+	<name>colReorder.disable()</name>
+		<signature>colReorder.disable()</signature>
 		<description>
 			Disable end user ability to reorder columns.
 		</description>
@@ -26,16 +26,16 @@ var table = $('#example').DataTable( {
 } );
 
 $('#enableReordering').on( 'click', function () {
-	table.colReorder().enable( true );
+	table.colReorder.enable( true );
 } );
 
 $('#disableReordering').on( 'click', function () {
-	table.colReorder().disable();
+	table.colReorder.disable();
 } );
 
 ]]></example>
 
 	<related>-init colReorder.enable</related>
-	<related>-api colReorder().enable()</related>
-	<related>-api colReorder().disable()</related>
+	<related>-api colReorder.enable()</related>
+	<related>-api colReorder.disable()</related>
 </dt-api>
