@@ -249,7 +249,14 @@ $.fn.dataTableExt.oApi.fnColReorder = function ( oSettings, iFrom, iTo, drop, in
 		}
 
 		/* Header */
-		nTrs = oSettings.nTHead.getElementsByTagName('tr');
+		var skipHeaderRowsClasses = oSettings._colReorder.s.skipHeaderRowsClasses;
+		if (skipHeaderRowsClasses) {
+			/* querySelectorAll doesn't support multiple classes in pseudo-class :not */
+			var skipClasses = skipHeaderRowsClasses.map(function (className) {return ':not(' + className + ')'}).join('');
+			nTrs = oSettings.nTHead.querySelectorAll('tr' + skipClasses);
+		} else {
+			nTrs = oSettings.nTHead.getElementsByTagName('tr');
+		}
 		for ( i=0, iLen=nTrs.length ; i<iLen ; i++ )
 		{
 			fnDomSwitch( nTrs[i], iVisibleIndex, iInsertBeforeIndex );
@@ -693,6 +700,11 @@ $.extend( ColReorder.prototype, {
 		if ( this.s.init.iFixedColumnsLeft )
 		{
 			this.s.fixed = this.s.init.iFixedColumnsLeft;
+		}
+
+		if ( this.s.init.asSkipHeaderRowsClasses )
+		{
+			this.s.skipHeaderRowsClasses = this.s.init.asSkipHeaderRowsClasses;
 		}
 
 		/* Columns discounted from reordering - counting right to left */
@@ -1359,7 +1371,15 @@ ColReorder.defaults = {
 	 *  @default null
 	 *  @static
 	 */
-	fnReorderCallback: null
+	fnReorderCallback: null,
+
+	/**
+	 * Indicate which header rows containing specified classes should be skipped while changing the DOM.
+	 *  @type array
+	 *  @default null
+	 *  @static
+	 */
+	asSkipHeaderRowsClasses: null
 };
 
 
