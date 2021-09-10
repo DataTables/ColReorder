@@ -723,6 +723,10 @@ $.extend( ColReorder.prototype, {
 			that._fnStateSave.call( that, oData );
 		}, "ColReorder_State" );
 
+		this.s.dt.oApi._fnCallbackReg(this.s.dt, 'aoStateLoadParams', function(oS, oData) {
+			that.s.dt._colReorder.fnOrder(oData.ColReorder, true);
+		})
+
 		/* An initial column order has been specified */
 		var aiOrder = null;
 		if ( this.s.init.aiOrder )
