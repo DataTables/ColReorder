@@ -66,7 +66,7 @@ describe('colReorder - move()', function() {
 			checkHeaders(['Name', 'Position', 'Office', 'Age', 'Start date', 'Salary']);
 
 			table.order([2, 'asc']).draw();
-			expect($('tbody tr td:eq(2)').text()).toBe('New York');
+			expect($('tbody tr td:eq(2)').text()).toBe('Edinburgh');
 		});
 		it('Invalidate to refresh', function() {
 			table

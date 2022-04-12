@@ -307,10 +307,8 @@ $.fn.dataTableExt.oApi.fnColReorder = function ( oSettings, iFrom, iTo, drop, in
 			}
 		}
 
-		// For DOM sourced data, the invalidate will reread the cell into
-		// the data array, but for data sources as an array, they need to
-		// be flipped
-		if ( data.src !== 'dom' && Array.isArray( data._aData ) ) {
+		// Swap around array sourced data (object based is left as is)
+		if ( Array.isArray( data._aData ) ) {
 			fnArraySwitch( data._aData, iFrom, iTo );
 		}
 	}
@@ -331,7 +329,9 @@ $.fn.dataTableExt.oApi.fnColReorder = function ( oSettings, iFrom, iTo, drop, in
 
 	if ( invalidateRows || invalidateRows === undefined )
 	{
-		$.fn.dataTable.Api( oSettings ).rows().invalidate();
+		// Always read from the data object rather than reading back from the DOM
+		// since it could have been changed by a renderer
+		$.fn.dataTable.Api( oSettings ).rows().invalidate('data');
 	}
 
 	/*
