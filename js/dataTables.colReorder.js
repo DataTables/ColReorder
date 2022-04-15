@@ -824,7 +824,7 @@ $.extend( ColReorder.prototype, {
 			return;
 		}
 
-		$.fn.dataTable.Api( this.s.dt ).rows().invalidate();
+		$.fn.dataTable.Api( this.s.dt ).rows().invalidate('data');
 
 		/* When scrolling we need to recalculate the column sizes to allow for the shift */
 		if ( this.s.dt.oScroll.sX !== "" || this.s.dt.oScroll.sY !== "" )
