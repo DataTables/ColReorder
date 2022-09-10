@@ -4,11 +4,32 @@
 <css lib="datatables colreorder" />
 <js lib="jquery datatables colreorder">
 <![CDATA[
-$(document).ready(function() {
-	$('#example').DataTable( {
-		colReorder: true
-	} );
-} );
+$(document).ready( function () {
+  table = $('#example').DataTable(
+    {"stateSave": true,
+    "colReorder": true
+    }
+  );
+} ); 
+
+
+function test(){
+  try
+    {
+       table.destroy();
+  table = $('#example').DataTable(
+    {"stateSave": true,
+    "colReorder": true,
+    }
+  ); 
+    }
+   catch(error)
+     {
+       console.log('error on destroy : ',error.message) 
+     }
+  
+  
+}
 ]]>
 </js>
 
