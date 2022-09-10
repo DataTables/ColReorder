@@ -83,6 +83,10 @@ describe('colReorder - move()', function() {
 			table.order([4, 'asc']).draw();
 			expect($('tbody tr td:eq(4)').text()).toBe('Edinburgh');
 		});
+		it('Table is returned to original order when table is destroyed', function() {
+			table.destroy();
+			checkHeaders(['Name', 'Position', 'Office', 'Age', 'Start date', 'Salary']);
+		});
 	});
 
 	describe('Advanced/integration test', function() {
