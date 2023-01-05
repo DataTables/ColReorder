@@ -484,7 +484,7 @@ $.extend( ColReorder.prototype, {
 	fnEnable: function ( flag )
 	{
 		if ( flag === false ) {
-			return fnDisable();
+			return this.fnDisable();
 		}
 
 		this.s.enable = true;
