@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dt-example table-type="html5" order="14">
+
+<css lib="datatables colreorder" />
+<js lib="jquery datatables colreorder">
+<![CDATA[
+
+$(document).ready(function () {
+	$('#example').DataTable({
+		colReorder: true,
+	});
+});
+
+]]>
+</js>
+
+<title lib="ColReorder">HTML5 data-* orthogonal data</title>
+
+<info><![CDATA[
+
+This example demonstrates ColReorder's ability to operate with DataTables' [HTML5 orthogonal data](https://datatables.net/manual/data/orthogonal-data#HTML-5) which allows different data to be used for different options, such as display, ordering and search.
+
+]]></info>
+
+</dt-example>
