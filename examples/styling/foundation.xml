@@ -4,15 +4,19 @@
 <css lib="datatables colreorder"/>
 <js lib="jquery datatables colreorder">
 <![CDATA[
-
-$(document).ready(function() {
-	$('#example').DataTable( {
-		colReorder: true
-	} );
-} );
-
+$('#example').DataTable({
+	colReorder: true
+});
 ]]>
 </js>
+
+<js-vanilla>
+<![CDATA[
+new DataTable('#example', {
+	colReorder: true
+});
+]]>
+</js-vanilla>
 
 <title lib="ColReorder">Foundation styling</title>
 

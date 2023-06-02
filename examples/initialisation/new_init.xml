@@ -4,19 +4,24 @@
 <css lib="datatables colreorder" />
 <js lib="jquery datatables colreorder">
 <![CDATA[
-$(document).ready(function() {
-	var table = $('#example').DataTable();
+var table = $('#example').DataTable();
 
-	new $.fn.dataTable.ColReorder( table );
-} );
+new DataTable.ColReorder( table );
 ]]>
 </js>
+
+<js-vanilla>
+<![CDATA[
+new DataTable('#example');
+new DataTable.ColReorder( table );
+]]>
+</js-vanilla>
 
 <title lib="ColReorder">Initialisation using `new`</title>
 
 <info><![CDATA[
 
-As well as providing the option to be initialised through the `cr-init colReorder`, ColReorder can also be added to a DataTable using direct initialisation - `new $.fn.dataTable.ColReorder();` as shown in this example. Options can be passed in as the second parameter for the constructor.
+As well as providing the option to be initialised through the `cr-init colReorder`, ColReorder can also be added to a DataTable using direct initialisation - `new DataTable.ColReorder();` as shown in this example. Options can be passed in as the second parameter for the constructor.
 
 ]]></info>
 

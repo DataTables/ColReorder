@@ -4,48 +4,81 @@
 <css lib="datatables colreorder" />
 <js lib="jquery datatables colreorder">
 <![CDATA[
+$('#example').DataTable({
+	colReorder: true,
+	footerCallback: function (row, data, start, end, display) {
+		var api = this.api();
+		var currentPosition = api.colReorder.transpose(5);
 
-$(document).ready(function() {
-	$('#example').DataTable( {
-		colReorder: true,
-		"footerCallback": function ( row, data, start, end, display ) {
-			var api = this.api(), data;
-			var currentPosition = api.colReorder.transpose( 3 );
+		// Remove the formatting to get integer data for summation
+		var intVal = function (i) {
+			return typeof i === 'string'
+				? i.replace(/[\$,]/g, '') * 1
+				: typeof i === 'number'
+				? i
+				: 0;
+		};
 
-			// Remove the formatting to get integer data for summation
-			var intVal = function ( i ) {
-				return typeof i === 'string' ?
-					i.replace(/[\$,]/g, '')*1 :
-					typeof i === 'number' ?
-						i : 0;
-			};
+		// Total over all pages
+		total = api
+			.column(currentPosition)
+			.data()
+			.reduce(function (a, b) {
+				return intVal(a) + intVal(b);
+			}, 0);
 
-			// Total over all pages
-			total = api
-				.column( currentPosition )
-				.data()
-				.reduce( function (a, b) {
-					return intVal(a) + intVal(b);
-				}, 0 );
+		// Total over this page
+		pageTotal = api
+			.column(currentPosition, { page: 'current' })
+			.data()
+			.reduce(function (a, b) {
+				return intVal(a) + intVal(b);
+			}, 0);
 
-			// Total over this page
-			pageTotal = api
-				.column( currentPosition, { page: 'current'} )
-				.data()
-				.reduce( function (a, b) {
-					return intVal(a) + intVal(b);
-				}, 0 );
-
-			// Update footer
-			$( api.column( currentPosition ).footer() ).html(
-				pageTotal +' ('+ total +' total)'
-			);
-		}
-	} );
-} );
+		// Update footer
+		$(api.column(currentPosition).footer()).html(pageTotal + ' (' + total + ' total)');
+	}
+});
 
 ]]>
 </js>
+
+<js-vanilla>
+<![CDATA[
+new DataTable('#example', {
+	colReorder: true,
+	footerCallback: function (row, data, start, end, display) {
+		let api = this.api();
+		var currentPosition = api.colReorder.transpose(5);
+
+		// Remove the formatting to get integer data for summation
+		let intVal = function (i) {
+			return typeof i === 'string'
+				? i.replace(/[\$,]/g, '') * 1
+				: typeof i === 'number'
+				? i
+				: 0;
+		};
+
+		// Total over all pages
+		total = api
+			.column(currentPosition)
+			.data()
+			.reduce((a, b) => intVal(a) + intVal(b), 0);
+
+		// Total over this page
+		pageTotal = api
+			.column(currentPosition, { page: 'current' })
+			.data()
+			.reduce((a, b) => intVal(a) + intVal(b), 0);
+
+		// Update footer
+		api.column(currentPosition).footer().innerHTML = '$' + pageTotal + ' ( $' + total + ' total)';
+	}
+});
+
+]]>
+</js-vanilla>
 
 <title lib="ColReorder">Footer callback</title>
 

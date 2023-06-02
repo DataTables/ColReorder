@@ -4,30 +4,55 @@
 <css lib="datatables buttons colreorder" />
 <js lib="jquery datatables buttons colreorder">
 <![CDATA[
-$(document).ready(function() {
-	$('#example').DataTable( {
-		dom: 'Bfrtip',
-		colReorder: {
-			enable: false
-		},
-		buttons: [
-			{
-				text: "Enable column reordering",
-				action: function ( e, dt ) {
-					dt.colReorder.enable();
-				}
-			},
-			{
-				text: "Disable column reordering",
-				action: function ( e, dt ) {
-					dt.colReorder.disable();
-				}
+$('#example').DataTable({
+	buttons: [
+		{
+			text: 'Enable column reordering',
+			action: function (e, dt) {
+				dt.colReorder.enable();
 			}
-		]
-	} );
-} );
+		},
+		{
+			text: 'Disable column reordering',
+			action: function (e, dt) {
+				dt.colReorder.disable();
+			}
+		}
+	],
+	colReorder: {
+		enable: false
+	},
+	dom: 'Bfrtip'
+});
+
 ]]>
 </js>
+
+<js-vanilla>
+<![CDATA[
+new DataTable('#example', {
+	buttons: [
+		{
+			text: 'Enable column reordering',
+			action: function (e, dt) {
+				dt.colReorder.enable();
+			}
+		},
+		{
+			text: 'Disable column reordering',
+			action: function (e, dt) {
+				dt.colReorder.disable();
+			}
+		}
+	],
+	colReorder: {
+		enable: false
+	},
+	dom: 'Bfrtip'
+});
+
+]]>
+</js-vanilla>
 
 <title lib="ColReorder">Enable / disable API</title>
 

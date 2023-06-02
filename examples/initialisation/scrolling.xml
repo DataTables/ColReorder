@@ -4,17 +4,23 @@
 <css lib="datatables colreorder" />
 <js lib="jquery datatables colreorder">
 <![CDATA[
-
-$(document).ready(function() {
-	$('#example').dataTable( {
-		scrollY:    '200px',
-		paging:     false,
-		colReorder: true
-	} );
-} );
-
+$('#example').DataTable({
+	colReorder: true,
+	paging: false,
+	scrollY: 200
+});
 ]]>
 </js>
+
+<js-vanilla>
+<![CDATA[
+new DataTable('#example', {
+	colReorder: true,
+	paging: false,
+	scrollY: 200
+});
+]]>
+</js-vanilla>
 
 <title lib="ColReorder">Scrolling table</title>
 

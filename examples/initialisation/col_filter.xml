@@ -4,34 +4,71 @@
 <css lib="datatables colreorder" />
 <js lib="jquery datatables colreorder">
 <![CDATA[
-$(document).ready(function() {
-    // Setup - add a text input to each footer cell
-    $('#example tfoot th').each( function () {
-        var title = $('#example thead th').eq( $(this).index() ).text();
-        $(this).html( '<input type="text" placeholder="Search '+title+'" />' );
-    } );
- 
-    // DataTable
-    var table = $('#example').DataTable( {
-		colReorder: true
-	} );
-     
-    // Apply the filter
-    $("#example tfoot input").on( 'keyup change', function () {
-        table
-            .column( $(this).parent().index()+':visible' )
-            .search( this.value )
-            .draw();
-    } );
-} );
+$('#example').DataTable({
+	colReorder: true,
+	initComplete: function () {
+		var api = this.api();
+
+		api.columns().every(function () {
+			var column = this;
+			var title = column.footer().textContent;
+
+			// Create input element and add event listener
+			$('<input type="text" placeholder="Search ' + title + '" />')
+				.appendTo($(column.footer()).empty())
+				.on('keyup change clear', function () {
+					if (column.search() !== this.value) {
+						api.column($(this).parent().index() + ':visible')
+							.search(this.value)
+							.draw();
+					}
+				});
+		});
+	}
+});
+
 ]]>
 </js>
+
+<js-vanilla>
+<![CDATA[
+new DataTable('#example', {
+	colReorder: true,
+	initComplete: function () {
+		let api = this.api();
+
+		api.columns().every(function () {
+			let column = this;
+			let title = column.footer().textContent;
+			let th = column.footer();
+
+			// Create input element
+			let input = document.createElement('input');
+			input.placeholder = title;
+			th.replaceChildren(input);
+
+			// Event listener for user input
+			input.addEventListener('keyup', () => {
+				if (column.search() !== this.value) {
+					let idx = [...th.parentNode.children].indexOf(th);
+
+					api.column(idx + ':visible')
+						.search(input.value)
+						.draw();
+				}
+			});
+		});
+	}
+});
+
+]]>
+</js-vanilla>
 
 <title lib="ColReorder">Individual column filtering</title>
 
 <info><![CDATA[
 
-This example shows ColReorder can integrate with DataTables' ability to do individual column filtering. The basic example is exactly the same as the DataTables column filtering example, but with ColReorder also added to the table (`cr-init colReorder`).
+This example shows ColReorder can integrate with DataTables' ability to do individual column filtering. The basic example is very similar to the DataTables column filtering example, but not that in the event handler for the `-tag input` we need to reselect the column in case the column position has changed from when it was initialised.
 
 ]]></info>
 

@@ -4,17 +4,23 @@
 <css lib="datatables colreorder" />
 <js lib="jquery datatables colreorder">
 <![CDATA[
-
-$(document).ready(function() {
-	$('#example').dataTable( {
-		colReorder: {
-			order: [ 4, 3, 2, 1, 0, 5 ]
-		}
-	} );
-} );
-
+$('#example').DataTable({
+	colReorder: {
+		order: [4, 3, 2, 1, 0, 5]
+	}
+});
 ]]>
 </js>
+
+<js-vanilla>
+<![CDATA[
+new DataTable('#example', {
+	colReorder: {
+		order: [4, 3, 2, 1, 0, 5]
+	}
+});
+]]>
+</js-vanilla>
 
 <title lib="ColReorder">Predefined column ordering</title>
 

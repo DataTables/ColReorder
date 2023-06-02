@@ -4,16 +4,21 @@
 <css lib="datatables colreorder" />
 <js lib="jquery datatables colreorder">
 <![CDATA[
-
-$(document).ready(function() {
-	$('#example').dataTable( {
-		colReorder: true,
-		stateSave:  true
-	} );
-} );
-
+$('#example').DataTable({
+	colReorder: true,
+	stateSave: true
+});
 ]]>
 </js>
+
+<js-vanilla>
+<![CDATA[
+new DataTable('#example', {
+	colReorder: true,
+	stateSave: true
+});
+]]>
+</js-vanilla>
 
 <title lib="ColReorder">State saving</title>
 

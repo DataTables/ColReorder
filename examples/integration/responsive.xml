@@ -4,16 +4,21 @@
 <css lib="datatables colreorder responsive" />
 <js lib="jquery datatables colreorder responsive">
 <![CDATA[
-
-$(document).ready(function() {
-	var table = $('#example').dataTable( {
-		colReorder: true,
-		responsive: true
-	} );
-} );
-
+$('#example').DataTable({
+	colReorder: true,
+	responsive: true
+});
 ]]>
 </js>
+
+<js-vanilla>
+<![CDATA[
+new DataTable('#example', {
+	colReorder: true,
+	responsive: true
+});
+]]>
+</js-vanilla>
 
 <title lib="ColReorder">Responsive integration</title>
 

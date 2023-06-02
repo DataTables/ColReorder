@@ -5,26 +5,47 @@
 <js lib="jquery datatables colreorder fixedcolumns">
 <![CDATA[
 
-$(document).ready(function() {
-	var table = $('#example').DataTable( {
-		scrollX: true,
-		scrollCollapse: true,
-		columnDefs: [
-			{ orderable: false, targets: 0 },
-			{ orderable: false, targets: -1 }
-		],
-		ordering: [[ 1, 'asc' ]],
-		colReorder: {
-			fixedColumnsLeft: 1,
-			fixedColumnsRight: 1
-		}
-	} );
+$('#example').DataTable({
+	columnDefs: [
+		{ orderable: false, targets: 0 },
+		{ orderable: false, targets: -1 }
+	],
+	colReorder: {
+		fixedColumnsLeft: 1,
+		fixedColumnsRight: 1
+	},
+	fixedColumns: {
+		left: 1,
+		right: 1
+	},
+	ordering: [[1, 'asc']],
+	scrollX: true,
+	scrollCollapse: true
+});
 
-	new $.fn.dataTable.FixedColumns( table, {
-		leftColumns: 1,
-		rightColumns: 1
-	} );
-} );
+]]>
+</js>
+
+<js>
+<![CDATA[
+
+new DataTable('#example', {
+	columnDefs: [
+		{ orderable: false, target: 0 },
+		{ orderable: false, target: -1 }
+	],
+	colReorder: {
+		fixedColumnsLeft: 1,
+		fixedColumnsRight: 1
+	},
+	fixedColumns: {
+		left: 1,
+		right: 1
+	},
+	ordering: [[1, 'asc']],
+	scrollX: true,
+	scrollCollapse: true
+});
 
 ]]>
 </js>

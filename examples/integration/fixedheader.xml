@@ -4,16 +4,21 @@
 <css lib="datatables colreorder fixedheader" />
 <js lib="jquery datatables colreorder fixedheader">
 <![CDATA[
-
-$(document).ready(function() {
-	var table = $('#example').dataTable( {
-		colReorder: true,
-		fixedHeader: true
-	} );
-} );
-
+$('#example').DataTable({
+	colReorder: true,
+	fixedHeader: true
+});
 ]]>
 </js>
+
+<js-vanilla>
+<![CDATA[
+new DataTable('#example', {
+	colReorder: true,
+	fixedHeader: true
+});
+]]>
+</js-vanilla>
 
 <title lib="ColReorder">FixedHeader integration</title>
 
