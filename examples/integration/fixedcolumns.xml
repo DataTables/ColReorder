@@ -26,7 +26,7 @@ $('#example').DataTable({
 ]]>
 </js>
 
-<js>
+<js-vanilla>
 <![CDATA[
 
 new DataTable('#example', {
@@ -48,7 +48,7 @@ new DataTable('#example', {
 });
 
 ]]>
-</js>
+</js-vanilla>
 
 <title lib="ColReorder">FixedColumns integration</title>
 
