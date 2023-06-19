@@ -3,6 +3,7 @@
 
 <title lib="ColReorder">Styling</title>
 
+<js lib="jquery" />
 <info><![CDATA[
 
 Like all DataTables components, ColReorder can be styled to integrate seamlessly with Bootstrap, Foundation and other CSS frameworks, as demonstrated by the examples in this section.
