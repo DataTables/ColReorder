@@ -1,11 +1,11 @@
-/*! ColReorder 1.6.2
+/*! ColReorder 1.7.0
  * © SpryMedia Ltd - datatables.net/license
  */
 
 /**
  * @summary     ColReorder
  * @description Provide the ability to reorder columns in a DataTable
- * @version     1.6.2
+ * @version     1.7.0
  * @author      SpryMedia Ltd
  * @contact     datatables.net
  * @copyright   SpryMedia Ltd.
@@ -1354,7 +1354,7 @@ ColReorder.defaults = {
  *  @type      String
  *  @default   As code
  */
-ColReorder.version = "1.6.2";
+ColReorder.version = "1.7.0";
 
 
 
