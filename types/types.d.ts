@@ -32,7 +32,7 @@ declare module 'datatables.net' {
 		colReorder: ApiColReorderMethods<T>;
 	}
 
-	interface ApiStatic {
+	interface DataTablesStatic {
 		/**
 		 * ColReorder class
 		 */
