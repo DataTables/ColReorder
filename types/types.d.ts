@@ -40,7 +40,7 @@ declare module 'datatables.net' {
 			/**
 			 * Create a new ColReorder instance for the target DataTable
 			 */
-			new (dt: Api<any>, settings: boolean | ConfigColReorder);
+			new (dt: Api<any>, settings: boolean | ConfigColReorder): void;
 
 			/**
 			 * ColReorder version

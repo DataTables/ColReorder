@@ -5,9 +5,19 @@
 <js lib="jquery datatables colreorder">
 <![CDATA[
 $('#example').DataTable({
+	scrollY: 200,
+	paging: false,
 	colReorder: {
-		realtime: true
-	}
+		realtime: false
+	},
+	columns: [
+		{width: '20%'},
+		{width: '20%'},
+		{width: '20%'},
+		{width: '20%'},
+		{width: '10%'},
+		{width: '10%'},
+	]
 });
 ]]>
 </js>
@@ -15,8 +25,10 @@ $('#example').DataTable({
 <js-vanilla>
 <![CDATA[
 new DataTable('#example', {
+	scrollY: 200,
+	paging: false,
 	colReorder: {
-		realtime: true
+		realtime: false
 	}
 });
 ]]>
