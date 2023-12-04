@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+        "target": "ES5",
+        "module": "ES6",
+        "lib": ["es2017", "es2016", "dom"],
+        "allowUnreachableCode": true,
+        "allowSyntheticDefaultImports": true,
+        "pretty": true,
+        "declaration": true
+    },
+    "files": [
+        "js/dataTables.colReorder.ts"
+    ]
+}

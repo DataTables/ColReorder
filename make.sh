@@ -27,10 +27,19 @@ DT_BUILT="${DT_SRC}/built/DataTables"
 rsync -r css $OUT_DIR
 css_frameworks colReorder $OUT_DIR/css
 
-# Copy JS
-rsync -r js $OUT_DIR
-js_wrap $OUT_DIR/js/dataTables.colReorder.js "jquery datatables.net"
+# JS - compile and then copy into place
+$DT_SRC/node_modules/typescript/bin/tsc
+
+rsync -r js/*.js $OUT_DIR/js
+
+## Remove the import - our wrapper does it for UMD as well as ESM
+sed -i "s#import DataTable from '../../../types/types';##" $OUT_DIR/js/dataTables.colReorder.js
+
 js_frameworks colReorder $OUT_DIR/js "jquery datatables.net-FW datatables.net-colreorder"
+js_wrap $OUT_DIR/js/dataTables.colReorder.js "jquery datatables.net"
+
+rm js/*.d.ts
+rm js/dataTables.colReorder.js
 
 # Copy Types
 if [ -d $OUT_DIR/types ]; then
