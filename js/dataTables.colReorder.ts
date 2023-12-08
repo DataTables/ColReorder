@@ -20,7 +20,7 @@
  * For details please refer to: http://www.datatables.net
  */
 
-import DataTable, { Api, HeaderStructure, InternalSettings } from '../../../types/types'; // declare var DataTable: any;
+import DataTable, { Api, HeaderStructure } from '../../../types/types'; // declare var DataTable: any;
 
 
 /**
@@ -60,12 +60,12 @@ function finalise(dt: Api) {
 	dt.columns.adjust();
 
 	// Fire an event so other plug-ins can update
-	let order = this.colReorder.order();
+	let order = (dt as any).colReorder.order();
 
-	this.trigger('columns-reordered.dt', {
+	dt.trigger('columns-reordered.dt', [{
 		order: order,
 		mapping: invertKeyValues(order)
-	});
+	}]);
 }
 
 /**
@@ -245,7 +245,7 @@ function move(dt: Api, from: number[], to: number): void {
 	});
 
 	// Fire an event so other plug-ins can update
-	this.trigger('column-reorder.dt', [{
+	dt.trigger('column-reorder.dt', [{
 		from: from,
 		to: to,
 		mapping: reverseIndexes
@@ -293,16 +293,20 @@ function setOrder(dt: Api, order: number[]): void {
 		throw 'ERROR TODO'
 	}
 
+	// The API is array index as the deired position, but our algorthim below is
+	// for array index as the current position. So we need to invert for it to work.
+	let setOrder = invertKeyValues(order);
+
 	// Move columns, one by one with validation disabled!
-	for (let i=0 ; i<order.length ; i++) {
-		let currentIndex = order.indexOf(i);
+	for (let i=0 ; i<setOrder.length ; i++) {
+		let currentIndex = setOrder.indexOf(i);
 
 		if (i !== currentIndex) {
 			// Reorder our switching error
-			arrayMove(order, currentIndex, 1, i);
+			arrayMove(setOrder, currentIndex, 1, i);
 
 			// Do the reorder
-			(dt as any).colReorder.move(currentIndex, i, false, false);
+			move(dt, [currentIndex], i);
 
 			changed = true;
 		}
@@ -442,7 +446,7 @@ DataTable.Api.register('colReorder.move()', function (from, to) {
 	});
 });
 
-DataTable.Api.register('colReorder.order()', function (set: number[]) {
+DataTable.Api.register('colReorder.order()', function (set?: number[], original?) {
 	init(this);
 
 	if (!set) {
@@ -452,7 +456,23 @@ DataTable.Api.register('colReorder.order()', function (set: number[]) {
 	}
 
 	return this.tables().every(function() {
-		setOrder(this, set);
+		let newOrder = set;
+
+		// The order given is based on the original indexes, rather than the
+		// existing ones, so we need to translate from the original to current
+		// before then doing the order
+		if ( original ) {
+			let a = [];
+			let order = (this as any).colReorder.order();
+	
+			for ( let i=0 ; i<newOrder.length ; i++ ) {
+				a.push( order.indexOf(set[i] ) );
+			}
+	
+			newOrder = a;
+		}
+
+		setOrder(this, newOrder);
 	});
 });
 
