@@ -20,36 +20,8 @@
  * For details please refer to: http://www.datatables.net
  */
 
-import DataTable, { Api, HeaderStructure } from '../../../types/types'; // declare var DataTable: any;
+import DataTable, { Api, HeaderStructure, InternalSettings } from '../../../types/types'; // declare var DataTable: any;
 
-/**
- * Convert the DataTables header structure array into a 2D array where each
- * element has a reference to its TH/TD cell (regardless of spanning).
- *
- * @param structure Header / footer structure object
- * @returns 2D array of header cells
- */
-function structureFill(structure: HeaderStructure[][]) {
-	let filledIn: Array<Array<HTMLElement>> = [];
-
-	for (let row = 0; row < structure.length; row++) {
-		filledIn.push([]);
-
-		for (let col = 0; col < structure[row].length; col++) {
-			let cell = structure[row][col];
-
-			if (cell) {
-				for (let rowInner = 0; rowInner < cell.rowspan; rowInner++) {
-					for (let colInner = 0; colInner < cell.colspan; colInner++) {
-						filledIn[row + rowInner][col + colInner] = cell.cell;
-					}
-				}
-			}
-		}
-	}
-
-	return filledIn;
-}
 
 /**
  * Mutate an array, moving a set of elements into a new index position
@@ -70,118 +42,42 @@ function arrayMove(arr: any[], from: number, count: number, to: number): void {
 }
 
 /**
- * For a given structure check that the move is valid.
- * @param structure
- * @param from
- * @param to
- * @returns
+ * Run finishing activities after one or more columns have been reordered.
+ *
+ * @param dt DataTable being operated on - must be a single table instance
  */
-function validateStructureMove(structure: HeaderStructure[][], from: number[], to: number): boolean {
-	let header = structureFill(structure);
-	let i;
+function finalise(dt: Api) {
+	// Cache invalidation. Always read from the data object rather
+	// than reading back from the DOM since it could have been
+	// changed by a renderer
+	dt.rows().invalidate('data');
 
-	// Shuffle the header cells around
-	for (i = 0; i < header.length; i++) {
-		arrayMove(header[i], from[0], from.length, to);
-	}
+	// Redraw the header / footer. Its a little bit of a hack this, as DT
+	// doesn't expose the header draw as an API method. It calls state
+	// saving, so we don't need to here.
+	dt.column(0).visible(dt.column(0).visible());
 
-	// Sanity check that the headers are next to each other
-	for (i = 0; i < header.length; i++) {
-		let seen = [];
+	dt.columns.adjust();
 
-		for (let j = 0; j < header[i].length; j++) {
-			let cell = header[i][j];
+	// Fire an event so other plug-ins can update
+	let order = this.colReorder.order();
 
-			if (!seen.includes(cell)) {
-				// Hasn't been seen before
-				seen.push(cell);
-			}
-			else if (seen[seen.length - 1] !== cell) {
-				// Has been seen before and is not the previous cell - validation failed
-				return false;
-			}
-		}
-	}
-
-	return true;
+	this.trigger('columns-reordered.dt', {
+		order: order,
+		mapping: invertKeyValues(order)
+	});
 }
 
 /**
- * Validate that a requested move is okay. This includes bound checking
- * and that it won't split colspan'ed cells.
+ * Get the original indexes in their current order
  *
- * @param table API instance
- * @param from Column indexes to move
- * @param to Destination index (starting if multiple)
- * @returns Validation result
+ * @param dt DataTable being operated on - must be a single table instance
+ * @returns Original indexes in current order
  */
-function validateMove(table: Api<any>, from: number[], to: number) {
-	let columns = table.columns().count();
-
-	// Sanity and bound checking
-	if (from[0] < to && to < from[from.length]) {
-		return false;
-	}
-
-	if (from[0] < 0 && from[from.length - 1] > columns) {
-		return false;
-	}
-
-	if (to < 0 && to > columns) {
-		return false;
-	}
-
-	if (!validateStructureMove(table.table().header.structure(), from, to)) {
-		return false;
-	}
-
-	if (!validateStructureMove(table.table().footer.structure(), from, to)) {
-		return false;
-	}
-
-	return true;
-}
-
-/**
- * Switch the key value pairing of an index array to be value key (i.e. the old value is now the
- * key). For example consider [ 2, 0, 1 ] this would be returned as [ 1, 2, 0 ].
- *
- *  @param   array arr Array to switch around
- */
-function invertKeyValues(arr: number[]): number[] {
-	let result = [];
-
-	for (let i = 0; i < arr.length; i++) {
-		result[arr[i]] = i;
-	}
-
-	return result;
-}
-
-/**
- * Update the indexing for ordering arrays
- *
- * @param map Reverse index map
- * @param order Array to update
- */
-function orderingIndexes(map: number[], order: any[]): void {
-	for (let i = 0; i < order.length; i++) {
-		let el = order[i];
-
-		if (typeof el === 'number') {
-			// Just a number
-			order[i] = map[el];
-		}
-		else if ($.isPlainObject(el) && el.idx !== undefined) {
-			// New index in an object style
-			el.idx = map[el.idx];
-		}
-		else {
-			// The good old fixes length array
-			el[0] = map[el[0]];
-		}
-		// No need to update if in object + .name style
-	}
+function getOrder(dt: Api): number[] {
+	return dt.settings()[0].aoColumns.map(function (col) {
+		return col._crOriginalIdx;
+	})
 }
 
 /**
@@ -220,7 +116,12 @@ function headerUpdate(structure: any[], map: number[], from: number[], to: numbe
 	}
 }
 
-function init(api: Api) {
+/**
+ * Setup for ColReorder API operations
+ *
+ * @param dt DataTable(s) being operated on - might have multiple tables!
+ */
+function init(api: Api): void {
 	// Assign the original column index to a parameter that we can lookup.
 	// On the first pass (i.e. when the parameter hasn't yet been set), the
 	// index order will be the original order, so this is quite a simple
@@ -235,30 +136,35 @@ function init(api: Api) {
 }
 
 /**
- * Change the ordering of the columns in the DataTable.
- * 
+ * Switch the key value pairing of an index array to be value key (i.e. the old value is now the
+ * key). For example consider [ 2, 0, 1 ] this would be returned as [ 1, 2, 0 ].
+ *
+ *  @param   array arr Array to switch around
+ */
+function invertKeyValues(arr: number[]): number[] {
+	let result = [];
+
+	for (let i = 0; i < arr.length; i++) {
+		result[arr[i]] = i;
+	}
+
+	return result;
+}
+
+/**
+ * Move one or more columns from one index to another.
+ *
  * This method has a lot of knowledge about how DataTables works internally.
  * If DataTables changes how it handles cells, columns, etc, then this
  * method would need to be updated accordingly.
- * 
- * @param number|number[] Current column index(es) to move. Must be sequential
- *   if given as an array
- * @param number Target column (current index)
+ *
+ * @param dt DataTable being operated on - must be a single table instance
+ * @param from Column indexes to move
+ * @param to Destination index (starting if multiple)
  */
-DataTable.Api.register('colReorder.move()', function (from, to) {
-	init(this);
-
-	if (!Array.isArray(from)) {
-		from = [from];
-	}
-
-	if (!validateMove(this, from, to)) {
-		console.log('INVALID move');
-		return this;
-	}
-
+function move(dt: Api, from: number[], to: number): void {
 	let i, j;
-	let settings = this.context[0];
+	let settings = dt.settings()[0];
 	let columns = settings.aoColumns;
 	let newOrder = columns.map(function (col, idx) {
 		return idx;
@@ -338,64 +244,250 @@ DataTable.Api.register('colReorder.move()', function (from, to) {
 		el.src = reverseIndexes[el.src];
 	});
 
-	// Cache invalidation. Always read from the data object rather
-	// than reading back from the DOM since it could have been
-	// changed by a renderer
-	this.rows().invalidate('data');
-
-	// Redraw the header / footer. Its a little bit of a hack this, as DT
-	// doesn't expose the header draw as an API method. It calls state
-	// saving, so we don't need to here.
-	this.column(0).visible(this.column(0).visible());
-
-	this.columns.adjust();
-
 	// Fire an event so other plug-ins can update
-	this.trigger( 'column-reorder.dt', [{
+	this.trigger('column-reorder.dt', [{
 		from: from,
 		to: to,
 		mapping: reverseIndexes
 	}]);
+}
 
-	return this;
+/**
+ * Update the indexing for ordering arrays
+ *
+ * @param map Reverse index map
+ * @param order Array to update
+ */
+function orderingIndexes(map: number[], order: any[]): void {
+	for (let i = 0; i < order.length; i++) {
+		let el = order[i];
+
+		if (typeof el === 'number') {
+			// Just a number
+			order[i] = map[el];
+		}
+		else if ($.isPlainObject(el) && el.idx !== undefined) {
+			// New index in an object style
+			el.idx = map[el.idx];
+		}
+		else {
+			// The good old fixes length array
+			el[0] = map[el[0]];
+		}
+		// No need to update if in object + .name style
+	}
+}
+
+/**
+ * Take an index array for the current positioned, reordered to what you want
+ * them to be.
+ *
+ * @param dt DataTable being operated on - must be a single table instance
+ * @param order Indexes from current order, positioned as you want them to be
+ */
+function setOrder(dt: Api, order: number[]): void {
+	let changed = false;
+
+	if (order.length !== dt.columns().count()) {
+		// TODO DT needs an error method.
+		throw 'ERROR TODO'
+	}
+
+	// Move columns, one by one with validation disabled!
+	for (let i=0 ; i<order.length ; i++) {
+		let currentIndex = order.indexOf(i);
+
+		if (i !== currentIndex) {
+			// Reorder our switching error
+			arrayMove(order, currentIndex, 1, i);
+
+			// Do the reorder
+			(dt as any).colReorder.move(currentIndex, i, false, false);
+
+			changed = true;
+		}
+	}
+
+	// Reorder complete
+	if (changed) {
+		finalise(dt);
+	}
+}
+
+/**
+ * Convert the DataTables header structure array into a 2D array where each
+ * element has a reference to its TH/TD cell (regardless of spanning).
+ *
+ * @param structure Header / footer structure object
+ * @returns 2D array of header cells
+ */
+function structureFill(structure: HeaderStructure[][]) {
+	let filledIn: Array<Array<HTMLElement>> = [];
+
+	for (let row = 0; row < structure.length; row++) {
+		filledIn.push([]);
+
+		for (let col = 0; col < structure[row].length; col++) {
+			let cell = structure[row][col];
+
+			if (cell) {
+				for (let rowInner = 0; rowInner < cell.rowspan; rowInner++) {
+					for (let colInner = 0; colInner < cell.colspan; colInner++) {
+						filledIn[row + rowInner][col + colInner] = cell.cell;
+					}
+				}
+			}
+		}
+	}
+
+	return filledIn;
+}
+
+/**
+ * Validate that a requested move is okay. This includes bound checking
+ * and that it won't split colspan'ed cells.
+ *
+ * @param table API instance
+ * @param from Column indexes to move
+ * @param to Destination index (starting if multiple)
+ * @returns Validation result
+ */
+function validateMove(table: Api<any>, from: number[], to: number) {
+	let columns = table.columns().count();
+
+	// Sanity and bound checking
+	if (from[0] < to && to < from[from.length]) {
+		return false;
+	}
+
+	if (from[0] < 0 && from[from.length - 1] > columns) {
+		return false;
+	}
+
+	if (to < 0 && to > columns) {
+		return false;
+	}
+
+	if (!validateStructureMove(table.table().header.structure(), from, to)) {
+		return false;
+	}
+
+	if (!validateStructureMove(table.table().footer.structure(), from, to)) {
+		return false;
+	}
+
+	return true;
+}
+
+/**
+ * For a given structure check that the move is valid.
+ * @param structure
+ * @param from
+ * @param to
+ * @returns
+ */
+function validateStructureMove(structure: HeaderStructure[][], from: number[], to: number): boolean {
+	let header = structureFill(structure);
+	let i;
+
+	// Shuffle the header cells around
+	for (i = 0; i < header.length; i++) {
+		arrayMove(header[i], from[0], from.length, to);
+	}
+
+	// Sanity check that the headers are next to each other
+	for (i = 0; i < header.length; i++) {
+		let seen = [];
+
+		for (let j = 0; j < header[i].length; j++) {
+			let cell = header[i][j];
+
+			if (!seen.includes(cell)) {
+				// Hasn't been seen before
+				seen.push(cell);
+			}
+			else if (seen[seen.length - 1] !== cell) {
+				// Has been seen before and is not the previous cell - validation failed
+				return false;
+			}
+		}
+	}
+
+	return true;
+}
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * DataTables API integration
+ */
+
+/**
+ * Change the ordering of the columns in the DataTable.
+ */
+DataTable.Api.register('colReorder.move()', function (from, to) {
+	init(this);
+
+	if (!Array.isArray(from)) {
+		from = [from];
+	}
+
+	if (!validateMove(this, from, to)) {
+		console.log('INVALID move');
+		return this;
+	}
+
+	return this.tables().every(function() {
+		move(this, from, to);
+		finalise(this);
+	});
 });
 
 DataTable.Api.register('colReorder.order()', function (set: number[]) {
 	init(this);
 
-	// TODO setter
+	if (!set) {
+		return this.context.length
+			? getOrder(this)
+			: null;
+	}
 
-	return this.context.length
-		? this.context[0].aoColumns.map(function (col) {
-			return col._crOriginalIdx;
-		})
-		: null;
+	return this.tables().every(function() {
+		setOrder(this, set);
+	});
 });
 
-DataTable.Api.register( 'colReorder.transpose()', function ( idx: number | number[], dir ) {
+DataTable.Api.register('colReorder.reset()', function () {
 	init(this);
-	
-	if ( ! dir ) {
+
+	return this.tables().every(function() {
+		setOrder(this, getOrder(this));
+	});
+});
+
+DataTable.Api.register('colReorder.transpose()', function (idx: number | number[], dir) {
+	init(this);
+
+	if (!dir) {
 		dir = 'toCurrent';
 	}
 
 	var order = (this as any).colReorder.order() as number[];
 	var columns = this.context[0].aoColumns;
 
-	if ( dir === 'toCurrent' ) {
+	if (dir === 'toCurrent') {
 		// Given an original index, want the current
-		return ! Array.isArray( idx )
+		return !Array.isArray(idx)
 			? order.indexOf(idx)
-			: idx.map(function ( index ) {
+			: idx.map(function (index) {
 				return order.indexOf(index);
-			} );
+			});
 	}
 	else {
 		// Given a current index, want the original
-		return ! Array.isArray( idx )
+		return !Array.isArray(idx)
 			? columns[idx]._crOriginalIdx
-			: idx.map( function ( index ) {
+			: idx.map(function (index) {
 				return columns[index]._crOriginalIdx;
-			} );
+			});
 	}
-} );
+});
