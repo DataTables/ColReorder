@@ -220,6 +220,20 @@ function headerUpdate(structure: any[], map: number[], from: number[], to: numbe
 	}
 }
 
+function init(api: Api) {
+	// Assign the original column index to a parameter that we can lookup.
+	// On the first pass (i.e. when the parameter hasn't yet been set), the
+	// index order will be the original order, so this is quite a simple
+	// assignment.
+	api.columns().iterator('column', function (s, idx) {
+		let columns = s.aoColumns;
+
+		if (columns[idx]._crOriginalIdx === undefined) {
+			columns[idx]._crOriginalIdx = idx;
+		}
+	});
+}
+
 /**
  * Change the ordering of the columns in the DataTable.
  * 
@@ -232,6 +246,8 @@ function headerUpdate(structure: any[], map: number[], from: number[], to: numbe
  * @param number Target column (current index)
  */
 DataTable.Api.register('colReorder.move()', function (from, to) {
+	init(this);
+
 	if (!Array.isArray(from)) {
 		from = [from];
 	}
@@ -343,3 +359,43 @@ DataTable.Api.register('colReorder.move()', function (from, to) {
 
 	return this;
 });
+
+DataTable.Api.register('colReorder.order()', function (set: number[]) {
+	init(this);
+
+	// TODO setter
+
+	return this.context.length
+		? this.context[0].aoColumns.map(function (col) {
+			return col._crOriginalIdx;
+		})
+		: null;
+});
+
+DataTable.Api.register( 'colReorder.transpose()', function ( idx: number | number[], dir ) {
+	init(this);
+	
+	if ( ! dir ) {
+		dir = 'toCurrent';
+	}
+
+	var order = (this as any).colReorder.order() as number[];
+	var columns = this.context[0].aoColumns;
+
+	if ( dir === 'toCurrent' ) {
+		// Given an original index, want the current
+		return ! Array.isArray( idx )
+			? order.indexOf(idx)
+			: idx.map(function ( index ) {
+				return order.indexOf(index);
+			} );
+	}
+	else {
+		// Given a current index, want the original
+		return ! Array.isArray( idx )
+			? columns[idx]._crOriginalIdx
+			: idx.map( function ( index ) {
+				return columns[index]._crOriginalIdx;
+			} );
+	}
+} );
