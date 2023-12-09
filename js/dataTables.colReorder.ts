@@ -511,3 +511,63 @@ DataTable.Api.register('colReorder.transpose()', function (idx: number | number[
 			});
 	}
 });
+
+$(document).on('preInit.dt', function (e, settings) {
+	if (e.namespace !== 'dt') {
+		return;
+	}
+
+	var init = settings.oInit.colReorder;
+	var defaults = (DataTable.defaults as any).colReorder;
+
+	if (init || defaults) {
+		var opts = $.extend({}, defaults, init);
+
+		if (init !== false) {
+			initUi(settings, opts);
+		}
+	}
+});
+
+function initUi(settings, opts) {
+	let dt = new DataTable.Api(settings);
+
+	init(dt);
+
+	dt.on('stateSaveParams', function (e, s, d) {
+		d.colReorder = getOrder(dt);
+		console.log('save', d.colReorder);
+	});
+
+	dt.on('stateLoadInit', function (e, s, d) {
+		console.log('load', d.colReorder);
+		if (d.colReorder) {
+			setOrder(dt, d.colReorder);
+		}
+	});
+
+	let loaded = dt.state.loaded() as any;
+	let order = opts.order;
+
+	if (loaded && loaded.colReorder) {
+		order = loaded.colReorder;
+	}
+
+	// Need to wait for the table's initialisation to be completed
+	// if (order) {
+	// 	if ( !settings._bInitComplete ) {
+	// 		var done = false;
+
+	// 		dt.on( 'draw.dt.colReorder', function () {
+	// 			if ( !settings._bInitComplete && !done ) {
+	// 				done = true;
+	// 				setOrder(dt, order);
+	// 			}
+	// 		} );
+	// 	}
+	// 	else
+	// 	{
+	// 		setOrder(dt, order);
+	// 	}
+	// }
+}
