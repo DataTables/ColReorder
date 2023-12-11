@@ -22,7 +22,6 @@
 
 import DataTable, { Api, HeaderStructure } from '../../../types/types'; // declare var DataTable: any;
 
-
 /**
  * Mutate an array, moving a set of elements into a new index position
  *
@@ -62,10 +61,12 @@ function finalise(dt: Api) {
 	// Fire an event so other plug-ins can update
 	let order = (dt as any).colReorder.order();
 
-	dt.trigger('columns-reordered.dt', [{
-		order: order,
-		mapping: invertKeyValues(order)
-	}]);
+	dt.trigger('columns-reordered.dt', [
+		{
+			order: order,
+			mapping: invertKeyValues(order)
+		}
+	]);
 }
 
 /**
@@ -77,7 +78,7 @@ function finalise(dt: Api) {
 function getOrder(dt: Api): number[] {
 	return dt.settings()[0].aoColumns.map(function (col) {
 		return col._crOriginalIdx;
-	})
+	});
 }
 
 /**
@@ -245,11 +246,13 @@ function move(dt: Api, from: number[], to: number): void {
 	});
 
 	// Fire an event so other plug-ins can update
-	dt.trigger('column-reorder.dt', [{
-		from: from,
-		to: to,
-		mapping: reverseIndexes
-	}]);
+	dt.trigger('column-reorder.dt', [
+		{
+			from: from,
+			to: to,
+			mapping: reverseIndexes
+		}
+	]);
 }
 
 /**
@@ -285,20 +288,28 @@ function orderingIndexes(map: number[], order: any[]): void {
  * @param dt DataTable being operated on - must be a single table instance
  * @param order Indexes from current order, positioned as you want them to be
  */
-function setOrder(dt: Api, order: number[]): void {
+function setOrder(dt: Api, order: number[], original: boolean): void {
 	let changed = false;
+	let i;
 
 	if (order.length !== dt.columns().count()) {
 		// TODO DT needs an error method.
-		throw 'ERROR TODO'
+		throw 'ERROR TODO';
 	}
 
-	// The API is array index as the deired position, but our algorthim below is
+	// The order given is based on the original indexes, rather than the
+	// existing ones, so we need to translate from the original to current
+	// before then doing the order
+	if (original) {
+		order = transpose(dt, order, 'toCurrent');
+	}
+
+	// The API is array index as the desired position, but our algorithm below is
 	// for array index as the current position. So we need to invert for it to work.
 	let setOrder = invertKeyValues(order);
 
 	// Move columns, one by one with validation disabled!
-	for (let i=0 ; i<setOrder.length ; i++) {
+	for (i = 0; i < setOrder.length; i++) {
 		let currentIndex = setOrder.indexOf(i);
 
 		if (i !== currentIndex) {
@@ -345,6 +356,39 @@ function structureFill(structure: HeaderStructure[][]) {
 	}
 
 	return filledIn;
+}
+
+/**
+ * Convert the index type
+ *
+ * @param dt DataTable to work on
+ * @param idx Index to transform
+ * @param dir Transform direction
+ * @returns Converted number(s)
+ */
+function transpose(
+	dt: Api,
+	idx: number | number[],
+	dir: 'toCurrent' | 'toOriginal' | 'fromCurrent' | 'fromOriginal'
+): any {
+	var order = (dt as any).colReorder.order() as number[];
+	var columns = dt.settings()[0].aoColumns;
+
+	if (dir === 'toCurrent' || dir === 'fromOriginal') {
+		// Given an original index, want the current
+		return !Array.isArray(idx)
+			? order.indexOf(idx)
+			: idx.map(function (index) {
+					return order.indexOf(index);
+			  });
+	}
+
+	// Given a current index, want the original
+	return !Array.isArray(idx)
+		? columns[idx]._crOriginalIdx
+		: idx.map(function (index) {
+				return columns[index]._crOriginalIdx;
+			});
 }
 
 /**
@@ -420,7 +464,6 @@ function validateStructureMove(structure: HeaderStructure[][], from: number[], t
 	return true;
 }
 
-
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * DataTables API integration
  */
@@ -440,7 +483,7 @@ DataTable.Api.register('colReorder.move()', function (from, to) {
 		return this;
 	}
 
-	return this.tables().every(function() {
+	return this.tables().every(function () {
 		move(this, from, to);
 		finalise(this);
 	});
@@ -450,66 +493,37 @@ DataTable.Api.register('colReorder.order()', function (set?: number[], original?
 	init(this);
 
 	if (!set) {
-		return this.context.length
-			? getOrder(this)
-			: null;
+		return this.context.length ? getOrder(this) : null;
 	}
 
-	return this.tables().every(function() {
-		let newOrder = set;
-
-		// The order given is based on the original indexes, rather than the
-		// existing ones, so we need to translate from the original to current
-		// before then doing the order
-		if ( original ) {
-			let a = [];
-			let order = (this as any).colReorder.order();
-	
-			for ( let i=0 ; i<newOrder.length ; i++ ) {
-				a.push( order.indexOf(set[i] ) );
-			}
-	
-			newOrder = a;
-		}
-
-		setOrder(this, newOrder);
+	return this.tables().every(function () {
+		setOrder(this, set, original);
 	});
 });
 
 DataTable.Api.register('colReorder.reset()', function () {
 	init(this);
 
-	return this.tables().every(function() {
-		setOrder(this, getOrder(this));
+	return this.tables().every(function () {
+		var order = this.columns()
+			.every(function (i) {
+				return i;
+			})
+			.flatten()
+			.toArray();
+
+		setOrder(this, order, true);
 	});
 });
 
-DataTable.Api.register('colReorder.transpose()', function (idx: number | number[], dir) {
+DataTable.Api.register('colReorder.transpose()', function (idx: any, dir) {
 	init(this);
 
 	if (!dir) {
 		dir = 'toCurrent';
 	}
 
-	var order = (this as any).colReorder.order() as number[];
-	var columns = this.context[0].aoColumns;
-
-	if (dir === 'toCurrent') {
-		// Given an original index, want the current
-		return !Array.isArray(idx)
-			? order.indexOf(idx)
-			: idx.map(function (index) {
-				return order.indexOf(index);
-			});
-	}
-	else {
-		// Given a current index, want the original
-		return !Array.isArray(idx)
-			? columns[idx]._crOriginalIdx
-			: idx.map(function (index) {
-				return columns[index]._crOriginalIdx;
-			});
-	}
+	return transpose(this, idx, dir);
 });
 
 $(document).on('preInit.dt', function (e, settings) {
@@ -542,7 +556,7 @@ function initUi(settings, opts) {
 	dt.on('stateLoadInit', function (e, s, d) {
 		console.log('load', d.colReorder);
 		if (d.colReorder) {
-			setOrder(dt, d.colReorder);
+			setOrder(dt, d.colReorder, true);
 		}
 	});
 
