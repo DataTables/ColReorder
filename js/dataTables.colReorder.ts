@@ -273,7 +273,7 @@ function orderingIndexes(map: number[], order: any[]): void {
 			// New index in an object style
 			el.idx = map[el.idx];
 		}
-		else {
+		else if (Array.isArray(el) && typeof el[0] === 'number') {
 			// The good old fixes length array
 			el[0] = map[el[0]];
 		}
@@ -560,11 +560,19 @@ function initUi(settings, opts) {
 		}
 	});
 
+	dt.on('destroy', function () {
+		(dt as any).colReorder.reset();
+	});
+
 	let loaded = dt.state.loaded() as any;
 	let order = opts.order;
 
 	if (loaded && loaded.colReorder) {
 		order = loaded.colReorder;
+	}
+
+	if (order) {
+		setOrder(dt, order, true);
 	}
 
 	// Need to wait for the table's initialisation to be completed
