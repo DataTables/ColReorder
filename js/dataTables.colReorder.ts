@@ -293,8 +293,8 @@ function setOrder(dt: Api, order: number[], original: boolean): void {
 	let i;
 
 	if (order.length !== dt.columns().count()) {
-		// TODO DT needs an error method.
-		throw 'ERROR TODO';
+		dt.error('ColReorder - column count mismatch');
+		return;
 	}
 
 	// The order given is based on the original indexes, rather than the
