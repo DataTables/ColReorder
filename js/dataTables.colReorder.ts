@@ -175,6 +175,9 @@ function move(dt: Api, from: number[], to: number): void {
 	arrayMove(newOrder, from[0], from.length, to);
 	let reverseIndexes = invertKeyValues(newOrder);
 
+	// Main column
+	arrayMove(columns, from[0], from.length, to);
+
 	// Per row manipulations
 	for (i = 0; i < settings.aoData.length; i++) {
 		var data = settings.aoData[i];
@@ -199,9 +202,6 @@ function move(dt: Api, from: number[], to: number): void {
 	}
 
 	// Per column manipulation
-	// Main column
-	arrayMove(columns, from[0], from.length, to);
-
 	for (i = 0; i < columns.length; i++) {
 		let column = columns[i];
 
@@ -324,7 +324,7 @@ function setOrder(dt: Api, order: number[], original: boolean): void {
 	}
 
 	// Reorder complete
-	if (changed) {
+	if (changed && dt.ready()) {
 		finalise(dt);
 	}
 }
@@ -555,7 +555,7 @@ function initUi(settings, opts) {
 
 	dt.on('stateLoadInit', function (e, s, d) {
 		console.log('load', d.colReorder);
-		if (d.colReorder) {
+		if (d.colReorder && dt.ready()) {
 			setOrder(dt, d.colReorder, true);
 		}
 	});
@@ -571,25 +571,9 @@ function initUi(settings, opts) {
 		order = loaded.colReorder;
 	}
 
-	if (order) {
-		setOrder(dt, order, true);
-	}
-
-	// Need to wait for the table's initialisation to be completed
 	// if (order) {
-	// 	if ( !settings._bInitComplete ) {
-	// 		var done = false;
-
-	// 		dt.on( 'draw.dt.colReorder', function () {
-	// 			if ( !settings._bInitComplete && !done ) {
-	// 				done = true;
-	// 				setOrder(dt, order);
-	// 			}
-	// 		} );
-	// 	}
-	// 	else
-	// 	{
-	// 		setOrder(dt, order);
-	// 	}
+	// 	dt.ready(function () {
+	// 		setOrder(dt, order, true);
+	// 	});
 	// }
 }
