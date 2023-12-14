@@ -36,10 +36,16 @@ rsync -r js/*.js $OUT_DIR/js
 sed -i "s#import DataTable from '../../../types/types';##" $OUT_DIR/js/dataTables.colReorder.js
 
 js_frameworks colReorder $OUT_DIR/js "jquery datatables.net-FW datatables.net-colreorder"
+
+HEADER="$(head -n 3 js/dataTables.colReorder.ts)"
+OUT=$OUT_DIR $DT_SRC/node_modules/rollup/dist/bin/rollup \
+    --banner "$HEADER" \
+    --config rollup.config.mjs
+
 js_wrap $OUT_DIR/js/dataTables.colReorder.js "jquery datatables.net"
 
 rm js/*.d.ts
-rm js/dataTables.colReorder.js
+rm js/dataTables.colReorder.js js/functions.js js/ColReorder.js
 
 # Copy Types
 if [ -d $OUT_DIR/types ]; then
