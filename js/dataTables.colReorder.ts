@@ -324,7 +324,7 @@ function setOrder(dt: Api, order: number[], original: boolean): void {
 	}
 
 	// Reorder complete
-	if (changed && dt.ready()) {
+	if (changed) {
 		finalise(dt);
 	}
 }
@@ -388,7 +388,7 @@ function transpose(
 		? columns[idx]._crOriginalIdx
 		: idx.map(function (index) {
 				return columns[index]._crOriginalIdx;
-			});
+		  });
 }
 
 /**
@@ -479,7 +479,7 @@ DataTable.Api.register('colReorder.move()', function (from, to) {
 	}
 
 	if (!validateMove(this, from, to)) {
-		console.log('INVALID move');
+		this.error('ColReorder - invalid move');
 		return this;
 	}
 
@@ -526,6 +526,45 @@ DataTable.Api.register('colReorder.transpose()', function (idx: any, dir) {
 	return transpose(this, idx, dir);
 });
 
+// Called when DataTables is going to load a state. That might be
+// before the table is ready (state saving) or after (state restoring).
+// Also note that it happens _before_ preInit (below).
+$(document).on('stateLoadInit.dt', function (e, settings, state) {
+	if (e.namespace !== 'dt') {
+		return;
+	}
+
+	let dt = new DataTable.Api(settings);
+
+	if (state.colReorder) {
+		if (dt.ready()) {
+			// Table is fully loaded - do the column reordering here
+			// so that the stored indexes are in the correct place
+			// e.g. column visibility
+			setOrder(dt, state.colReorder, true);
+		}
+		else {
+			// If the table is not ready, column reordering is done
+			// after it becomes fully ready. That means that saved
+			// column indexes need to be updated for where those columns
+			// currently are.
+			let map = invertKeyValues(state.colReorder);
+
+			// State's ordering indexes
+			orderingIndexes(map, state.order);
+
+			// State's columns array - sort by restore index
+			for (let i = 0; i < state.columns.length; i++) {
+				state.columns[i]._cr_sort = state.colReorder[i];
+			}
+
+			state.columns.sort(function (a, b) {
+				return a._cr_sort - b._cr_sort;
+			});
+		}
+	}
+});
+
 $(document).on('preInit.dt', function (e, settings) {
 	if (e.namespace !== 'dt') {
 		return;
@@ -550,17 +589,7 @@ function initUi(settings, opts) {
 
 	dt.on('stateSaveParams', function (e, s, d) {
 		d.colReorder = getOrder(dt);
-		console.log('save', d.colReorder);
-	});
-
-	dt.on('stateLoadInit', function (e, s, d) {
-		console.log('load', d.colReorder);
-		if (d.colReorder && dt.ready()) {
-			setOrder(dt, d.colReorder, true);
-		}
-	});
-
-	dt.on('destroy', function () {
+	}).on('destroy', function () {
 		(dt as any).colReorder.reset();
 	});
 
@@ -571,9 +600,9 @@ function initUi(settings, opts) {
 		order = loaded.colReorder;
 	}
 
-	// if (order) {
-	// 	dt.ready(function () {
-	// 		setOrder(dt, order, true);
-	// 	});
-	// }
+	if (order) {
+		dt.ready(function () {
+			setOrder(dt, order, true);
+		});
+	}
 }
