@@ -151,6 +151,12 @@ export function move(dt: Api, from: number[], to: number): void {
 		return idx;
 	});
 
+	// The to column in already inside the from column(s) (might be the same)
+	// no change required
+	if (from.includes(to)) {
+		return;
+	}
+
 	// A reverse index array so we can look up new indexes from old
 	arrayMove(newOrder, from[0], from.length, to);
 	let reverseIndexes = invertKeyValues(newOrder);
@@ -394,6 +400,11 @@ export function validateMove(table: Api<any>, from: number[], to: number) {
 
 	if (to < 0 && to > columns) {
 		return false;
+	}
+
+	// No change - it's valid
+	if (from.includes(to)) {
+		return true;
 	}
 
 	if (!validateStructureMove(table.table().header.structure(), from, to)) {
