@@ -146,6 +146,7 @@ export default class ColReorder {
 	 * @returns
 	 */
 	private _mouseDown(e: JQuery.TriggeredEvent, cell: HTMLElement) {
+		let that = this;
 		var target = $(e.target).closest('th, td');
 		var offset = target.offset();
 		var moveColumnIndexes = $(cell)
@@ -165,12 +166,23 @@ export default class ColReorder {
 		this.s.mouse.fromIndex = moveColumnIndexes[0];
 		this.s.mouse.tableOffset = $(this.dt.table().node()).offset().left;
 
-		this._regions(moveColumnIndexes);
+		// Classes to highlight the columns being moved
+		for (let i=0 ; i<moveColumnIndexes.length ; i++) {
+			let cells = this.dt.cells(null, moveColumnIndexes[i] as any, {page: 'current'}).nodes().to$();
+			let klass = 'dtcr-moving';
 
-		// TODO
-		// Add a class to the columns being moved to highlight them in some way
-		// A border around them would be nice, but might be difficult? Prob need
-		// class names like `cr-moving-first cr-moving`, etc.
+			if (i === 0) {
+				klass += ' dtcr-moving-first';
+			}
+
+			if (i === moveColumnIndexes.length - 1) {
+				klass += ' dtcr-moving-last';
+			}
+
+			cells.addClass(klass);
+		}
+
+		this._regions(moveColumnIndexes);
 
 		/* Add event handlers to the document */
 		$(document)
@@ -234,6 +246,10 @@ export default class ColReorder {
 			this.dom.drag.remove();
 			this.dom.drag = null;
 		}
+
+		this.dt.cells('.dtcr-moving').nodes().to$().removeClass(
+			'dtcr-moving dtcr-moving-first dtcr-moving-last'
+		);
 	}
 
 	/**
