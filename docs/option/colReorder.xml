@@ -30,21 +30,17 @@
 	</description>
 
 	<example title="Enable ColReorder for a table"><![CDATA[
-
-$('#example').DataTable( {
+new DataTable('#myTable', {
 	colReorder: true
-} );
-
+});
 ]]></example>
 
 	<example title="Enable ColReorder with configuration options"><![CDATA[
-
-$('#example').DataTable( {
+new DataTable('#myTable', {
 	colReorder: {
 		realtime: false
 	}
-} );
-
+});
 ]]></example>
 
 </dt-option>

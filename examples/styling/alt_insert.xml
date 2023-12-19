@@ -14,11 +14,11 @@
 </css>
 <js lib="jquery datatables colreorder">
 <![CDATA[
-$(document).ready(function() {
-	$('#example').DataTable( {
+$(document).ready(function () {
+	$('#example').DataTable({
 		colReorder: true
-	} );
-} );
+	});
+});
 ]]>
 </js>
 

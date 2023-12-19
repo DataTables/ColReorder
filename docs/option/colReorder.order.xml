@@ -20,13 +20,11 @@
 	</description>
 
 	<example title="Enable ColReorder and reserve the table's default column order (for a six column table)"><![CDATA[
-
-$('#example').DataTable( {
+new DataTable('#myTable', {
 	colReorder: {
-		order: [ 5, 4, 3, 2, 1, 0 ]
+		order: [5, 4, 3, 2, 1, 0]
 	}
-} );
-
+});
 ]]></example>
 
 	<related>cr-api colReorder.order()</related>

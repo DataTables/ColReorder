@@ -19,15 +19,13 @@
 	</description>
 
 	<example title="Restore column ordering on click of a button"><![CDATA[
-
-var table = $('#example').DataTable( {
+var table = new DataTable('#myTable', {
 	colReorder: true
-} );
+});
 
-$('#reset').click( function (e) {
+$('#reset').click(function (e) {
 	table.colReorder.reset();
-} );
-
+});
 ]]></example>
 
 </dt-api>

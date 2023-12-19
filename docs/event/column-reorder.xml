@@ -32,20 +32,18 @@
 	</description>
 
 	<example title="Add a class to the reordered column"><![CDATA[
-
-var table = $('#example').DataTable( {
+var table = new DataTable('#myTable', {
 	colReorder: true
-} );
+});
 
-table.on( 'column-reorder', function ( e, settings, details ) {
-	var headerCell = $( table.column( details.to ).header() );
+table.on('column-reorder', function (e, settings, details) {
+	var headerCell = $(table.column(details.to).header());
 
-	headerCell.addClass( 'reordered' );
+	headerCell.addClass('reordered');
 
-	setTimeout( function () {
-		headerCell.removeClass( 'reordered' );
-	}, 2000 );
-} );
-
+	setTimeout(function () {
+		headerCell.removeClass('reordered');
+	}, 2000);
+});
 ]]></example>
 </dt-event>

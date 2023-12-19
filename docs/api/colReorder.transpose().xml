@@ -34,15 +34,13 @@
 	</description>
 
 	<example title="Get the current column position of the column that was in index 0 when the table was created"><![CDATA[
-
-var table = $('#example').DataTable( {
+var table = new DataTable('#myTable', {
 	colReorder: true
-} );
+});
 
-$('#info').click( function (e) {
-	alert( table.colReorder.transpose( 0 ) );
-} );
-
+$('#info').click(function (e) {
+	alert(table.colReorder.transpose(0));
+});
 ]]></example>
 
 </dt-api>

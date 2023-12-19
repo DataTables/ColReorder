@@ -5,24 +5,27 @@
 <js lib="jquery datatables buttons colreorder">
 <![CDATA[
 $('#example').DataTable({
-	buttons: [
-		{
-			text: 'Enable column reordering',
-			action: function (e, dt) {
-				dt.colReorder.enable();
-			}
-		},
-		{
-			text: 'Disable column reordering',
-			action: function (e, dt) {
-				dt.colReorder.disable();
-			}
-		}
-	],
 	colReorder: {
 		enable: false
 	},
-	dom: 'Bfrtip'
+	layout: {
+		topStart: {
+			buttons: [
+				{
+					text: 'Enable column reordering',
+					action: function (e, dt) {
+						dt.colReorder.enable();
+					}
+				},
+				{
+					text: 'Disable column reordering',
+					action: function (e, dt) {
+						dt.colReorder.disable();
+					}
+				}
+			]
+		}
+	}
 });
 
 ]]>
@@ -31,24 +34,27 @@ $('#example').DataTable({
 <js-vanilla>
 <![CDATA[
 new DataTable('#example', {
-	buttons: [
-		{
-			text: 'Enable column reordering',
-			action: function (e, dt) {
-				dt.colReorder.enable();
-			}
-		},
-		{
-			text: 'Disable column reordering',
-			action: function (e, dt) {
-				dt.colReorder.disable();
-			}
-		}
-	],
 	colReorder: {
 		enable: false
 	},
-	dom: 'Bfrtip'
+	layout: {
+		topStart: {
+			buttons: [
+				{
+					text: 'Enable column reordering',
+					action: function (e, dt) {
+						dt.colReorder.enable();
+					}
+				},
+				{
+					text: 'Disable column reordering',
+					action: function (e, dt) {
+						dt.colReorder.disable();
+					}
+				}
+			]
+		}
+	}
 });
 
 ]]>

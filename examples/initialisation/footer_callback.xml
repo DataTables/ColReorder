@@ -36,7 +36,9 @@ $('#example').DataTable({
 			}, 0);
 
 		// Update footer
-		$(api.column(currentPosition).footer()).html(pageTotal + ' (' + total + ' total)');
+		$(api.column(currentPosition).footer()).html(
+			pageTotal + ' (' + total + ' total)'
+		);
 	}
 });
 
@@ -73,7 +75,8 @@ new DataTable('#example', {
 			.reduce((a, b) => intVal(a) + intVal(b), 0);
 
 		// Update footer
-		api.column(currentPosition).footer().innerHTML = '$' + pageTotal + ' ( $' + total + ' total)';
+		api.column(currentPosition).footer().innerHTML =
+			'$' + pageTotal + ' ( $' + total + ' total)';
 	}
 });
 

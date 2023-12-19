@@ -31,12 +31,10 @@
 	</description>
 
 	<example title="Move the first column in the table to the second position"><![CDATA[
-
-var table = $('#example').DataTable( {
+var table = new DataTable('#myTable', {
 	colReorder: true
-} );
+});
 
-table.colReorder.move( 0, 1 );
-
+table.colReorder.move(0, 1);
 ]]></example>
 </dt-api>

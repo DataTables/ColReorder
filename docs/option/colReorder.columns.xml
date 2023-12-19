@@ -24,12 +24,10 @@
 	</description>
 
 	<example title="Disable reordering for first two columns in the table"><![CDATA[
-
-$('#example').DataTable( {
+new DataTable('#myTable', {
 	colReorder: {
 		columns: ':gt(1)'
 	}
-} );
-
+});
 ]]></example>
 </dt-option>

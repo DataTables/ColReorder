@@ -20,19 +20,17 @@
 	</description>
 
 	<example title="Enable / disable column reordering using buttons"><![CDATA[
-
-var table = $('#example').DataTable( {
+var table = new DataTable('#myTable', {
 	colReorder: true
-} );
+});
 
-$('#enableReordering').on( 'click', function () {
-	table.colReorder.enable( true );
-} );
+$('#enableReordering').on('click', function () {
+	table.colReorder.enable(true);
+});
 
-$('#disableReordering').on( 'click', function () {
+$('#disableReordering').on('click', function () {
 	table.colReorder.disable();
-} );
-
+});
 ]]></example>
 
 	<related>-init colReorder.enable</related>

@@ -20,13 +20,11 @@
 	</description>
 
 	<example title="Disable ColReorder on initialisation"><![CDATA[
-
-$('#example').DataTable( {
+new DataTable('#myTable', {
 	colReorder: {
 		enable: false
 	}
-} );
-
+});
 ]]></example>
 
 	<related>-init colReorder.enable</related>

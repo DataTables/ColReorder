@@ -44,27 +44,23 @@
 	</description>
 
 	<example title="Reverse the order of the columns in the table on a button click"><![CDATA[
-
-var table = $('#example').DataTable( {
+var table = new DataTable('#myTable', {
 	colReorder: true
-} );
+});
 
-$('#reverse').click( function (e) {
-	table.colReorder.order( [ 5, 4, 3, 2, 1, 0 ] );
-} );
-
+$('#reverse').click(function (e) {
+	table.colReorder.order([5, 4, 3, 2, 1, 0]);
+});
 ]]></example>
 
 	<example title="Restore the original order, regardless of any ordering applied (by passing the second parameter as `true`)"><![CDATA[
-
-var table = $('#example').DataTable( {
+var table = new DataTable('#myTable', {
 	colReorder: true
-} );
+});
 
-$('#reverse').click( function (e) {
-	table.colReorder.order( [ 0, 1, 2, 3, 4, 5 ], true );
-} );
-
+$('#reverse').click(function (e) {
+	table.colReorder.order([0, 1, 2, 3, 4, 5], true);
+});
 ]]></example>
 
 </dt-api>

@@ -4,7 +4,7 @@
 <css lib="datatables colreorder" />
 <js lib="jquery datatables colreorder">
 <![CDATA[
-$('#example').dataTable({
+$('#example').DataTable({
 	ajax: '../../../../examples/server_side/scripts/objects.php',
 	columns: [
 		{ data: 'first_name' },

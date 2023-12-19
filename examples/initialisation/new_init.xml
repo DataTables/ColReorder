@@ -6,14 +6,14 @@
 <![CDATA[
 var table = $('#example').DataTable();
 
-new DataTable.ColReorder( table );
+new DataTable.ColReorder(table);
 ]]>
 </js>
 
 <js-vanilla>
 <![CDATA[
 new DataTable('#example');
-new DataTable.ColReorder( table );
+new DataTable.ColReorder(table);
 ]]>
 </js-vanilla>
 

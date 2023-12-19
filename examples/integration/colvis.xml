@@ -5,9 +5,12 @@
 <js lib="jquery datatables colreorder buttons buttons-colvis">
 <![CDATA[
 $('#example').DataTable({
-	buttons: ['colvis'],
 	colReorder: true,
-	dom: 'Bfrtip'
+	layout: {
+		topStart: {
+			buttons: ['colvis']
+		}
+	}
 });
 ]]>
 </js>
@@ -15,9 +18,12 @@ $('#example').DataTable({
 <js-vanilla>
 <![CDATA[
 new DataTable('#example', {
-	buttons: ['colvis'],
 	colReorder: true,
-	dom: 'Bfrtip'
+	layout: {
+		topStart: {
+			buttons: ['colvis']
+		}
+	}
 });
 ]]>
 </js-vanilla>
