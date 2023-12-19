@@ -1,4 +1,5 @@
-import DataTable, { Api, HeaderStructure } from '../../../types/types'; // declare var DataTable: any;
+
+import { Api } from '../../../types/types'; // declare var DataTable: any;
 import { init, getOrder, setOrder, validateMove } from './functions';
 
 interface IDropZone {
@@ -12,7 +13,6 @@ interface ISettings {
 	dropZones: IDropZone[];
 	enable: boolean;
 	mouse: {
-		fromIndex: number;
 		offset: {
 			x: number;
 			y: number;
@@ -24,10 +24,15 @@ interface ISettings {
 		tableOffset: number;
 		target: JQuery;
 		targets: number[];
-		targetIndex: number;
 	};
 }
 
+/**
+ * This is one possible UI for column reordering in DataTables. In this case
+ * columns are reordered by clicking and dragging a column header. It calculates
+ * where columns can be dropped based on the column header used to start the drag
+ * and then `colReorder.move()` method to alter the DataTable.
+ */
 export default class ColReorder {
 	private dom = {
 		drag: null
@@ -41,7 +46,6 @@ export default class ColReorder {
 		enable: true,
 
 		mouse: {
-			fromIndex: -1,
 			offset: {
 				x: -1,
 				y: -1
@@ -52,8 +56,7 @@ export default class ColReorder {
 			},
 			tableOffset: -1,
 			target: null,
-			targets: [],
-			targetIndex: -1
+			targets: []
 		}
 	};
 
@@ -162,13 +165,14 @@ export default class ColReorder {
 		this.s.mouse.offset.y = this._cursorPosition(e, 'pageY') - offset.top;
 		this.s.mouse.target = target;
 		this.s.mouse.targets = moveColumnIndexes;
-		this.s.mouse.targetIndex = moveColumnIndexes[0];
-		this.s.mouse.fromIndex = moveColumnIndexes[0];
 		this.s.mouse.tableOffset = $(this.dt.table().node()).offset().left;
 
 		// Classes to highlight the columns being moved
-		for (let i=0 ; i<moveColumnIndexes.length ; i++) {
-			let cells = this.dt.cells(null, moveColumnIndexes[i] as any, {page: 'current'}).nodes().to$();
+		for (let i = 0; i < moveColumnIndexes.length; i++) {
+			let cells = this.dt
+				.cells(null, moveColumnIndexes[i] as any, { page: 'current' })
+				.nodes()
+				.to$();
 			let klass = 'dtcr-moving';
 
 			if (i === 0) {
@@ -228,14 +232,12 @@ export default class ColReorder {
 			return false;
 		});
 
-		if (! dropZone) {
+		if (!dropZone) {
 			return;
 		}
 
-		if (! dropZone.self) {
-			(this.dt as any).colReorder.move(this.s.mouse.targets, dropZone.colIdx);
-
-			this._regions(this.s.mouse.targets);
+		if (!dropZone.self) {
+			this._move(dropZone, cursorMouseLeft);
 		}
 	}
 
@@ -247,9 +249,69 @@ export default class ColReorder {
 			this.dom.drag = null;
 		}
 
-		this.dt.cells('.dtcr-moving').nodes().to$().removeClass(
-			'dtcr-moving dtcr-moving-first dtcr-moving-last'
-		);
+		this.dt.cells('.dtcr-moving').nodes().to$().removeClass('dtcr-moving dtcr-moving-first dtcr-moving-last');
+	}
+
+	/**
+	 * Shift columns around
+	 *
+	 * @param dropZone Where to move to
+	 * @param cursorMouseLeft Cursor position, relative to the left of the table
+	 */
+	private _move(dropZone: IDropZone, cursorMouseLeft: number) {
+		let that = this;
+
+		(this.dt as any).colReorder.move(this.s.mouse.targets, dropZone.colIdx);
+
+		// Update the targets
+		this.s.mouse.targets = $(this.s.mouse.target)
+			.attr('data-dt-column')
+			.split(',')
+			.map(function (val) {
+				return parseInt(val, 10);
+			});
+
+		this._regions(this.s.mouse.targets);
+
+		// If the column being moved is smaller than the column it is replacing,
+		// the drop zones might need a correction to allow for this since, otherwise
+		// we might immediately be changing the column order as soon as it was placed.
+
+		// Find the drop zone for the first in the list of targets - is its
+		// left greater than the mouse position. If so, it needs correcting
+		let dz = this.s.dropZones.find(function (zone) {
+			return zone.colIdx === that.s.mouse.targets[0];
+		});
+		let dzIdx = this.s.dropZones.indexOf(dz);
+
+		if (dz.left > cursorMouseLeft) {
+			let previousDiff = dz.left - cursorMouseLeft;
+			let previousDz = this.s.dropZones[dzIdx - 1];
+
+			dz.left -= previousDiff;
+			dz.width += previousDiff;
+
+			if (previousDz) {
+				previousDz.width -= previousDiff;
+			}
+		}
+
+		// And for the last in the list
+		dz = this.s.dropZones.find(function (zone) {
+			return zone.colIdx === that.s.mouse.targets[that.s.mouse.targets.length - 1];
+		});
+
+		if (dz.left + dz.width < cursorMouseLeft) {
+			let nextDiff = cursorMouseLeft - (dz.left + dz.width);
+			let nextDz = this.s.dropZones[dzIdx + 1];
+
+			dz.width += nextDiff;
+
+			if (nextDz) {
+				nextDz.left += nextDiff;
+				nextDz.width -= nextDiff;
+			}
+		}
 	}
 
 	/**
@@ -263,9 +325,15 @@ export default class ColReorder {
 		let negativeCorrect = 0;
 
 		// Each column is a drop zone
-		this.dt.columns(':visible').every(function (colIdx, tabIdx, i) {
+		this.dt.columns().every(function (colIdx, tabIdx, i) {
+			if (!this.visible()) {
+				return;
+			}
+
 			let columnWidth = this.width();
 			let valid = validateMove(that.dt, moveColumns, colIdx);
+
+			console.log(i, colIdx, this.title());
 
 			if (valid) {
 				// New drop zone. Note that it might have it's offset moved
@@ -293,25 +361,32 @@ export default class ColReorder {
 			totalWidth += columnWidth;
 		});
 
-		// for (let i=0 ; i<dropZones.length ; i++) {
-		// 	let zone = dropZones[i];
-
-		// 	$(that.dt.table().container()).append(
-		// 		$('<div>').css({
-		// 			position: 'absolute',
-		// 			top: 0,
-		// 			width: zone.width - 4,
-		// 			height: 20,
-		// 			left: zone.left + 2,
-		// 			border: '1px solid red',
-		// 		})
-		// 	);
-		// }
-
-		console.log(dropZones);
-
 		this.s.dropZones = dropZones;
 	}
+
+	// This is handy for debugging where the drop zones actually are!
+	// private _drawDropZones () {
+	// 	let dropZones = this.s.dropZones;
+
+	// 	$('div.allan').remove();
+
+	// 	for (let i=0 ; i<dropZones.length ; i++) {
+	// 		let zone = dropZones[i];
+
+	// 		$(this.dt.table().container()).append(
+	// 			$('<div>')
+	// 				.addClass('allan')
+	// 				.css({
+	// 					position: 'absolute',
+	// 					top: 0,
+	// 					width: zone.width - 4,
+	// 					height: 20,
+	// 					left: zone.left + 2,
+	// 					border: '1px solid red',
+	// 				})
+	// 		);
+	// 	}
+	// }
 
 	static defaults = {
 		order: null
