@@ -1,6 +1,5 @@
-
-import { Api } from '../../../types/types'; // declare var DataTable: any;
-import { init, getOrder, setOrder, validateMove } from './functions';
+import { Api, ColumnSelector } from '../../../types/types'; // declare var DataTable: any;
+import { init, getOrder, setOrder, validateMove, move } from './functions';
 
 interface IDropZone {
 	colIdx: number;
@@ -9,9 +8,16 @@ interface IDropZone {
 	width: number;
 }
 
+interface IConfig {
+	columns: ColumnSelector;
+
+	enable: boolean;
+
+	order: number[];
+}
+
 interface ISettings {
 	dropZones: IDropZone[];
-	enable: boolean;
 	mouse: {
 		offset: {
 			x: number;
@@ -40,10 +46,14 @@ export default class ColReorder {
 
 	private dt: Api;
 
+	private c: IConfig = {
+		columns: null,
+		enable: null,
+		order: null
+	};
+
 	private s: ISettings = {
 		dropZones: [],
-
-		enable: true,
 
 		mouse: {
 			offset: {
@@ -61,7 +71,7 @@ export default class ColReorder {
 	};
 
 	public disable() {
-		this.s.enable = false;
+		this.c.enable = false;
 
 		return this;
 	}
@@ -71,7 +81,9 @@ export default class ColReorder {
 			return this.disable();
 		}
 
-		this.s.enable = true;
+		this.c.enable = true;
+
+		return this;
 	}
 
 	constructor(dt: Api, opts: typeof ColReorder.defaults) {
@@ -85,9 +97,10 @@ export default class ColReorder {
 		}
 		dt.settings()[0]._colReorder = this;
 
-		init(dt);
-
 		this.dt = dt;
+		$.extend(this.c, ColReorder.defaults, opts);
+
+		init(dt);
 
 		dt.on('stateSaveParams', function (e, s, d) {
 			d.colReorder = getOrder(dt);
@@ -119,7 +132,7 @@ export default class ColReorder {
 			}
 
 			// Ignore if disabled
-			if (!that.s.enable) {
+			if (!that.c.enable) {
 				return;
 			}
 
@@ -173,14 +186,22 @@ export default class ColReorder {
 	 * @returns
 	 */
 	private _mouseDown(e: JQuery.TriggeredEvent, cell: HTMLElement) {
-		var target = $(e.target).closest('th, td');
-		var offset = target.offset();
-		var moveColumnIndexes = $(cell)
+		let target = $(e.target).closest('th, td');
+		let offset = target.offset();
+		let moveableColumns = this.dt.columns(this.c.columns).indexes().toArray();
+		let moveColumnIndexes = $(cell)
 			.attr('data-dt-column')
 			.split(',')
 			.map(function (val) {
 				return parseInt(val, 10);
 			});
+
+		// Don't do anything for columns which are not selected as moveable
+		for (let j = 0; j < moveColumnIndexes.length; j++) {
+			if (! moveableColumns.includes(moveColumnIndexes[j])) {
+				return false;
+			}
+		}
 
 		this.s.mouse.start.x = this._cursorPosition(e, 'pageX');
 		this.s.mouse.start.y = this._cursorPosition(e, 'pageY');
@@ -346,6 +367,7 @@ export default class ColReorder {
 		let dropZones: IDropZone[] = [];
 		let totalWidth = 0;
 		let negativeCorrect = 0;
+		let allowedColumns = this.dt.columns(this.c.columns).indexes().toArray();
 
 		// Each column is a drop zone
 		this.dt.columns().every(function (colIdx, tabIdx, i) {
@@ -354,9 +376,15 @@ export default class ColReorder {
 			}
 
 			let columnWidth = this.width();
-			let valid = validateMove(that.dt, moveColumns, colIdx);
 
-			console.log(i, colIdx, this.title());
+			// Check that we are allowed to move into this column - if not, need
+			// to offset the widths
+			if (!allowedColumns.includes(colIdx)) {
+				totalWidth += columnWidth;
+				return;
+			}
+
+			let valid = validateMove(that.dt, moveColumns, colIdx);
 
 			if (valid) {
 				// New drop zone. Note that it might have it's offset moved
@@ -385,6 +413,7 @@ export default class ColReorder {
 		});
 
 		this.s.dropZones = dropZones;
+		// this._drawDropZones();
 	}
 
 	// This is handy for debugging where the drop zones actually are!
@@ -411,7 +440,11 @@ export default class ColReorder {
 	// 	}
 	// }
 
-	static defaults = {
+	static defaults: IConfig = {
+		columns: '',
+
+		enable: true,
+
 		order: null
 	};
 

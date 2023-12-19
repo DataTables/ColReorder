@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dt-example table-type="html" order="5">
+
+<css lib="datatables colreorder" />
+<js lib="jquery datatables colreorder">
+<![CDATA[
+$('#example').DataTable({
+	colReorder: {
+		columns: ':not(:first-child, :last-child)'
+	}
+});
+]]>
+</js>
+
+<js-vanilla>
+<![CDATA[
+new DataTable('#example', {
+	colReorder: {
+		columns: ':not(:first-child, :last-child)'
+	}
+});
+]]>
+</js-vanilla>
+
+<title lib="ColReorder">Selected columns</title>
+
+<info><![CDATA[
+
+This example shows the use of `-init colReorder.columns` to select which columns should be orderable. Please note that if a column is not orderable, then it also cannot have its position replaced by another column. This is particularly useful at the start or the end of a table where you might wish to have important information fixed in place.
+
+In this example the first and last columns are locked in place. Depending on your application, you will need to alter this selector. Note that you can use any `-type column-selector`, including an array of column indexes to pick the columns you want to have as moveable.
+
+]]></info>
+
+</dt-example>

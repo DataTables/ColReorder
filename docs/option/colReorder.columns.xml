@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dt-option library="ColReorder">
+	<name>colReorder.columns</name>
+	<summary>Select which columns can be reordered</summary>
+
+	<type type="column-selector">
+		<description>
+			Any column selector, including class names, CSS pseudo selectors and column indexes.
+		</description>
+	</type>
+
+	<default value="">
+		Empty string - all columns can be reordered.
+	</default>
+
+	<description>
+		This option can be used to select which columns ColReorder will allow the end user to perform reordering on. Columns which are not selected cannot have column reordering started on them (i.e. can't click and drag a header for them), nor can another column that is being reordered be dropped in this column's position.
+
+		Locking columns in this way can be particularly useful if you have important information or controls at the start / end of a table that you want to always be in the same place.
+
+		Please note that this method does not have any impact on column reordering via the API (e.g. `-api colReorder.move()` and `-api colReorder.order()`). If you have your own UI layer for column reordering that uses those methods, you will need to implement any column reordering restrictions you might want to impose on the end user.
+		
+		Please note that this option replaces the `colReorder.fixedColumnsLeft` and `colReorder.fixedColumnsRight` options from ColReorder 1.x.
+	</description>
+
+	<example title="Disable reordering for first two columns in the table"><![CDATA[
+
+$('#example').DataTable( {
+	colReorder: {
+		columns: ':gt(1)'
+	}
+} );
+
+]]></example>
+</dt-option>
