@@ -60,8 +60,30 @@ export default class ColReorder {
 		}
 	};
 
+	public disable() {
+		this.s.enable = false;
+
+		return this;
+	}
+
+	public enable(flag: boolean = true) {
+		if (flag === false) {
+			return this.disable();
+		}
+
+		this.s.enable = true;
+	}
+
 	constructor(dt: Api, opts: typeof ColReorder.defaults) {
 		let that = this;
+		let ctx = dt.settings()[0];
+
+		// Check if ColReorder already has been initialised on this DataTable - only
+		// one can exist.
+		if (ctx._colReorder) {
+			return;
+		}
+		dt.settings()[0]._colReorder = this;
 
 		init(dt);
 
@@ -72,9 +94,11 @@ export default class ColReorder {
 		});
 
 		dt.on('destroy', function () {
+			dt.off('.colReorder');
 			(dt as any).colReorder.reset();
 		});
 
+		// Initial ordering / state restoring
 		let loaded = dt.state.loaded() as any;
 		let order = opts.order;
 
@@ -149,7 +173,6 @@ export default class ColReorder {
 	 * @returns
 	 */
 	private _mouseDown(e: JQuery.TriggeredEvent, cell: HTMLElement) {
-		let that = this;
 		var target = $(e.target).closest('th, td');
 		var offset = target.offset();
 		var moveColumnIndexes = $(cell)

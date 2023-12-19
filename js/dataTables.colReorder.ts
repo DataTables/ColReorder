@@ -43,6 +43,24 @@ import {
  * DataTables API integration
  */
 
+/** Enable mouse column reordering */
+DataTable.Api.register( 'colReorder.enable()', function( flag ) {
+	return this.iterator( 'table', function ( ctx ) {
+		if ( ctx._colReorder ) {
+			ctx._colReorder.enable( flag );
+		}
+	} );
+} );
+
+/** Disable mouse column reordering */
+DataTable.Api.register( 'colReorder.disable()', function() {
+	return this.iterator( 'table', function ( ctx ) {
+		if ( ctx._colReorder ) {
+			ctx._colReorder.disable();
+		}
+	} );
+} );
+
 /**
  * Change the ordering of the columns in the DataTable.
  */
