@@ -125,21 +125,23 @@ export default class ColReorder {
 			});
 		}
 
-		dt.table().header.structure().forEach(function (row) {
-			for (let i=0 ; i<row.length ; i++) {
-				if (row[i] && row[i].cell) {
-					that._addListener(row[i].cell);
+		dt.table()
+			.header.structure()
+			.forEach(function (row) {
+				for (let i = 0; i < row.length; i++) {
+					if (row[i] && row[i].cell) {
+						that._addListener(row[i].cell);
+					}
 				}
-			}
-		});
+			});
 	}
 
 	/**
 	 * Attach the mouse down listener to an element to start a column reorder action
 	 *
-	 * @param el 
+	 * @param el
 	 */
-	private _addListener (el) {
+	private _addListener(el) {
 		let that = this;
 
 		$(el).on('mousedown.colReorder touchstart.colReorder', function (e: any) {
@@ -218,7 +220,7 @@ export default class ColReorder {
 
 		// Don't do anything for columns which are not selected as moveable
 		for (let j = 0; j < moveColumnIndexes.length; j++) {
-			if (! moveableColumns.includes(moveColumnIndexes[j])) {
+			if (!moveableColumns.includes(moveColumnIndexes[j])) {
 				return false;
 			}
 		}
