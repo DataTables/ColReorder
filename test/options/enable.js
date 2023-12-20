@@ -8,7 +8,7 @@ describe('colReorder - enable', function() {
 
 	dt.html('basic');
 	it('No order set by default', function() {
-		expect($.fn.dataTable.ColReorder.defaults.bEnable).toBe(true);
+		expect($.fn.dataTable.ColReorder.defaults.enable).toBe(true);
 	});
 
 	// TK COLIN need to add test to confirm user interaction

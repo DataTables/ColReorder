@@ -41,7 +41,7 @@ export function finalise(dt: Api) {
 	// Fire an event so other plug-ins can update
 	let order = (dt as any).colReorder.order();
 
-	dt.trigger('columns-reordered.dt', [
+	dt.trigger('columns-reordered', [
 		{
 			order: order,
 			mapping: invertKeyValues(order)
@@ -232,7 +232,8 @@ export function move(dt: Api, from: number[], to: number): void {
 	});
 
 	// Fire an event so other plug-ins can update
-	dt.trigger('column-reorder.dt', [
+	dt.trigger('column-reorder', [
+		dt.settings()[0],
 		{
 			from: from,
 			to: to,

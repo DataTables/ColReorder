@@ -11,7 +11,7 @@ describe('colReorder - order', function() {
 		table = $('#example').DataTable({
 			colReorder: true
 		});
-		expect($.fn.dataTable.ColReorder.defaults.aiOrder).toBe(null);
+		expect($.fn.dataTable.ColReorder.defaults.order).toBe(null);
 		expect($('thead tr th').text()).toBe('NamePositionOfficeAgeStart dateSalary');
 	});
 
