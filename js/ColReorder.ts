@@ -113,7 +113,7 @@ export default class ColReorder {
 
 		// Initial ordering / state restoring
 		let loaded = dt.state.loaded() as any;
-		let order = opts.order;
+		let order = this.c.order;
 
 		if (loaded && loaded.colReorder) {
 			order = loaded.colReorder;
@@ -125,18 +125,24 @@ export default class ColReorder {
 			});
 		}
 
-		dt.on('mousedown.colReorder touchstart.colReorder', 'thead th, thead td', function (e: any) {
-			// Ignore middle and right click
-			if (e.type === 'mousedown' && e.which !== 1) {
-				return;
-			}
+		dt.table().header.structure().forEach(function (row) {
+			for (let i=0 ; i<row.length ; i++) {
+				if (row[i] && row[i].cell) {
+					$(row[i].cell).on('mousedown.colReorder touchstart.colReorder', function (e: any) {
+						// Ignore middle and right click
+						if (e.type === 'mousedown' && e.which !== 1) {
+							return;
+						}
 
-			// Ignore if disabled
-			if (!that.c.enable) {
-				return;
-			}
+						// Ignore if disabled
+						if (!that.c.enable) {
+							return;
+						}
 
-			that._mouseDown(e, this);
+						that._mouseDown(e, this);
+					});
+				}
+			}
 		});
 	}
 
