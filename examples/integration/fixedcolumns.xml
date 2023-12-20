@@ -7,16 +7,14 @@
 
 $('#example').DataTable({
 	columnDefs: [
-		{ orderable: false, targets: 0 },
-		{ orderable: false, targets: -1 }
+		{ orderable: false, targets: [0, -1] }
 	],
 	colReorder: {
-		fixedColumnsLeft: 1,
-		fixedColumnsRight: 1
+		columns: ':not(:first-child, :last-child)'
 	},
 	fixedColumns: {
-		left: 1,
-		right: 1
+		start: 1,
+		end: 1
 	},
 	ordering: [[1, 'asc']],
 	scrollX: true,
@@ -31,16 +29,14 @@ $('#example').DataTable({
 
 new DataTable('#example', {
 	columnDefs: [
-		{ orderable: false, target: 0 },
-		{ orderable: false, target: -1 }
+		{ orderable: false, targets: [0, -1] }
 	],
 	colReorder: {
-		fixedColumnsLeft: 1,
-		fixedColumnsRight: 1
+		columns: ':not(:first-child, :last-child)'
 	},
 	fixedColumns: {
-		left: 1,
-		right: 1
+		start: 1,
+		end: 1
 	},
 	ordering: [[1, 'asc']],
 	scrollX: true,
@@ -56,7 +52,7 @@ new DataTable('#example', {
 
 ColReorder works with the built-in DataTables' scrolling options (`dt-init scrollY` and `dt-init scrollX`), and also the [FixedColumns extension](//datatables.net/extensions/fixedcolumns).
 
-ColReorder provides the `cr-init colReorder.fixedColumnsLeft` and `cr-init colReorder.fixedColumnsRight` options which allows you disallow reordering of the fixed columns (which is required).
+ColReorder provides the `cr-init colReorder.columns` option to select which columns should be eligible for reordering. In this case the example disallows reordering of the fixed columns.
 
 ]]></info>
 

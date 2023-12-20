@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <dt-example table-type="html" order="5">
 
-<css lib="datatables colreorder" />
+<css lib="datatables colreorder">
+	tfoot input {
+		width: 100%;
+	}
+</css>
 <js lib="jquery datatables colreorder">
 <![CDATA[
 $('#example').DataTable({

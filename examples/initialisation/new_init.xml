@@ -12,7 +12,8 @@ new DataTable.ColReorder(table);
 
 <js-vanilla>
 <![CDATA[
-new DataTable('#example');
+let table = new DataTable('#example');
+
 new DataTable.ColReorder(table);
 ]]>
 </js-vanilla>
