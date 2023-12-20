@@ -15,10 +15,9 @@
 		<parameter type="object" name="details">
 			An object that contains information about the reordered columns:
 
-			* `-type integer` `from` - Column index that the column has been moved from
+			* `-type array` `from` - An array of the column indexes that are being moved
 			* `-type integer` `to` - Column index that the column has been moved to
 			* `-type array` `mapping` - Array of integers that define how the old column positions map to the new positions
-			* `-type boolean` `drop` - Indicate if this event is the result of a mouse drop (i.e. the user has finished moving the columns). This is useful to distinguish between a live reorder and the final state. Requires **ColReorder 1.2.1** or newer.
 		</parameter>
 		<scope>HTML table element</scope>
 	</type>
@@ -26,7 +25,7 @@
 	<description>
 		When using ColReorder you may wish to know when a table has been reordered by an end user or through the API. This event provides that information.
 
-		This event is triggered when a column is reordered - if `cr-init colReorder.realtime` is enabled this can be during the column reordering drag.
+		This event is triggered when a column's data structure is moved internally - it does not signify that the reordering has been completed for all columns. For example the `-api colReorder.order()` method can cause multiple column reordering actions. Listen for `-event columns.reordered` to know then all columns have been updated and the table is fully up to date with the requested action.
 
 		Please note that, as with all DataTables emitted events, this event is triggered with the `dt` namespace. As such, to listen for this event, you must also use the `dt` namespace by simply appending `.dt` to your event name, or use the `dt-api on()` method to listen for the event which will automatically append this namespace.
 	</description>

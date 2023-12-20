@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dt-event library="ColReorder">
+	<name>columns-reordered</name>
+	<summary>Column reordering is finished and table updated</summary>
+	<since>2.0</since>
+
+	<type type="function">
+		<signature>function( e, details )</signature>
+		<parameter type="object" name="e">
+			jQuery event object
+		</parameter>
+		<parameter type="object" name="details">
+			An object that contains information about the reordered columns:
+
+			* `-type array` `order` - Current column order (`-api colReorder.order()`)
+			* `-type array` `mapping` - Array of integers that define how the old column positions map to the new positions
+		</parameter>
+		<scope>HTML table element</scope>
+	</type>
+
+	<description>
+		This event let's you know when column reordering has finished. That might be after an individual call to `-api colReorder.move()` (which is used by the UI drag and drop reordering), or after all updates required by a call to `-api colReorder.order()`.
+		
+		The `-event column-reorder` event can also be used to know when reordering happens - it happens for every reorder action (i.e. it might trigger multiple times from `-api colReorder.order()`).
+
+		Please note that, as with all DataTables emitted events, this event is triggered with the `dt` namespace. As such, to listen for this event, you must also use the `dt` namespace by simply appending `.dt` to your event name, or use the `dt-api on()` method to listen for the event which will automatically append this namespace.
+	</description>
+
+	<example title="Notification of when columns have been reordered"><![CDATA[
+var table = new DataTable('#myTable', {
+	colReorder: true
+});
+
+table.on('columns-reordered', function (e, settings, details) {
+	console.log('Columns have been reordered');
+});
+]]></example>
+</dt-event>
