@@ -19,6 +19,7 @@ interface IConfig {
 interface ISettings {
 	dropZones: IDropZone[];
 	mouse: {
+		absLeft: number;
 		offset: {
 			x: number;
 			y: number;
@@ -27,10 +28,10 @@ interface ISettings {
 			x: number;
 			y: number;
 		};
-		tableOffset: number;
 		target: JQuery;
 		targets: number[];
 	};
+	scrollInterval: number;
 }
 
 /**
@@ -56,6 +57,7 @@ export default class ColReorder {
 		dropZones: [],
 
 		mouse: {
+			absLeft: -1,
 			offset: {
 				x: -1,
 				y: -1
@@ -64,10 +66,11 @@ export default class ColReorder {
 				x: -1,
 				y: -1
 			},
-			tableOffset: -1,
 			target: null,
 			targets: []
-		}
+		},
+
+		scrollInterval: null
 	};
 
 	public disable() {
@@ -231,7 +234,6 @@ export default class ColReorder {
 		this.s.mouse.offset.y = this._cursorPosition(e, 'pageY') - offset.top;
 		this.s.mouse.target = target;
 		this.s.mouse.targets = moveColumnIndexes;
-		this.s.mouse.tableOffset = $(this.dt.table().node()).offset().left;
 
 		// Classes to highlight the columns being moved
 		for (let i = 0; i < moveColumnIndexes.length; i++) {
@@ -253,6 +255,7 @@ export default class ColReorder {
 		}
 
 		this._regions(moveColumnIndexes);
+		this._scrollRegions();
 
 		/* Add event handlers to the document */
 		$(document)
@@ -291,7 +294,8 @@ export default class ColReorder {
 		});
 
 		// Find cursor's left position relative to the table
-		let cursorMouseLeft = this._cursorPosition(e, 'pageX') - this.s.mouse.tableOffset;
+		let tableOffset = $(this.dt.table().node()).offset().left;
+		let cursorMouseLeft = this._cursorPosition(e, 'pageX') - tableOffset;
 		let dropZone = this.s.dropZones.find(function (zone) {
 			if (zone.left <= cursorMouseLeft && cursorMouseLeft <= zone.left + zone.width) {
 				return true;
@@ -299,6 +303,8 @@ export default class ColReorder {
 
 			return false;
 		});
+
+		this.s.mouse.absLeft = this._cursorPosition(e, 'pageX');
 
 		if (!dropZone) {
 			return;
@@ -316,6 +322,10 @@ export default class ColReorder {
 		if (this.dom.drag) {
 			this.dom.drag.remove();
 			this.dom.drag = null;
+		}
+
+		if (this.s.scrollInterval) {
+			clearInterval(this.s.scrollInterval);
 		}
 
 		this.dt.cells('.dtcr-moving').nodes().to$().removeClass('dtcr-moving dtcr-moving-first dtcr-moving-last');
@@ -439,6 +449,44 @@ export default class ColReorder {
 
 		this.s.dropZones = dropZones;
 		// this._drawDropZones();
+	}
+
+	/**
+	 * Check if the table is scrolling or not. It is it the `table` isn't the same for
+	 * the header and body parents.
+	 *
+	 * @returns 
+	 */
+	private _isScrolling() {
+		return this.dt.table().body().parentNode !== this.dt.table().header().parentNode;
+	}
+
+	/**
+	 * Set an interval clock that will check to see if the scrolling of the table body should be moved
+	 * as the mouse moves on the scroll (allowing a drag and drop to columns which aren't yet visible)
+	 */
+	private _scrollRegions() {
+		if (! this._isScrolling()) {
+			// Not scrolling - nothing to do
+			return;
+		}
+
+		let that = this;
+		let tableLeft = $(this.dt.table().container()).position().left;
+		let tableWidth = $(this.dt.table().container()).outerWidth();
+		let mouseBuffer = 75;
+		let scrollContainer = this.dt.table().body().parentElement.parentElement;
+
+		this.s.scrollInterval = setInterval(function () {
+			let mouseLeft = that.s.mouse.absLeft;
+
+			if (mouseLeft < tableLeft + mouseBuffer && scrollContainer.scrollLeft) {
+				scrollContainer.scrollLeft -= 5;
+			}
+			else if (mouseLeft > tableLeft + tableWidth - mouseBuffer && scrollContainer.scrollLeft < scrollContainer.scrollWidth) {
+				scrollContainer.scrollLeft += 5;
+			}
+		}, 25);
 	}
 
 	// This is handy for debugging where the drop zones actually are!
