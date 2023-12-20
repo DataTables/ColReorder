@@ -48,13 +48,13 @@ describe('colReorder - transpose()', function() {
 		it('Move a column', function() {
 			table.colReorder.move(0, 5);
 			checkTranspose([0, 1, 2, 3, 4, 5], [5, 0, 1, 2, 3, 4], 'toCurrent');
-			// DD-743 checkTranspose([0, 1, 2, 3, 4, 5], [5, 0, 1, 2, 3, 4], 'fromOriginal');
+			checkTranspose([0, 1, 2, 3, 4, 5], [5, 0, 1, 2, 3, 4], 'fromOriginal');
 			checkTranspose([0, 1, 2, 3, 4, 5], [1, 2, 3, 4, 5, 0], 'toOriginal');
 			checkTranspose([0, 1, 2, 3, 4, 5], [1, 2, 3, 4, 5, 0], 'fromCurrent');
 		});
 		it('Check a subset', function() {
 			checkTranspose([0, 1], [5, 0], 'toCurrent');
-			// DD-743 checkTranspose([0, 1], [5, 0], 'fromOriginal');
+			checkTranspose([0, 1], [5, 0], 'fromOriginal');
 			checkTranspose([0, 1], [1, 2], 'toOriginal');
 			checkTranspose([0, 1], [1, 2], 'fromCurrent');
 		});
@@ -68,7 +68,7 @@ describe('colReorder - transpose()', function() {
 		it('Reorder', function() {
 			table.colReorder.order([5, 4, 3, 2, 1, 0]);
 			checkTranspose([0, 1, 2, 3, 4, 5], [5, 4, 3, 2, 1, 0], 'toCurrent');
-			// DD-743 checkTranspose([0, 1, 2, 3, 4, 5], [5, 4, 3, 2, 1, 0], 'fromOriginal');
+			checkTranspose([0, 1, 2, 3, 4, 5], [5, 4, 3, 2, 1, 0], 'fromOriginal');
 			checkTranspose([0, 1, 2, 3, 4, 5], [5, 4, 3, 2, 1, 0], 'toOriginal');
 			checkTranspose([0, 1, 2, 3, 4, 5], [5, 4, 3, 2, 1, 0], 'fromCurrent');
 		});
@@ -81,7 +81,7 @@ describe('colReorder - transpose()', function() {
 				}
 			});
 			checkTranspose([0, 1, 2, 3, 4, 5], [5, 4, 3, 2, 1, 0], 'toCurrent');
-			// DD-743 checkTranspose([0, 1, 2, 3, 4, 5], [5, 4, 3, 2, 1, 0], 'fromOriginal');
+			checkTranspose([0, 1, 2, 3, 4, 5], [5, 4, 3, 2, 1, 0], 'fromOriginal');
 			checkTranspose([0, 1, 2, 3, 4, 5], [5, 4, 3, 2, 1, 0], 'toOriginal');
 			checkTranspose([0, 1, 2, 3, 4, 5], [5, 4, 3, 2, 1, 0], 'fromCurrent');
 		});
