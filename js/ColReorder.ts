@@ -263,6 +263,8 @@ export default class ColReorder {
 				return;
 			}
 
+			$(document.body).addClass('dtcr-dragging');
+
 			this._createDragNode();
 		}
 
@@ -293,6 +295,7 @@ export default class ColReorder {
 
 	private _mouseUp(e: JQuery.TriggeredEvent) {
 		$(document).off('.colReorder');
+		$(document.body).removeClass('dtcr-dragging');
 
 		if (this.dom.drag) {
 			this.dom.drag.remove();

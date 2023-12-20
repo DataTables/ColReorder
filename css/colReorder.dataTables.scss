@@ -2,6 +2,9 @@
 $colreorder-insert-color: #0259C4 !default;
 $colreorder-insert-color-dark: rgb(110, 168, 254) !default;
 
+body.dtcr-dragging {
+	overflow-x: hidden;
+}
 
 // Floating table, dragged with the mouse
 table.dtcr-cloned.dataTable {
@@ -9,12 +12,6 @@ table.dtcr-cloned.dataTable {
 	background-color: rgba(255, 255, 255, 0.7);
 	z-index: 202;
 	border-radius: 4px;
-}
-
-html.dark {
-	table.dtcr-cloned.dataTable {
-		background-color: rgba(33, 33, 33, 0.9);
-	}
 }
 
 table.dataTable tbody {
@@ -30,5 +27,11 @@ table.dataTable tbody {
 		td.dtcr-moving-last {
 			border-right: 1px solid $colreorder-insert-color;
 		}
+	}
+}
+
+html.dark {
+	table.dtcr-cloned.dataTable {
+		background-color: rgba(33, 33, 33, 0.9);
 	}
 }
