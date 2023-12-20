@@ -7,7 +7,7 @@
 
 /// <reference types="jquery" />
 
-import DataTables, {Api} from 'datatables.net';
+import DataTables, {Api, ColumnSelector} from 'datatables.net';
 
 export default DataTables;
 
@@ -62,34 +62,19 @@ declare module 'datatables.net' {
 
 interface ConfigColReorder {
 	/**
+	 * Columns to allow reordering on via the UI.
+	 */
+	columns?: ColumnSelector;
+
+	/**
 	 * Initial enablement state of ColReorder - Since 1.5.0
 	 */
 	enable?: boolean;
 
 	/**
-	 * Number of columns (counting from the left) to disallow reordering of, '0' in default
-	 */
-	fixedColumnsLeft?: number;
-
-	/**
-	 * Number of columns (counting from the right) to disallow reordering of, '0' in default
-	 */
-	fixedColumnsRight?: number;
-
-	/**
 	 * Set a default order for the columns in the table
 	 */
 	order?: number[];
-
-	/**
-	 * Enable / disable live reordering of columns during a drag, 'true' in default
-	 */
-	realtime?: boolean;
-	
-	/**
-	 * Callback after reorder
-	 */
-	reorderCallback?: () => void;
 }
 
 

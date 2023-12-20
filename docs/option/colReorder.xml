@@ -38,7 +38,7 @@ new DataTable('#myTable', {
 	<example title="Enable ColReorder with configuration options"><![CDATA[
 new DataTable('#myTable', {
 	colReorder: {
-		realtime: false
+		columns: ':not(:first-child)'
 	}
 });
 ]]></example>
