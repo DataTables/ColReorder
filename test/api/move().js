@@ -93,19 +93,18 @@ describe('colReorder - move()', function() {
 		dt.html('basic');
 		let table;
 
-		// TK COLIN Disabled because of DD-759
-		// it('Ensure row heights are sensible', function() {
-		// 	table = $('#example').DataTable({
-		// 		colReorder: true
-		// 	});
+		it('Ensure row heights are sensible', function() {
+			table = $('#example').DataTable({
+				colReorder: true
+			});
 
-		// 	let height = $('tbody tr:eq(1)').height();
+			let height = $('tbody tr:eq(1)').height();
 
-		// 	table.column(1).visible(false);
-		// 	table.colReorder.move(4, 3);
-		// 	table.columns().visible(true);
+			table.column(1).visible(false);
+			table.colReorder.move(4, 3);
+			table.columns().visible(true);
 
-		// 	expect(height).toBe($('tbody tr:eq(1)').height())
-		// });
+			expect(height).toBe($('tbody tr:eq(1)').height())
+		});
 	});
 });
