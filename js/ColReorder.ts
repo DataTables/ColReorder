@@ -128,24 +128,38 @@ export default class ColReorder {
 		dt.table().header.structure().forEach(function (row) {
 			for (let i=0 ; i<row.length ; i++) {
 				if (row[i] && row[i].cell) {
-					$(row[i].cell).on('mousedown.colReorder touchstart.colReorder', function (e: any) {
-						// Ignore middle and right click
-						if (e.type === 'mousedown' && e.which !== 1) {
-							return;
-						}
-
-						// Ignore if disabled
-						if (!that.c.enable) {
-							return;
-						}
-
-						that._mouseDown(e, this);
-					});
+					that._addListener(row[i].cell);
 				}
 			}
 		});
 	}
 
+	/**
+	 * Attach the mouse down listener to an element to start a column reorder action
+	 *
+	 * @param el 
+	 */
+	private _addListener (el) {
+		let that = this;
+
+		$(el).on('mousedown.colReorder touchstart.colReorder', function (e: any) {
+			// Ignore middle and right click
+			if (e.type === 'mousedown' && e.which !== 1) {
+				return;
+			}
+
+			// Ignore if disabled
+			if (!that.c.enable) {
+				return;
+			}
+
+			that._mouseDown(e, this);
+		});
+	}
+
+	/**
+	 * Create the element that is dragged around the page
+	 */
 	private _createDragNode() {
 		let origCell = this.s.mouse.target;
 		let origTr = origCell.parent();
