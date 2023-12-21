@@ -455,7 +455,7 @@ export default class ColReorder {
 	 * Check if the table is scrolling or not. It is it the `table` isn't the same for
 	 * the header and body parents.
 	 *
-	 * @returns 
+	 * @returns
 	 */
 	private _isScrolling() {
 		return this.dt.table().body().parentNode !== this.dt.table().header().parentNode;
@@ -466,7 +466,7 @@ export default class ColReorder {
 	 * as the mouse moves on the scroll (allowing a drag and drop to columns which aren't yet visible)
 	 */
 	private _scrollRegions() {
-		if (! this._isScrolling()) {
+		if (!this._isScrolling()) {
 			// Not scrolling - nothing to do
 			return;
 		}
@@ -483,7 +483,10 @@ export default class ColReorder {
 			if (mouseLeft < tableLeft + mouseBuffer && scrollContainer.scrollLeft) {
 				scrollContainer.scrollLeft -= 5;
 			}
-			else if (mouseLeft > tableLeft + tableWidth - mouseBuffer && scrollContainer.scrollLeft < scrollContainer.scrollWidth) {
+			else if (
+				mouseLeft > tableLeft + tableWidth - mouseBuffer &&
+				scrollContainer.scrollLeft < scrollContainer.scrollWidth
+			) {
 				scrollContainer.scrollLeft += 5;
 			}
 		}, 25);

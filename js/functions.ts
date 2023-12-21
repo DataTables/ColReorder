@@ -1,6 +1,4 @@
-
 import DataTable, { Api, HeaderStructure } from '../../../types/types'; // declare var DataTable: any;
-
 
 /**
  * Mutate an array, moving a set of elements into a new index position
