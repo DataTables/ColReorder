@@ -147,19 +147,23 @@ export default class ColReorder {
 	private _addListener(el) {
 		let that = this;
 
-		$(el).on('mousedown.colReorder touchstart.colReorder', function (e: any) {
-			// Ignore middle and right click
-			if (e.type === 'mousedown' && e.which !== 1) {
-				return;
-			}
+		$(el)
+			.on('selectstart.colReorder', function () {
+				return false;
+			})
+			.on('mousedown.colReorder touchstart.colReorder', function (e: any) {
+				// Ignore middle and right click
+				if (e.type === 'mousedown' && e.which !== 1) {
+					return;
+				}
 
-			// Ignore if disabled
-			if (!that.c.enable) {
-				return;
-			}
+				// Ignore if disabled
+				if (!that.c.enable) {
+					return;
+				}
 
-			that._mouseDown(e, this);
-		});
+				that._mouseDown(e, this);
+			});
 	}
 
 	/**
