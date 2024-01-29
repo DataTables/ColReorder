@@ -407,6 +407,7 @@ export default class ColReorder {
 		let totalWidth = 0;
 		let negativeCorrect = 0;
 		let allowedColumns = this.dt.columns(this.c.columns).indexes().toArray();
+		let widths = this.dt.columns().widths();
 
 		// Each column is a drop zone
 		this.dt.columns().every(function (colIdx, tabIdx, i) {
@@ -414,7 +415,7 @@ export default class ColReorder {
 				return;
 			}
 
-			let columnWidth = this.width();
+			let columnWidth = widths[colIdx];
 
 			// Check that we are allowed to move into this column - if not, need
 			// to offset the widths
