@@ -341,6 +341,10 @@ export function structureFill(structure: HeaderStructure[][]) {
 
 			if (cell) {
 				for (let rowInner = 0; rowInner < cell.rowspan; rowInner++) {
+					if (! filledIn[row + rowInner]) {
+						filledIn[row + rowInner] = [];
+					}
+
 					for (let colInner = 0; colInner < cell.colspan; colInner++) {
 						filledIn[row + rowInner][col + colInner] = cell.cell;
 					}
