@@ -255,7 +255,12 @@ export function move(dt: Api, from: number[], to: number): void {
  * @param map Reverse index map
  * @param order Array to update
  */
-export function orderingIndexes(map: number[], order: any[]): void {
+export function orderingIndexes(map: number[], order?: any[]): void {
+	// Can happen if the order was deleted from a saved state
+	if (! order) {
+		return;
+	}
+
 	for (let i = 0; i < order.length; i++) {
 		let el = order[i];
 
