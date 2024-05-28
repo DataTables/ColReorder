@@ -533,5 +533,5 @@ export default class ColReorder {
 		order: null
 	};
 
-	static version = '2.0.2';
+	static version = '2.0.3';
 }
