@@ -142,11 +142,11 @@ $(document).on('stateLoadInit.dt', function (e, settings, state) {
 			// If the table is not ready, column reordering is done
 			// after it becomes fully ready. That means that saved
 			// column indexes need to be updated for where those columns
-			// currently are.
-			let map = invertKeyValues(state.colReorder);
+			// currently are. Any properties which refer to column indexes
+			// would need to be updated here.
 
 			// State's ordering indexes
-			orderingIndexes(map, state.order);
+			orderingIndexes(state.colReorder, state.order);
 
 			// State's columns array - sort by restore index
 			for (let i = 0; i < state.columns.length; i++) {
