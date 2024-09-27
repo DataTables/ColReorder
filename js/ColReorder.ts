@@ -326,6 +326,21 @@ export default class ColReorder {
 		if (this.dom.drag) {
 			this.dom.drag.remove();
 			this.dom.drag = null;
+
+			// Once the element is removed, Firefox will then complete the mouse event
+			// sequence by firing a click event on the element that the mouse is now
+			// over. This means that a click event happens on the header cell triggering
+			// a sort. A setTimeout on the remove doesn't appear to work around this.
+			//
+			// Therefore, we need to add a click event listener that will kill the
+			// bubbling of the event, and then _almost_ immediately remove it.
+			this.s.mouse.target.on('click.dtcr', function (e) {
+				return false;
+			});
+
+			setTimeout(() => {
+				this.s.mouse.target.off('.dtcr');
+			}, 10);
 		}
 
 		if (this.s.scrollInterval) {
