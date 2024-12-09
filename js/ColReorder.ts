@@ -348,6 +348,13 @@ export default class ColReorder {
 		}
 
 		this.dt.cells('.dtcr-moving').nodes().to$().removeClass('dtcr-moving dtcr-moving-first dtcr-moving-last');
+
+		this.dt.trigger('columns-reordered-dropped', [
+		  {
+			  order: this.dt.colReorder.order(),
+			  mapping: invertKeyValues(order)
+		  }
+		]);
 	}
 
 	/**
