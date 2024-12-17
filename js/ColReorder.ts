@@ -3,7 +3,7 @@ import { init, getOrder, setOrder, validateMove, move } from './functions';
 
 interface IDropZone {
 	colIdx: number;
-	left: number;
+	inlineStart: number;
 	self: boolean;
 	width: number;
 }
@@ -298,10 +298,23 @@ export default class ColReorder {
 		});
 
 		// Find cursor's left position relative to the table
-		let tableOffset = $(this.dt.table().node()).offset().left;
+		const tableNode = this.dt.table().node();
+
+		let tableOffset = $(tableNode).offset().left;
 		let cursorMouseLeft = this._cursorPosition(e, 'pageX') - tableOffset;
+
+		let cursorInlineStart : number;
+
+		if (this._isRtl()) {
+			const tableWidth = tableNode.clientWidth;
+			cursorInlineStart = tableWidth - cursorMouseLeft;
+		}
+		else {
+			cursorInlineStart = cursorMouseLeft;
+		}
+
 		let dropZone = this.s.dropZones.find(function (zone) {
-			if (zone.left <= cursorMouseLeft && cursorMouseLeft <= zone.left + zone.width) {
+			if (zone.inlineStart <= cursorInlineStart && cursorInlineStart <= zone.inlineStart + zone.width) {
 				return true;
 			}
 
@@ -315,7 +328,7 @@ export default class ColReorder {
 		}
 
 		if (!dropZone.self) {
-			this._move(dropZone, cursorMouseLeft);
+			this._move(dropZone, cursorInlineStart);
 		}
 	}
 
@@ -354,9 +367,9 @@ export default class ColReorder {
 	 * Shift columns around
 	 *
 	 * @param dropZone Where to move to
-	 * @param cursorMouseLeft Cursor position, relative to the left of the table
+	 * @param cursorInlineStart Cursor position, relative to the inline start (left or right) of the table
 	 */
-	private _move(dropZone: IDropZone, cursorMouseLeft: number) {
+	private _move(dropZone: IDropZone, cursorInlineStart: number) {
 		let that = this;
 
 		(this.dt as any).colReorder.move(this.s.mouse.targets, dropZone.colIdx);
@@ -386,11 +399,11 @@ export default class ColReorder {
 		});
 		let dzIdx = this.s.dropZones.indexOf(dz);
 
-		if (dz.left > cursorMouseLeft) {
-			let previousDiff = dz.left - cursorMouseLeft;
+		if (dz.inlineStart > cursorInlineStart) {
+			let previousDiff = dz.inlineStart - cursorInlineStart;
 			let previousDz = this.s.dropZones[dzIdx - 1];
 
-			dz.left -= previousDiff;
+			dz.inlineStart -= previousDiff;
 			dz.width += previousDiff;
 
 			if (previousDz) {
@@ -403,14 +416,14 @@ export default class ColReorder {
 			return zone.colIdx === visibleTargets[visibleTargets.length - 1];
 		});
 
-		if (dz.left + dz.width < cursorMouseLeft) {
-			let nextDiff = cursorMouseLeft - (dz.left + dz.width);
+		if (dz.inlineStart + dz.width < cursorInlineStart) {
+			let nextDiff = cursorInlineStart - (dz.inlineStart + dz.width);
 			let nextDz = this.s.dropZones[dzIdx + 1];
 
 			dz.width += nextDiff;
 
 			if (nextDz) {
-				nextDz.left += nextDiff;
+				nextDz.inlineStart += nextDiff;
 				nextDz.width -= nextDiff;
 			}
 		}
@@ -450,7 +463,7 @@ export default class ColReorder {
 				// by the final condition in this logic set
 				dropZones.push({
 					colIdx: colIdx,
-					left: totalWidth - negativeCorrect,
+					inlineStart: totalWidth - negativeCorrect,
 					self: moveColumns[0] <= colIdx && colIdx <= moveColumns[moveColumns.length - 1],
 					width: columnWidth + negativeCorrect
 				});
@@ -539,6 +552,10 @@ export default class ColReorder {
 	// 		);
 	// 	}
 	// }
+
+	private _isRtl() {
+		return $(this.dt.table()).css('direction') === 'rtl';
+	}
 
 	static defaults: IConfig = {
 		columns: '',
