@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dt-option library="ColReorder">
+	<name>colReorder.headerRows</name>
+	<summary>Select which columns can be reordered</summary>
+	<since>2.1.0</since>
+
+	<type type="array">
+		<description>
+			An array of the header row indexes that should be considered for the ColReorder drag and drop action.
+		</description>
+	</type>
+
+	<default value="null">
+		If null, then all header cells will received a click and drag listener (allowing for `-init colReorder.columns`).
+	</default>
+
+	<description>
+		If you have a header in your DataTable that spans multiple rows, you might wish to only have the event handler for ColReorder's click and drag action apply to a specific row in the header (e.g. if you use a second row for column search inputs). This option provides that ability by being able to specify which rows the click and drag listener should be applied to.
+	</description>
+
+	<example title="Apply click and drag listeners to only the first row in the table header"><![CDATA[
+new DataTable('#myTable', {
+	colReorder: {
+		headerRows: [0]
+	}
+});
+]]></example>
+</dt-option>

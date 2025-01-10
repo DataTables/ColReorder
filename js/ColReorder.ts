@@ -13,6 +13,8 @@ interface IConfig {
 
 	enable: boolean;
 
+	headerRows: null | number[];
+
 	order: number[];
 }
 
@@ -50,6 +52,7 @@ export default class ColReorder {
 	private c: IConfig = {
 		columns: null,
 		enable: null,
+		headerRows: null,
 		order: null
 	};
 
@@ -130,10 +133,14 @@ export default class ColReorder {
 
 		dt.table()
 			.header.structure()
-			.forEach(function (row) {
+			.forEach(function (row, rowIdx) {
+				let headerRows = opts.headerRows;
+
 				for (let i = 0; i < row.length; i++) {
-					if (row[i] && row[i].cell) {
-						that._addListener(row[i].cell);
+					if (!headerRows || headerRows.includes(rowIdx)) {
+						if (row[i] && row[i].cell) {
+							that._addListener(row[i].cell);
+						}
 					}
 				}
 			});
@@ -562,8 +569,10 @@ export default class ColReorder {
 
 		enable: true,
 
+		headerRows: null,
+
 		order: null
 	};
 
-	static version = '2.0.4';
+	static version = '2.1.0-dev';
 }

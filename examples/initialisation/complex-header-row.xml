@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dt-example table-type="html-complex-header-mid" order="2">
+
+<css lib="datatables colreorder" />
+<js lib="jquery datatables colreorder">
+<![CDATA[
+$('#example').DataTable({
+	colReorder: {
+		headerRows: [1]
+	}
+});
+]]>
+</js>
+
+<js-vanilla>
+<![CDATA[
+new DataTable('#example', {
+	colReorder: {
+		headerRows: [1]
+	}
+});
+]]>
+</js-vanilla>
+
+<title lib="ColReorder">Complex headers - specific row</title>
+
+<info><![CDATA[
+
+This example shows ColReorder operating with a complex header (i.e. multiple rows, with a `colspan` attribute on some cells), but restricting the column reordering click and drag action to only a specific row in the header.
+
+In this example only the cells in the second row in the header can be clicked and drags to reorder columns.
+
+]]></info>
+
+
+
+</dt-example>
