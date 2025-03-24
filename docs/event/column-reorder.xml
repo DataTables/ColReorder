@@ -25,7 +25,7 @@
 	<description>
 		When using ColReorder you may wish to know when a table has been reordered by an end user or through the API. This event provides that information.
 
-		This event is triggered when a column's data structure is moved internally - it does not signify that the reordering has been completed for all columns. For example the `-api colReorder.order()` method can cause multiple column reordering actions. Listen for `-event columns.reordered` to know then all columns have been updated and the table is fully up to date with the requested action.
+		This event is triggered when a column's data structure is moved internally - it does not signify that the reordering has been completed for all columns. For example the `-api colReorder.order()` method can cause multiple column reordering actions. Listen for `-event columns-reordered` to know then all columns have been updated and the table is fully up to date with the requested action.
 
 		Please note that, as with all DataTables emitted events, this event is triggered with the `dt` namespace. As such, to listen for this event, you must also use the `dt` namespace by simply appending `.dt` to your event name, or use the `dt-api on()` method to listen for the event which will automatically append this namespace.
 	</description>
