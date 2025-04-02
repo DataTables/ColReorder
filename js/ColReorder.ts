@@ -169,6 +169,14 @@ export default class ColReorder {
 					return;
 				}
 
+				// ColumnControl integration - if there is a CC reorder button in the header
+				// then the mousedown is limited to that
+				let btn = $('button.dtcc-button_reorder', this);
+
+				if (btn.length && e.target !== btn[0] && btn.find(e.target).length === 0) {
+					return;
+				}
+
 				that._mouseDown(e, this);
 			});
 	}
