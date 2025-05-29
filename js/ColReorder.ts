@@ -121,7 +121,7 @@ export default class ColReorder {
 		let loaded = dt.state.loaded() as any;
 		let order = this.c.order;
 
-		if (loaded && loaded.colReorder) {
+		if (loaded && loaded.colReorder && dt.columns().count() === loaded.colReorder.length) {
 			order = loaded.colReorder;
 		}
 
