@@ -1,4 +1,4 @@
 
 $colreorder-insert-color: #0275d8 !default;
 
-@import 'colReorder.dataTables.scss';
+@use 'colReorder.dataTables.scss' with ($colreorder-insert-color: $colreorder-insert-color);
