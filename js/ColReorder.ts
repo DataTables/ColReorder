@@ -574,7 +574,7 @@ export default class ColReorder {
 	// }
 
 	private _isRtl() {
-		return $(this.dt.table()).css('direction') === 'rtl';
+		return $(this.dt.table().node()).css('direction') === 'rtl';
 	}
 
 	static defaults: IConfig = {
