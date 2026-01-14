@@ -1,39 +1,14 @@
-import { Api, ColumnSelector } from '../../../types/types'; // declare var DataTable: any;
-import { init, getOrder, setOrder, validateMove, move } from './functions';
+import DataTable, { Api } from 'datatables.net';
+import { getOrder, init, setOrder, validateMove } from './functions';
+import './interface';
+import { IDefaults, IDropZone, ISettings } from './interface';
 
-interface IDropZone {
-	colIdx: number;
-	inlineStart: number;
-	self: boolean;
-	width: number;
-}
+const dom = DataTable.dom;
+const util = DataTable.util;
 
-interface IConfig {
-	columns: ColumnSelector;
-
-	enable: boolean;
-
-	headerRows: null | number[];
-
-	order: number[];
-}
-
-interface ISettings {
-	dropZones: IDropZone[];
-	mouse: {
-		absLeft: number;
-		offset: {
-			x: number;
-			y: number;
-		};
-		start: {
-			x: number;
-			y: number;
-		};
-		target: JQuery;
-		targets: number[];
-	};
-	scrollInterval: number;
+// Sanity check
+if (!DataTable.versionCheck('3')) {
+	throw 'Warning: ColReorder requires DataTables 3 or newer';
 }
 
 /**
@@ -49,7 +24,7 @@ export default class ColReorder {
 
 	private dt: Api;
 
-	private c: IConfig = {
+	private c: IDefaults = {
 		columns: null,
 		enable: null,
 		headerRows: null,
@@ -92,7 +67,7 @@ export default class ColReorder {
 		return this;
 	}
 
-	constructor(dt: Api, opts: typeof ColReorder.defaults) {
+	constructor(dt: Api, opts: Partial<IDefaults>) {
 		let that = this;
 		let ctx = dt.settings()[0];
 
@@ -104,7 +79,7 @@ export default class ColReorder {
 		dt.settings()[0]._colReorder = this;
 
 		this.dt = dt;
-		$.extend(this.c, ColReorder.defaults, opts);
+		util.object.assign(this.c, ColReorder.defaults, opts);
 
 		init(dt);
 
@@ -154,7 +129,7 @@ export default class ColReorder {
 	private _addListener(el) {
 		let that = this;
 
-		$(el)
+		dom.s(el)
 			.on('selectstart.colReorder', function () {
 				return false;
 			})
@@ -171,9 +146,9 @@ export default class ColReorder {
 
 				// ColumnControl integration - if there is a CC reorder button in the header
 				// then the mousedown is limited to that
-				let btn = $('button.dtcc-button_reorder', this);
+				let btn = dom.s(this).find('button.dtcc-button_reorder');
 
-				if (btn.length && e.target !== btn[0] && btn.find(e.target).length === 0) {
+				if (btn.count() && e.target !== btn.get(0) && btn.find(e.target).count() === 0) {
 					return;
 				}
 
@@ -194,19 +169,19 @@ export default class ColReorder {
 		// This is a slightly odd combination of jQuery and DOM, but it is the
 		// fastest and least resource intensive way I could think of cloning
 		// the table with just a single header cell in it.
-		this.dom.drag = $(origTable[0].cloneNode(false))
-			.addClass('dtcr-cloned')
+		this.dom.drag = dom.s(origTable.get(0).cloneNode(false))
+			.classAdd('dtcr-cloned')
 			.append(
-				$(origThead[0].cloneNode(false)).append(
-					$(origTr[0].cloneNode(false)).append(cloneCell[0]) as any
-				) as any // Not sure why  it doesn't want to append a jQuery node
+				dom.s(origThead.get(0).cloneNode(false)).append(
+					dom.s(origTr.get(0).cloneNode(false)).append(cloneCell.get(0))
+				)
 			)
 			.css({
 				position: 'absolute',
-				top: 0,
-				left: 0,
-				width: $(origCell).outerWidth(),
-				height: $(origCell).outerHeight()
+				top: '0',
+				left: '0',
+				width: origCell.width('outer') + 'px',
+				height: origCell.height('outer') + 'px'
 			})
 			.appendTo('body');
 	}
@@ -218,8 +193,8 @@ export default class ColReorder {
 	 * @param prop Property name to get
 	 * @returns Value - assuming a number here
 	 */
-	private _cursorPosition(e: JQuery.TriggeredEvent, prop: string): number {
-		return e.type.indexOf('touch') !== -1 ? (e.originalEvent as any).touches[0][prop] : e[prop];
+	private _cursorPosition(e: MouseEvent, prop: string): number {
+		return e.type.indexOf('touch') !== -1 ? ((e as any).originalEvent as any).touches[0][prop] : e[prop];
 	}
 
 	/**
@@ -229,11 +204,11 @@ export default class ColReorder {
 	 * @param cell Cell that the action started on
 	 * @returns
 	 */
-	private _mouseDown(e: JQuery.TriggeredEvent, cell: HTMLElement) {
-		let target = $(e.target).closest('th, td');
+	private _mouseDown(e: MouseEvent, cell: HTMLElement) {
+		let target = dom.s(e.target as HTMLElement).closest('th, td');
 		let offset = target.offset();
 		let moveableColumns = this.dt.columns(this.c.columns).indexes().toArray();
-		let moveColumnIndexes = $(cell)
+		let moveColumnIndexes = dom.s(cell)
 			.attr('data-dt-column')
 			.split(',')
 			.map(function (val) {
@@ -256,10 +231,10 @@ export default class ColReorder {
 
 		// Classes to highlight the columns being moved
 		for (let i = 0; i < moveColumnIndexes.length; i++) {
-			let cells = this.dt
+			let cells = dom.s(this.dt
 				.cells(null, moveColumnIndexes[i] as any, { page: 'current' })
 				.nodes()
-				.to$();
+				.toArray());
 			let klass = 'dtcr-moving';
 
 			if (i === 0) {
@@ -270,14 +245,14 @@ export default class ColReorder {
 				klass += ' dtcr-moving-last';
 			}
 
-			cells.addClass(klass);
+			cells.classAdd(klass);
 		}
 
 		this._regions(moveColumnIndexes);
 		this._scrollRegions();
 
 		/* Add event handlers to the document */
-		$(document)
+		dom.s(document)
 			.on('mousemove.colReorder touchmove.colReorder', (e) => {
 				this._mouseMove(e);
 			})
@@ -286,7 +261,7 @@ export default class ColReorder {
 			});
 	}
 
-	private _mouseMove(e: JQuery.TriggeredEvent) {
+	private _mouseMove(e: MouseEvent) {
 		if (this.dom.drag === null) {
 			// Only create the drag element if the mouse has moved a specific distance from the start
 			// point - this allows the user to make small mouse movements when sorting and not have a
@@ -301,7 +276,7 @@ export default class ColReorder {
 				return;
 			}
 
-			$(document.body).addClass('dtcr-dragging');
+			dom.s(document.body).classAdd('dtcr-dragging');
 
 			this._createDragNode();
 		}
@@ -315,7 +290,7 @@ export default class ColReorder {
 		// Find cursor's left position relative to the table
 		const tableNode = this.dt.table().node();
 
-		let tableOffset = $(tableNode).offset().left;
+		let tableOffset = dom.s(tableNode).offset().left;
 		let cursorMouseLeft = this._cursorPosition(e, 'pageX') - tableOffset;
 
 		let cursorInlineStart : number;
@@ -347,9 +322,9 @@ export default class ColReorder {
 		}
 	}
 
-	private _mouseUp(e: JQuery.TriggeredEvent) {
-		$(document).off('.colReorder');
-		$(document.body).removeClass('dtcr-dragging');
+	private _mouseUp(e: MouseEvent) {
+		dom.s(document).off('.colReorder');
+		dom.s(document.body).classRemove('dtcr-dragging');
 
 		if (this.dom.drag) {
 			this.dom.drag.remove();
@@ -375,7 +350,7 @@ export default class ColReorder {
 			clearInterval(this.s.scrollInterval);
 		}
 
-		this.dt.cells('.dtcr-moving').nodes().to$().removeClass('dtcr-moving dtcr-moving-first dtcr-moving-last');
+		dom.s(this.dt.cells('.dtcr-moving').nodes().toArray()).classRemove('dtcr-moving dtcr-moving-first dtcr-moving-last');
 	}
 
 	/**
@@ -390,7 +365,7 @@ export default class ColReorder {
 		(this.dt as any).colReorder.move(this.s.mouse.targets, dropZone.colIdx);
 
 		// Update the targets
-		this.s.mouse.targets = $(this.s.mouse.target)
+		this.s.mouse.targets = this.s.mouse.target
 			.attr('data-dt-column')
 			.split(',')
 			.map(function (val) {
@@ -524,8 +499,8 @@ export default class ColReorder {
 		}
 
 		let that = this;
-		let tableLeft = $(this.dt.table().container()).offset().left;
-		let tableWidth = $(this.dt.table().container()).outerWidth();
+		let tableLeft = dom.s(this.dt.table().container()).offset().left;
+		let tableWidth = dom.s(this.dt.table().container()).width('outer');
 		let mouseBuffer = 75;
 		let scrollContainer = this.dt.table().body().parentElement.parentElement;
 
@@ -574,10 +549,10 @@ export default class ColReorder {
 	// }
 
 	private _isRtl() {
-		return $(this.dt.table().node()).css('direction') === 'rtl';
+		return dom.s(this.dt.table().node()).css('direction') === 'rtl';
 	}
 
-	static defaults: IConfig = {
+	static defaults: IDefaults = {
 		columns: '',
 
 		enable: true,
@@ -587,5 +562,5 @@ export default class ColReorder {
 		order: null
 	};
 
-	static version = '2.1.2';
+	static version = '3.0.0-dev';
 }

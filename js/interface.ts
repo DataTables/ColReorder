@@ -7,7 +7,8 @@
 
 /// <reference types="jquery" />
 
-import DataTables, {Api, ColumnSelector} from 'datatables.net';
+import DataTables, { Api, ColumnSelector, Dom } from 'datatables.net';
+import ColReorder from './ColReorder';
 
 export default DataTables;
 
@@ -23,6 +24,17 @@ declare module 'datatables.net' {
 		colReorder?: boolean | ConfigColReorder;
 	}
 
+	interface Defaults {
+		/**
+		 * ColReorder extension options
+		 */
+		colReorder?: ConfigColReorder;
+	}
+
+	interface Context {
+		_colReorder: ColReorder;
+	}
+
 	interface Api<T> {
 		/**
 		 * ColReorder methods container
@@ -36,22 +48,7 @@ declare module 'datatables.net' {
 		/**
 		 * ColReorder class
 		 */
-		ColReorder: {
-			/**
-			 * Create a new ColReorder instance for the target DataTable
-			 */
-			new (dt: Api<any>, settings: boolean | ConfigColReorder): DataTablesStatic['ColReorder'];
-
-			/**
-			 * ColReorder version
-			 */
-			version: string;
-
-			/**
-			 * Default configuration values
-			 */
-			defaults: ConfigColReorder;
-		}
+		ColReorder: typeof ColReorder;
 	}
 }
 
@@ -140,4 +137,40 @@ interface ApiColReorderMethods<T> extends Omit<Api<T>, 'order'> {
 	 * @returns The transpose values
 	 */
 	transpose(idx: number | number[], direction?: "toCurrent" | "toOriginal" | "fromOriginal" | "fromCurrent"): Array<number>;
+}
+
+
+export interface IDropZone {
+	colIdx: number;
+	inlineStart: number;
+	self: boolean;
+	width: number;
+}
+
+export interface IDefaults {
+	columns: ColumnSelector;
+
+	enable: boolean;
+
+	headerRows: null | number[];
+
+	order: number[];
+}
+
+export interface ISettings {
+	dropZones: IDropZone[];
+	mouse: {
+		absLeft: number;
+		offset: {
+			x: number;
+			y: number;
+		};
+		start: {
+			x: number;
+			y: number;
+		};
+		target: Dom;
+		targets: number[];
+	};
+	scrollInterval: number;
 }

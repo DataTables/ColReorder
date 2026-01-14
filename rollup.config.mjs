@@ -1,11 +1,19 @@
+// import { dts } from 'rollup-plugin-dts';
 
 export default [
 	{
-		input: process.env.OUT + '/js/dataTables.colReorder.js',
+		input: 'dist/dataTables.colReorder.js',
 		output: {
-			file: process.env.OUT + '/js/dataTables.colReorder.js',
+			file: 'dist/dataTables.colReorder.js',
 			format: 'es'
 		},
-		plugins: []
-	}
+		plugins: [],
+		external: ['datatables.net']
+	},
+	// {
+	// 	// Create a single .d.ts file
+	// 	input: './types/types.d.ts',
+	// 	output: [{ file: 'dist/types.d.ts', format: 'es' }],
+	// 	plugins: [dts()]
+	// }
 ];

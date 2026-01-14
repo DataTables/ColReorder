@@ -1,4 +1,4 @@
-/*! ColReorder 2.1.2
+/*! ColReorder 3.0.0-dev
  * © SpryMedia Ltd - datatables.net/license
  */
 
@@ -20,20 +20,23 @@
  * For details please refer to: http://www.datatables.net
  */
 
-import DataTable from '../../../types/types'; // declare var DataTable: any;
-
+import DataTable from 'datatables.net';
 import ColReorder from './ColReorder';
 import {
 	finalise,
-	init,
-	invertKeyValues,
 	getOrder,
+	init,
 	move,
 	orderingIndexes,
 	setOrder,
 	transpose,
 	validateMove
 } from './functions';
+import { IDefaults } from './interface';
+
+const Api = DataTable.Api;
+const dom = DataTable.dom;
+const util = DataTable.util;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * UI interaction class
@@ -44,7 +47,7 @@ import {
  */
 
 /** Enable mouse column reordering */
-DataTable.Api.register('colReorder.enable()', function (flag) {
+Api.register('colReorder.enable()', function (flag) {
 	return this.iterator('table', function (ctx) {
 		if (ctx._colReorder) {
 			ctx._colReorder.enable(flag);
@@ -53,7 +56,7 @@ DataTable.Api.register('colReorder.enable()', function (flag) {
 });
 
 /** Disable mouse column reordering */
-DataTable.Api.register('colReorder.disable()', function () {
+Api.register('colReorder.disable()', function () {
 	return this.iterator('table', function (ctx) {
 		if (ctx._colReorder) {
 			ctx._colReorder.disable();
@@ -64,7 +67,7 @@ DataTable.Api.register('colReorder.disable()', function () {
 /**
  * Change the ordering of the columns in the DataTable.
  */
-DataTable.Api.register('colReorder.move()', function (from, to) {
+Api.register('colReorder.move()', function (from, to) {
 	init(this);
 
 	if (!Array.isArray(from)) {
@@ -82,7 +85,7 @@ DataTable.Api.register('colReorder.move()', function (from, to) {
 	});
 });
 
-DataTable.Api.register('colReorder.order()', function (set?: number[], original?) {
+Api.register('colReorder.order()', function (set?: number[], original?) {
 	init(this);
 
 	if (!set) {
@@ -94,7 +97,7 @@ DataTable.Api.register('colReorder.order()', function (set?: number[], original?
 	});
 });
 
-DataTable.Api.register('colReorder.reset()', function () {
+Api.register('colReorder.reset()', function () {
 	init(this);
 
 	return this.tables().every(function () {
@@ -109,7 +112,7 @@ DataTable.Api.register('colReorder.reset()', function () {
 	});
 });
 
-DataTable.Api.register('colReorder.transpose()', function (idx: any, dir) {
+Api.register('colReorder.transpose()', function (idx: any, dir) {
 	init(this);
 
 	if (!dir) {
@@ -119,17 +122,17 @@ DataTable.Api.register('colReorder.transpose()', function (idx: any, dir) {
 	return transpose(this, idx, dir);
 });
 
-(DataTable as any).ColReorder = ColReorder;
+DataTable.ColReorder = ColReorder;
 
 // Called when DataTables is going to load a state. That might be
 // before the table is ready (state saving) or after (state restoring).
 // Also note that it happens _before_ preInit (below).
-$(document).on('stateLoadInit.dt', function (e, settings, state) {
+dom.s(document).on('stateLoadInit.dt', function (e, settings, state) {
 	if (e.namespace !== 'dt') {
 		return;
 	}
 
-	let dt = new DataTable.Api(settings);
+	let dt = new Api(settings);
 
 	if (state.colReorder && dt.columns().count() === state.colReorder.length) {
 		if (dt.ready()) {
@@ -162,7 +165,7 @@ $(document).on('stateLoadInit.dt', function (e, settings, state) {
 	}
 });
 
-$(document).on('preInit.dt', function (e, settings) {
+dom.s(document).on('preInit.dt', function (e, settings) {
 	if (e.namespace !== 'dt') {
 		return;
 	}
@@ -171,7 +174,15 @@ $(document).on('preInit.dt', function (e, settings) {
 	var defaults = (DataTable.defaults as any).colReorder;
 
 	if (init || defaults) {
-		var opts = $.extend({}, defaults, init);
+		let opts: Partial<IDefaults> = {};
+
+		if (util.is.plainObject(defaults)) {
+			util.object.assign(opts, defaults);
+		}
+
+		if (util.is.plainObject(init)) {
+			util.object.assign(opts, init);
+		}
 
 		if (init !== false) {
 			let dt = new DataTable.Api(settings);
