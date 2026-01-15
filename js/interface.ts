@@ -1,17 +1,7 @@
-// Type definitions for DataTables ColReorder
-//
-// Project: https://datatables.net/extensions/colreorder/, https://datatables.net
-// Definitions by:
-//   SpryMedia
-//   Andy Ma <https://github.com/andy-maca>
-
-/// <reference types="jquery" />
-
 import DataTables, { Api, ColumnSelector, Dom } from 'datatables.net';
 import ColReorder from './ColReorder';
 
 export default DataTables;
-
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * DataTables' types integration
@@ -38,7 +28,7 @@ declare module 'datatables.net' {
 	interface Api<T> {
 		/**
 		 * ColReorder methods container
-		 * 
+		 *
 		 * @returns Api for chaining with the additional ColReorder methods
 		 */
 		colReorder: ApiColReorderMethods<T>;
@@ -55,7 +45,6 @@ declare module 'datatables.net' {
 		_crOriginalIdx?: number;
 	}
 }
-
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * Options
@@ -78,7 +67,6 @@ interface ConfigColReorder {
 	order?: number[];
 }
 
-
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * API
  */
@@ -86,14 +74,14 @@ interface ConfigColReorder {
 interface ApiColReorderMethods<T> extends Omit<Api<T>, 'order'> {
 	/**
 	 * Disable end user ability to reorder columns.
-	 * 
+	 *
 	 * @returns DataTables Api instance.
 	 */
 	disable(): Api<T>;
 
 	/**
 	 * Enable and disable user ability to reorder columns in a table.
-	 * 
+	 *
 	 * @param flag if true enable colReorder, if false disable.
 	 * @returns DataTables Api instance
 	 */
@@ -101,7 +89,7 @@ interface ApiColReorderMethods<T> extends Omit<Api<T>, 'order'> {
 
 	/**
 	 * Programmatically reorder columns
-	 * 
+	 *
 	 * @param from Column index to move.
 	 * @param to New index to move the column to.
 	 * @param drop Indicate that this is the final move. Set this to false if you are performing multiple moves
@@ -112,14 +100,14 @@ interface ApiColReorderMethods<T> extends Omit<Api<T>, 'order'> {
 
 	/**
 	 * Get the current column order.
-	 * 
+	 *
 	 * @returns Returns an array of column indexes. The column index given is the original column index, with its new position defined by the location in the returned array.
 	 */
 	order(): Array<number>;
 
 	/**
 	 * Set column order
-	 * 
+	 *
 	 * @param newOrder Array of column indexes that define where the columns should be placed after the reorder.
 	 * @param originalIndexes Set to be true to indicate that the indexes passed in are the original indexes. false or undefined (default) will treat them as the current indexes.
 	 * @returns DataTables Api instance for chaining
@@ -128,21 +116,23 @@ interface ApiColReorderMethods<T> extends Omit<Api<T>, 'order'> {
 
 	/**
 	 * Restore the loaded column order
-	 * 
+	 *
 	 * @returns DataTables Api instance.
 	 */
 	reset(): Api<T>;
 
 	/**
 	 * Convert one or more column indexes to and from current and original indexes
-	 * 
+	 *
 	 * @param idx The index, or array of indexes to transpose.
-	 * @param direction Set what transposition is required. 
+	 * @param direction Set what transposition is required.
 	 * @returns The transpose values
 	 */
-	transpose(idx: number | number[], direction?: "toCurrent" | "toOriginal" | "fromOriginal" | "fromCurrent"): Array<number>;
+	transpose(
+		idx: number | number[],
+		direction?: 'toCurrent' | 'toOriginal' | 'fromOriginal' | 'fromCurrent'
+	): Array<number>;
 }
-
 
 export interface IDropZone {
 	colIdx: number;

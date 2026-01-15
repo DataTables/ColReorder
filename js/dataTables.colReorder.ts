@@ -148,7 +148,7 @@ dom.s(document).on('preInit.dt', function (e, settings) {
 		return;
 	}
 
-	var init = settings.oInit.colReorder;
+	var init = settings.init.colReorder;
 	var defaults = (DataTable.defaults as any).colReorder;
 
 	if (init || defaults) {

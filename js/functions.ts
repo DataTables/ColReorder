@@ -1,6 +1,5 @@
 import DataTable, { Api, HeaderStructure } from 'datatables.net';
 
-const dom = DataTable.dom;
 const util = DataTable.util;
 
 /**

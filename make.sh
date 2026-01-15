@@ -37,6 +37,7 @@ $DT_SRC/node_modules/typescript/bin/tsc -p ./tsconfig.json
 ## Remove the import - our wrapper does it for UMD as well as ESM
 sed -i "s#import DataTable from 'datatables.net';##" dist/dataTables.colReorder.js
 sed -i "s#import DataTable from 'datatables.net';##" dist/ColReorder.js
+sed -i "s#import DataTable from 'datatables.net';##" dist/functions.js
 
 HEADER="/*! ColReorder $VERSION
  * Copyright (c) SpryMedia Ltd - datatables.net/license
@@ -61,7 +62,7 @@ mkdir $OUT_DIR/types
 cp dist/types.d.ts $OUT_DIR/types
 cp types/colReorder*.d.ts $OUT_DIR/types
 
-# rm -r dist
+rm -r dist
 
 
 # Copy and build examples
