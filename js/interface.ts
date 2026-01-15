@@ -50,6 +50,10 @@ declare module 'datatables.net' {
 		 */
 		ColReorder: typeof ColReorder;
 	}
+
+	interface ColumnContext {
+		_crOriginalIdx?: number;
+	}
 }
 
 

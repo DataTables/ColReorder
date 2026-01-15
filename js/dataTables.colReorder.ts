@@ -1,26 +1,4 @@
-/*! ColReorder 3.0.0-dev
- * © SpryMedia Ltd - datatables.net/license
- */
-
-/**
- * @summary     ColReorder
- * @description Provide the ability to reorder columns in a DataTable
- * @version     2.1.2
- * @author      SpryMedia Ltd
- * @contact     datatables.net
- * @copyright   SpryMedia Ltd.
- *
- * This source file is free software, available under the following license:
- *   MIT license - http://datatables.net/license/mit
- *
- * This source file is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the license files for details.
- *
- * For details please refer to: http://www.datatables.net
- */
-
-import DataTable from 'datatables.net';
+import DataTable, { Context } from 'datatables.net';
 import ColReorder from './ColReorder';
 import {
 	finalise,
@@ -127,7 +105,7 @@ DataTable.ColReorder = ColReorder;
 // Called when DataTables is going to load a state. That might be
 // before the table is ready (state saving) or after (state restoring).
 // Also note that it happens _before_ preInit (below).
-dom.s(document).on('stateLoadInit.dt', function (e, settings, state) {
+dom.s(document).on('stateLoadInit.dt', function (e, settings: Context, state) {
 	if (e.namespace !== 'dt') {
 		return;
 	}

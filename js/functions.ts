@@ -1,4 +1,7 @@
-import DataTable, { Api, HeaderStructure } from '../../../types/types'; // declare var DataTable: any;
+import DataTable, { Api, HeaderStructure } from 'datatables.net';
+
+const dom = DataTable.dom;
+const util = DataTable.util;
 
 /**
  * Mutate an array, moving a set of elements into a new index position
@@ -54,7 +57,7 @@ export function finalise(dt: Api) {
  * @returns Original indexes in current order
  */
 export function getOrder(dt: Api): number[] {
-	return dt.settings()[0].aoColumns.map(function (col) {
+	return dt.settings()[0].columns.map(function (col) {
 		return col._crOriginalIdx;
 	});
 }
@@ -106,7 +109,7 @@ export function init(api: Api): void {
 	// index order will be the original order, so this is quite a simple
 	// assignment.
 	api.columns().iterator('column', function (s, idx) {
-		let columns = s.aoColumns;
+		let columns = s.columns;
 
 		if (columns[idx]._crOriginalIdx === undefined) {
 			columns[idx]._crOriginalIdx = idx;
@@ -144,7 +147,7 @@ export function invertKeyValues(arr: number[]): number[] {
 export function move(dt: Api, from: number[], to: number): void {
 	let i, j;
 	let settings = dt.settings()[0];
-	let columns = settings.aoColumns;
+	let columns = settings.columns;
 	let newOrder = columns.map(function (col, idx) {
 		return idx;
 	});
@@ -163,15 +166,15 @@ export function move(dt: Api, from: number[], to: number): void {
 	arrayMove(columns, from[0], from.length, to);
 
 	// Per row manipulations
-	for (i = 0; i < settings.aoData.length; i++) {
-		var data = settings.aoData[i];
+	for (i = 0; i < settings.data.length; i++) {
+		var data = settings.data[i];
 
 		// Allow for sparse array
 		if (! data) {
 			continue;
 		}
 
-		var cells = data.anCells;
+		var cells = data.cells;
 
 		// Not yet rendered
 		if (! cells) {
@@ -183,8 +186,8 @@ export function move(dt: Api, from: number[], to: number): void {
 
 		for (j = 0; j < cells.length; j++) {
 			// Reinsert into the document in the new order
-			if (data.nTr && cells[j] && columns[j].bVisible) {
-				data.nTr.appendChild(cells[j]);
+			if (data.tr && cells[j] && columns[j].visible) {
+				data.tr.appendChild(cells[j]);
 			}
 
 			// Update lookup index
@@ -199,42 +202,42 @@ export function move(dt: Api, from: number[], to: number): void {
 		let column = columns[i];
 
 		// Data column sorting
-		for (j = 0; j < column.aDataSort.length; j++) {
-			column.aDataSort[j] = reverseIndexes[column.aDataSort[j]];
+		for (j = 0; j < column.orderData.length; j++) {
+			column.orderData[j] = reverseIndexes[column.orderData[j]];
 		}
 
 		// Update the column indexes
 		column.idx = reverseIndexes[column.idx];
 
 		// Reorder the colgroup > col elements for the new order
-		if (column.bVisible) {
+		if (column.visible) {
 			settings.colgroup.append(column.colEl);
 		}
 	}
 
 	// Header and footer
-	headerUpdate(settings.aoHeader, reverseIndexes, from, to);
-	headerUpdate(settings.aoFooter, reverseIndexes, from, to);
+	headerUpdate(settings.header, reverseIndexes, from, to);
+	headerUpdate(settings.footer, reverseIndexes, from, to);
 
 	// Search - columns
-	arrayMove(settings.aoPreSearchCols, from[0], from.length, to);
+	arrayMove(settings.preSearchCols, from[0], from.length, to);
 
 	// Ordering indexes update - note that the sort listener on the
 	// header works out the index to apply on each draw, so it doesn't
 	// need to be updated here.
-	orderingIndexes(reverseIndexes, settings.aaSorting);
+	orderingIndexes(reverseIndexes, settings.order);
 
-	if (Array.isArray(settings.aaSortingFixed)) {
-		orderingIndexes(reverseIndexes, settings.aaSortingFixed);
+	if (Array.isArray(settings.orderFixed)) {
+		orderingIndexes(reverseIndexes, settings.orderFixed);
 	}
-	else if (settings.aaSortingFixed.pre) {
-		orderingIndexes(reverseIndexes, settings.aaSortingFixed.pre);
+	else if (settings.orderFixed.pre) {
+		orderingIndexes(reverseIndexes, settings.orderFixed.pre);
 	}
-	else if (settings.aaSortingFixed.post) {
-		orderingIndexes(reverseIndexes, settings.aaSortingFixed.pre);
+	else if (settings.orderFixed.post) {
+		orderingIndexes(reverseIndexes, settings.orderFixed.pre);
 	}
 
-	settings.aLastSort.forEach(function (el) {
+	settings.lastOrder.forEach(function (el) {
 		el.src = reverseIndexes[el.src];
 	});
 
@@ -268,7 +271,7 @@ export function orderingIndexes(map: number[], order?: any[]): void {
 			// Just a number
 			order[i] = map[el];
 		}
-		else if ($.isPlainObject(el) && el.idx !== undefined) {
+		else if (util.is.plainObject(el) && el.idx !== undefined) {
 			// New index in an object style
 			el.idx = map[el.idx];
 		}
@@ -375,7 +378,7 @@ export function transpose(
 	dir: 'toCurrent' | 'toOriginal' | 'fromCurrent' | 'fromOriginal'
 ): any {
 	var order = (dt as any).colReorder.order() as number[];
-	var columns = dt.settings()[0].aoColumns;
+	var columns = dt.settings()[0].columns;
 
 	if (dir === 'toCurrent' || dir === 'fromOriginal') {
 		// Given an original index, want the current
