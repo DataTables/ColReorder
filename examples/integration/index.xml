@@ -3,7 +3,7 @@
 
 <title lib="ColReorder">Integration</title>
 
-<js lib="jquery" />
+<js lib="datatables" />
 <info><![CDATA[
 
 The examples in this section demonstrate ColReorder being used with other DataTables extensions.

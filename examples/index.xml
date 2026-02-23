@@ -3,7 +3,7 @@
 
 <title lib="ColReorder">ColReorder examples</title>
 
-<js lib="jquery" />
+<js lib="datatables" />
 <info><![CDATA[
 
 ColReorder allows the end user to click and drag DataTables column headers to reorder a table as they see fit. Key features include:
