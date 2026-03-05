@@ -1,3 +1,3 @@
-/*! Foundation styling wrapper for ColReorder
- * © SpryMedia Ltd - datatables.net/license
+/*! ColReorder Foundation styling for DataTables
+ * Copyright (c) SpryMedia Ltd - datatables.net/license
  */

@@ -1,6 +1,4 @@
-import DataTable, { Api, HeaderStructure } from 'datatables.net';
-
-const util = DataTable.util;
+import { Api, HeaderStructure, util } from 'datatables.net';
 
 /**
  * Mutate an array, moving a set of elements into a new index position

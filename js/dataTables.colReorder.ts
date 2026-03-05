@@ -1,4 +1,8 @@
-import DataTable, { Context } from 'datatables.net';
+/*! ColReorder for DataTables
+ * Copyright (c) SpryMedia Ltd - datatables.net/license
+ */
+
+import DataTable, { Api, Context, Dom, util } from 'datatables.net';
 import ColReorder from './ColReorder';
 import {
 	finalise,
@@ -11,10 +15,6 @@ import {
 	validateMove
 } from './functions';
 import { IDefaults } from './interface';
-
-const Api = DataTable.Api;
-const dom = DataTable.dom;
-const util = DataTable.util;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * UI interaction class
@@ -105,7 +105,7 @@ DataTable.ColReorder = ColReorder;
 // Called when DataTables is going to load a state. That might be
 // before the table is ready (state saving) or after (state restoring).
 // Also note that it happens _before_ preInit (below).
-dom.s(document).on('stateLoadInit.dt', function (e, settings: Context, state) {
+Dom.s(document).on('stateLoadInit.dt', function (e, settings: Context, state) {
 	if (e.namespace !== 'dt') {
 		return;
 	}
@@ -143,7 +143,7 @@ dom.s(document).on('stateLoadInit.dt', function (e, settings: Context, state) {
 	}
 });
 
-dom.s(document).on('preInit.dt', function (e, settings) {
+Dom.s(document).on('preInit.dt', function (e, settings) {
 	if (e.namespace !== 'dt') {
 		return;
 	}

@@ -1,3 +1,3 @@
-/*! Bootstrap 4 styling wrapper for ColReorder
- * © SpryMedia Ltd - datatables.net/license
+/*! ColReorder Bootstrap 4 styling for DataTables
+ * Copyright (c) SpryMedia Ltd - datatables.net/license
  */

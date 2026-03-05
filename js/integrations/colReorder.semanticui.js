@@ -1,3 +1,3 @@
-/*! Semanic UI styling wrapper for ColReorder
- * © SpryMedia Ltd - datatables.net/license
+/*! ColReorder Fomantic styling for DataTables
+ * Copyright (c) SpryMedia Ltd - datatables.net/license
  */

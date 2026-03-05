@@ -1,3 +1,3 @@
-/*! DataTables styling wrapper for ColReorder
- * © SpryMedia Ltd - datatables.net/license
+/*! ColReorder default styling for DataTables
+ * Copyright (c) SpryMedia Ltd - datatables.net/license
  */

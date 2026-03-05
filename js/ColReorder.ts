@@ -1,26 +1,7 @@
-/**
- * @summary     ColReorder
- * @description Provide the ability to reorder columns in a DataTable
- * @version     3.0.0-dev
- * @author      SpryMedia Ltd
- *
- * This source file is free software, available under the following license:
- *   MIT license - http://datatables.net/license/mit
- *
- * This source file is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the license files for details.
- *
- * For details please refer to: http://datatables.net
- */
-
-import DataTable, { Api } from 'datatables.net';
+import DataTable, { Api, Dom, util } from 'datatables.net';
 import { getOrder, init, setOrder, validateMove } from './functions';
 import './interface';
 import { IDefaults, IDropZone, ISettings } from './interface';
-
-const dom = DataTable.dom;
-const util = DataTable.util;
 
 // Sanity check
 if (!DataTable.versionCheck('3')) {
@@ -145,7 +126,7 @@ export default class ColReorder {
 	private _addListener(el) {
 		let that = this;
 
-		dom.s(el)
+		Dom.s(el)
 			.on('selectstart.colReorder', function () {
 				return false;
 			})
@@ -162,7 +143,7 @@ export default class ColReorder {
 
 				// ColumnControl integration - if there is a CC reorder button in the header
 				// then the mousedown is limited to that
-				let btn = dom.s(this).find('button.dtcc-button_reorder');
+				let btn = Dom.s(this).find('button.dtcc-button_reorder');
 
 				if (btn.count() && e.target !== btn.get(0) && btn.find(e.target).count() === 0) {
 					return;
@@ -185,11 +166,11 @@ export default class ColReorder {
 		// This is a slightly odd combination of jQuery and DOM, but it is the
 		// fastest and least resource intensive way I could think of cloning
 		// the table with just a single header cell in it.
-		this.dom.drag = dom.s(origTable.get(0).cloneNode(false))
+		this.dom.drag = Dom.s(origTable.get(0).cloneNode(false))
 			.classAdd('dtcr-cloned')
 			.append(
-				dom.s(origThead.get(0).cloneNode(false)).append(
-					dom.s(origTr.get(0).cloneNode(false)).append(cloneCell.get(0))
+				Dom.s(origThead.get(0).cloneNode(false)).append(
+					Dom.s(origTr.get(0).cloneNode(false)).append(cloneCell.get(0))
 				)
 			)
 			.css({
@@ -221,10 +202,10 @@ export default class ColReorder {
 	 * @returns
 	 */
 	private _mouseDown(e: MouseEvent, cell: HTMLElement) {
-		let target = dom.s(e.target as HTMLElement).closest('th, td');
+		let target = Dom.s(e.target as HTMLElement).closest('th, td');
 		let offset = target.offset();
 		let moveableColumns = this.dt.columns(this.c.columns).indexes().toArray();
-		let moveColumnIndexes = dom.s(cell)
+		let moveColumnIndexes = Dom.s(cell)
 			.attr('data-dt-column')
 			.split(',')
 			.map(function (val) {
@@ -247,7 +228,7 @@ export default class ColReorder {
 
 		// Classes to highlight the columns being moved
 		for (let i = 0; i < moveColumnIndexes.length; i++) {
-			let cells = dom.s(this.dt
+			let cells = Dom.s(this.dt
 				.cells(null, moveColumnIndexes[i] as any, { page: 'current' })
 				.nodes()
 				.toArray());
@@ -268,7 +249,7 @@ export default class ColReorder {
 		this._scrollRegions();
 
 		/* Add event handlers to the document */
-		dom.s(document)
+		Dom.s(document)
 			.on('mousemove.colReorder touchmove.colReorder', (e) => {
 				this._mouseMove(e);
 			})
@@ -292,7 +273,7 @@ export default class ColReorder {
 				return;
 			}
 
-			dom.s(document.body).classAdd('dtcr-dragging');
+			Dom.s(document.body).classAdd('dtcr-dragging');
 
 			this._createDragNode();
 		}
@@ -306,7 +287,7 @@ export default class ColReorder {
 		// Find cursor's left position relative to the table
 		const tableNode = this.dt.table().node();
 
-		let tableOffset = dom.s(tableNode).offset().left;
+		let tableOffset = Dom.s(tableNode).offset().left;
 		let cursorMouseLeft = this._cursorPosition(e, 'pageX') - tableOffset;
 
 		let cursorInlineStart : number;
@@ -339,8 +320,8 @@ export default class ColReorder {
 	}
 
 	private _mouseUp(e: MouseEvent) {
-		dom.s(document).off('.colReorder');
-		dom.s(document.body).classRemove('dtcr-dragging');
+		Dom.s(document).off('.colReorder');
+		Dom.s(document.body).classRemove('dtcr-dragging');
 
 		if (this.dom.drag) {
 			this.dom.drag.remove();
@@ -366,7 +347,7 @@ export default class ColReorder {
 			clearInterval(this.s.scrollInterval);
 		}
 
-		dom.s(this.dt.cells('.dtcr-moving').nodes().toArray()).classRemove('dtcr-moving dtcr-moving-first dtcr-moving-last');
+		Dom.s(this.dt.cells('.dtcr-moving').nodes().toArray()).classRemove('dtcr-moving dtcr-moving-first dtcr-moving-last');
 	}
 
 	/**
@@ -515,8 +496,8 @@ export default class ColReorder {
 		}
 
 		let that = this;
-		let tableLeft = dom.s(this.dt.table().container()).offset().left;
-		let tableWidth = dom.s(this.dt.table().container()).width('outer');
+		let tableLeft = Dom.s(this.dt.table().container()).offset().left;
+		let tableWidth = Dom.s(this.dt.table().container()).width('outer');
 		let mouseBuffer = 75;
 		let scrollContainer = this.dt.table().body().parentElement.parentElement;
 
@@ -565,7 +546,7 @@ export default class ColReorder {
 	// }
 
 	private _isRtl() {
-		return dom.s(this.dt.table().node()).css('direction') === 'rtl';
+		return Dom.s(this.dt.table().node()).css('direction') === 'rtl';
 	}
 
 	static defaults: IDefaults = {

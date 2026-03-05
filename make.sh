@@ -27,43 +27,8 @@ DT_BUILT="${DT_SRC}/built/DataTables"
 rsync -r css $OUT_DIR
 css_frameworks colReorder $OUT_DIR/css
 
-
-# Get the version from the file
-VERSION=$(grep "static version" js/ColReorder.ts | perl -nle'print $& if m{\d+\.\d+\.\d+(\-\w*)?}')
-
-# JS - compile and then copy into place
-$DT_SRC/node_modules/typescript/bin/tsc -p ./tsconfig.json
-
-## Remove the import - our wrapper does it for UMD as well as ESM
-sed -i "s#import DataTable from 'datatables.net';##" dist/dataTables.colReorder.js
-sed -i "s#import DataTable from 'datatables.net';##" dist/ColReorder.js
-sed -i "s#import DataTable from 'datatables.net';##" dist/functions.js
-
-HEADER="/*! ColReorder $VERSION
- * Copyright (c) SpryMedia Ltd - datatables.net/license
- */
-"
-$DT_SRC/node_modules/rollup/dist/bin/rollup \
-    --banner "$HEADER" \
-    --config rollup.config.mjs
-
-rsync -r dist/dataTables.colReorder.js $OUT_DIR/js/
-rsync -r js/integrations/colReorder.*.js $OUT_DIR/js/
-
-js_frameworks colReorder $OUT_DIR/js "datatables.net-FW datatables.net-colreorder"
-js_wrap $OUT_DIR/js/dataTables.colReorder.js "datatables.net"
-
-# Move types across, single file was built by rollup
-if [ -d $OUT_DIR/types ]; then
-	rm -r $OUT_DIR/types		
-fi
-mkdir $OUT_DIR/types
-
-cp dist/types.d.ts $OUT_DIR/types
-cp types/colReorder*.d.ts $OUT_DIR/types
-
-rm -r dist
-
+# TS / JS build
+ts_extension ColReorder colReorder
 
 # Copy and build examples
 rsync -r examples $OUT_DIR
