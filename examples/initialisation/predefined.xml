@@ -2,17 +2,7 @@
 <dt-example table-type="html" order="3">
 
 <css lib="datatables colreorder" />
-<js lib="jquery datatables colreorder">
-<![CDATA[
-$('#example').DataTable({
-	colReorder: {
-		order: [4, 3, 2, 1, 0, 5]
-	}
-});
-]]>
-</js>
-
-<js-vanilla>
+<js lib="datatables colreorder">
 <![CDATA[
 new DataTable('#example', {
 	colReorder: {
@@ -21,7 +11,7 @@ new DataTable('#example', {
 	columnDefs: [{ visible: false, target: 0 }]
 });
 ]]>
-</js-vanilla>
+</js>
 
 <title lib="ColReorder">Predefined column ordering</title>
 

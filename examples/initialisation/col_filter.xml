@@ -6,40 +6,7 @@
 		width: 100%;
 	}
 </css>
-<js lib="jquery datatables colreorder">
-<![CDATA[
-$('#example').DataTable({
-	colReorder: true,
-	initComplete: function () {
-		var api = this.api();
-
-		api.columns().every(function () {
-			var column = this;
-			var title = column.footer().textContent;
-
-			// Create input element and add event listener
-			$('<input type="text" placeholder="Search ' + title + '" />')
-				.appendTo($(column.footer()).empty())
-				.on('keyup change clear', function () {
-					if (column.search() !== this.value) {
-						api
-							.column(
-								$(this)
-									.parent()
-									.index() + ':visible'
-							)
-							.search(this.value)
-							.draw();
-					}
-				});
-		});
-	}
-});
-
-]]>
-</js>
-
-<js-vanilla>
+<js lib="datatables colreorder">
 <![CDATA[
 new DataTable('#example', {
 	colReorder: true,
@@ -72,7 +39,7 @@ new DataTable('#example', {
 });
 
 ]]>
-</js-vanilla>
+</js>
 
 <title lib="ColReorder">Individual column filtering</title>
 

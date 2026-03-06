@@ -2,23 +2,14 @@
 <dt-example table-type="html" order="6">
 
 <css lib="datatables colreorder" />
-<js lib="jquery datatables colreorder">
-<![CDATA[
-$('#example').DataTable({
-	colReorder: true,
-	stateSave: true
-});
-]]>
-</js>
-
-<js-vanilla>
+<js lib="datatables colreorder">
 <![CDATA[
 new DataTable('#example', {
 	colReorder: true,
 	stateSave: true
 });
 ]]>
-</js-vanilla>
+</js>
 
 <title lib="ColReorder">State saving</title>
 

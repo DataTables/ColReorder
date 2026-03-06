@@ -2,23 +2,14 @@
 <dt-example table-type="html" order="3">
 
 <css lib="datatables colreorder fixedheader" />
-<js lib="jquery datatables colreorder fixedheader">
-<![CDATA[
-$('#example').DataTable({
-	colReorder: true,
-	fixedHeader: true
-});
-]]>
-</js>
-
-<js-vanilla>
+<js lib="datatables colreorder fixedheader">
 <![CDATA[
 new DataTable('#example', {
 	colReorder: true,
 	fixedHeader: true
 });
 ]]>
-</js-vanilla>
+</js>
 
 <title lib="ColReorder">FixedHeader integration</title>
 

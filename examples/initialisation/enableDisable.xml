@@ -2,36 +2,7 @@
 <dt-example table-type="html" order="8">
 
 <css lib="datatables buttons colreorder" />
-<js lib="jquery datatables buttons colreorder">
-<![CDATA[
-$('#example').DataTable({
-	colReorder: {
-		enable: false
-	},
-	layout: {
-		topStart: {
-			buttons: [
-				{
-					text: 'Enable column reordering',
-					action: function (e, dt) {
-						dt.colReorder.enable();
-					}
-				},
-				{
-					text: 'Disable column reordering',
-					action: function (e, dt) {
-						dt.colReorder.disable();
-					}
-				}
-			]
-		}
-	}
-});
-
-]]>
-</js>
-
-<js-vanilla>
+<js lib="datatables buttons colreorder">
 <![CDATA[
 new DataTable('#example', {
 	colReorder: {
@@ -58,7 +29,7 @@ new DataTable('#example', {
 });
 
 ]]>
-</js-vanilla>
+</js>
 
 <title lib="ColReorder">Enable / disable API</title>
 

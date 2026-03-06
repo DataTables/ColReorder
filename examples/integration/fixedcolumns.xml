@@ -2,29 +2,7 @@
 <dt-example table-type="html-wide" table-class="display nowrap" order="2">
 
 <css lib="datatables colreorder fixedcolumns" />
-<js lib="jquery datatables colreorder fixedcolumns">
-<![CDATA[
-
-$('#example').DataTable({
-	columnDefs: [
-		{ orderable: false, targets: [0, -1] }
-	],
-	colReorder: {
-		columns: ':not(:first-child, :last-child)'
-	},
-	fixedColumns: {
-		start: 1,
-		end: 1
-	},
-	ordering: [[1, 'asc']],
-	scrollX: true,
-	scrollCollapse: true
-});
-
-]]>
-</js>
-
-<js-vanilla>
+<js lib="datatables colreorder fixedcolumns">
 <![CDATA[
 
 new DataTable('#example', {
@@ -44,7 +22,7 @@ new DataTable('#example', {
 });
 
 ]]>
-</js-vanilla>
+</js>
 
 <title lib="ColReorder">FixedColumns integration</title>
 

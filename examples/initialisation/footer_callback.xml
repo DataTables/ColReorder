@@ -2,50 +2,7 @@
 <dt-example table-type="html" order="13">
 
 <css lib="datatables colreorder" />
-<js lib="jquery datatables colreorder">
-<![CDATA[
-$('#example').DataTable({
-	colReorder: true,
-	footerCallback: function (row, data, start, end, display) {
-		var api = this.api();
-		var currentPosition = api.colReorder.transpose(5);
-
-		// Remove the formatting to get integer data for summation
-		var intVal = function (i) {
-			return typeof i === 'string'
-				? i.replace(/[\$,]/g, '') * 1
-				: typeof i === 'number'
-				? i
-				: 0;
-		};
-
-		// Total over all pages
-		total = api
-			.column(currentPosition)
-			.data()
-			.reduce(function (a, b) {
-				return intVal(a) + intVal(b);
-			}, 0);
-
-		// Total over this page
-		pageTotal = api
-			.column(currentPosition, { page: 'current' })
-			.data()
-			.reduce(function (a, b) {
-				return intVal(a) + intVal(b);
-			}, 0);
-
-		// Update footer
-		$(api.column(currentPosition).footer()).html(
-			pageTotal + ' (' + total + ' total)'
-		);
-	}
-});
-
-]]>
-</js>
-
-<js-vanilla>
+<js lib="datatables colreorder">
 <![CDATA[
 new DataTable('#example', {
 	colReorder: true,
@@ -81,7 +38,7 @@ new DataTable('#example', {
 });
 
 ]]>
-</js-vanilla>
+</js>
 
 <title lib="ColReorder">Footer callback</title>
 

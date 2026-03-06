@@ -8,17 +8,7 @@
 		margin: 0 auto;
 	}
 </css>
-<js lib="jquery datatables colreorder">
-<![CDATA[
-$('#example').DataTable({
-	colReorder: true,
-	paging: false,
-	scrollY: 200
-});
-]]>
-</js>
-
-<js-vanilla>
+<js lib="datatables colreorder">
 <![CDATA[
 new DataTable('#example', {
 	colReorder: true,
@@ -26,7 +16,7 @@ new DataTable('#example', {
 	scrollY: 200
 });
 ]]>
-</js-vanilla>
+</js>
 
 <title lib="ColReorder">Scrolling table</title>
 

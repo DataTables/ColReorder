@@ -2,17 +2,7 @@
 <dt-example table-type="html" order="5">
 
 <css lib="datatables colreorder" />
-<js lib="jquery datatables colreorder">
-<![CDATA[
-$('#example').DataTable({
-	colReorder: {
-		columns: ':not(:first-child, :last-child)'
-	}
-});
-]]>
-</js>
-
-<js-vanilla>
+<js lib="datatables colreorder">
 <![CDATA[
 new DataTable('#example', {
 	colReorder: {
@@ -20,7 +10,7 @@ new DataTable('#example', {
 	}
 });
 ]]>
-</js-vanilla>
+</js>
 
 <title lib="ColReorder">Selected columns</title>
 

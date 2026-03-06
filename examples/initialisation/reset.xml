@@ -2,20 +2,7 @@
 <dt-example table-type="html" order="8">
 
 <css lib="datatables colreorder" />
-<js lib="jquery datatables colreorder">
-<![CDATA[
-var table = $('#example').DataTable({
-	colReorder: true
-});
-
-$('#reset').click(function () {
-	table.colReorder.reset();
-});
-
-]]>
-</js>
-
-<js-vanilla>
+<js lib="datatables colreorder">
 <![CDATA[
 let table = new DataTable('#example', {
 	colReorder: true
@@ -26,7 +13,7 @@ document.querySelector('#reset').addEventListener('click', (e) => {
 });
 
 ]]>
-</js-vanilla>
+</js>
 
 <title lib="ColReorder">Reset ordering API</title>
 

@@ -2,23 +2,14 @@
 <dt-example table-type="html-wide" order="4" table-class="display nowrap">
 
 <css lib="datatables colreorder responsive" />
-<js lib="jquery datatables colreorder responsive">
-<![CDATA[
-$('#example').DataTable({
-	colReorder: true,
-	responsive: true
-});
-]]>
-</js>
-
-<js-vanilla>
+<js lib="datatables colreorder responsive">
 <![CDATA[
 new DataTable('#example', {
 	colReorder: true,
 	responsive: true
 });
 ]]>
-</js-vanilla>
+</js>
 
 <title lib="ColReorder">Responsive integration</title>
 

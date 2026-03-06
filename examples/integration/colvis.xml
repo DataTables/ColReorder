@@ -2,20 +2,7 @@
 <dt-example table-type="html" order="1">
 
 <css lib="datatables colreorder buttons" />
-<js lib="jquery datatables colreorder buttons buttons-colvis">
-<![CDATA[
-$('#example').DataTable({
-	colReorder: true,
-	layout: {
-		topStart: {
-			buttons: ['colvis']
-		}
-	}
-});
-]]>
-</js>
-
-<js-vanilla>
+<js lib="datatables colreorder buttons buttons-colvis">
 <![CDATA[
 new DataTable('#example', {
 	colReorder: true,
@@ -26,7 +13,7 @@ new DataTable('#example', {
 	}
 });
 ]]>
-</js-vanilla>
+</js>
 
 <title lib="ColReorder">Column visibility integration</title>
 

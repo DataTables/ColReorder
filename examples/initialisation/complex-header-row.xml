@@ -2,17 +2,7 @@
 <dt-example table-type="html-complex-header-mid" order="2">
 
 <css lib="datatables colreorder" />
-<js lib="jquery datatables colreorder">
-<![CDATA[
-$('#example').DataTable({
-	colReorder: {
-		headerRows: [1]
-	}
-});
-]]>
-</js>
-
-<js-vanilla>
+<js lib="datatables colreorder">
 <![CDATA[
 new DataTable('#example', {
 	colReorder: {
@@ -20,7 +10,7 @@ new DataTable('#example', {
 	}
 });
 ]]>
-</js-vanilla>
+</js>
 
 <title lib="ColReorder">Complex headers - specific row</title>
 
