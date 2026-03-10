@@ -32,7 +32,7 @@
 
 			Set to be `true` to indicate that the indexes passed in are the original indexes. `false` or `undefined` (default) will treat them as the current indexes.
 		</parameter>
-		<returns type="DataTables.Api">
+		<returns type="DataTable.Api">
 			DataTables API instance for chaining
 		</returns>
 	</type>

@@ -9,7 +9,7 @@
 		<description>
 			Restore the column order that the columns were in when initially loaded.
 		</description>
-		<returns type="DataTables.Api">DataTables API instance</returns>
+		<returns type="DataTable.Api">DataTables API instance</returns>
 	</type>
 
 	<description>

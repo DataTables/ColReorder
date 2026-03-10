@@ -3,7 +3,7 @@
 	<name>colReorder.columns</name>
 	<summary>Select which columns can be reordered</summary>
 
-	<type type="column-selector">
+	<type type="DataTable.ColumnSelector">
 		<description>
 			Any column selector, including class names, CSS pseudo selectors and column indexes.
 		</description>
