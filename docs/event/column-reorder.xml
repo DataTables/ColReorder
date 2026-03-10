@@ -9,7 +9,7 @@
 		<parameter type="object" name="e">
 			jQuery event object
 		</parameter>
-		<parameter type="DataTable.Settings" name="settings">
+		<parameter type="DataTable.Context" name="settings">
 			DataTables settings object for the table that has been modified
 		</parameter>
 		<parameter type="object" name="details">
