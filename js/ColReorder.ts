@@ -105,13 +105,13 @@ export default class ColReorder {
 
 		dt.table()
 			.header.structure()
-			.forEach(function (row, rowIdx) {
-				let headerRows = opts.headerRows;
+			.forEach((row, rowIdx) => {
+				let headerRows = this.c.headerRows;
 
 				for (let i = 0; i < row.length; i++) {
 					if (!headerRows || headerRows.includes(rowIdx)) {
 						if (row[i] && row[i].cell) {
-							that._addListener(row[i].cell);
+							this._addListener(row[i].cell);
 						}
 					}
 				}
