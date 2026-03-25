@@ -130,6 +130,16 @@ export function invertKeyValues(arr: number[]): number[] {
 	return result;
 }
 
+function transposeArray(arr: number[], inverted: number[]): number[] {
+	for (let i = 0; i<arr.length; i++) {
+		arr[i] = inverted[arr[i]];
+	}
+
+	arr.sort();
+
+	return arr;
+}
+
 /**
  * Move one or more columns from one index to another.
  *
@@ -199,9 +209,7 @@ export function move(dt: Api, from: number[], to: number): void {
 		let column = columns[i];
 
 		// Data column sorting
-		for (j = 0; j < column.orderData.length; j++) {
-			column.orderData[j] = reverseIndexes[column.orderData[j]];
-		}
+		transposeArray(column.orderData, reverseIndexes);
 
 		// Update the column indexes
 		column.idx = reverseIndexes[column.idx];
@@ -216,8 +224,52 @@ export function move(dt: Api, from: number[], to: number): void {
 	headerUpdate(settings.header, reverseIndexes, from, to);
 	headerUpdate(settings.footer, reverseIndexes, from, to);
 
-	// Search - columns
-	arrayMove(settings.preSearchCols, from[0], from.length, to);
+	// Search - core. Here the `searches` object is keyed by the columns that
+	// the search applies to, which needs to be updated, but also there is a
+	// `columns` array for each property which must also be updated.
+	util.object.each(settings.searches, (key, search) => {
+		let columns = transposeArray(search.columns, reverseIndexes);
+
+		// In case there is an overlap between those which have been reordered
+		// and those still to be done, we need to use a name that indicates that
+		// it has been reordered
+		if (key !== '*') {
+			settings.searches[columns.join(',') + '-transposed'] = search;
+			delete settings.searches[key];
+		}
+	});
+
+	// And then delete the transposed ones
+	util.object.each(settings.searches, (key, search) => {
+		if (key.includes('-transposed')) {
+			settings.searches[key.replace('-transposed', '')] = search;
+			delete settings.searches[key];
+		}
+	});
+
+	// Search - fixed. Similar to `searches` but there is an inner object that
+	// is keyed by the name of the fixed search.
+	util.object.each(settings.searchesFixed, (key, fixed) => {
+		util.object.each(settings.searchesFixed[key], (name, search) => {
+			transposeArray(search.columns, reverseIndexes);
+		});
+
+		// Top level object is named by columns
+		if (key !== '*') {
+			settings.searchesFixed[key + '-transposed'] = settings.searchesFixed[key];
+			delete settings.searchesFixed[key];
+		}
+	});
+
+	// And then delete the transposed ones
+	util.object.each(settings.searchesFixed, (key, fixed) => {
+		if (key.includes('-transposed')) {
+			let first = fixed[Object.keys(fixed)[0]];
+
+			settings.searchesFixed[first.columns.join(',')] = fixed;
+			delete settings.searchesFixed[key];
+		}
+	});
 
 	// Ordering indexes update - note that the sort listener on the
 	// header works out the index to apply on each draw, so it doesn't
