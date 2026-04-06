@@ -10,7 +10,10 @@
         "declaration": true,
 		"skipLibCheck": true,
 		"outDir": "dist",
-        "types": []
+        "types": [],
+        "strict": false,
+        "noImplicitAny": false,
+        "strictNullChecks": false
     },
     "files": [
         "js/dataTables.colReorder.ts"
