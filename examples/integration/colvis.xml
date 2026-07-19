@@ -2,7 +2,7 @@
 <dt-example table-type="html" order="1">
 
 <css lib="datatables colreorder buttons" />
-<js lib="datatables colreorder buttons buttons-colvis">
+<js lib="datatables colreorder buttons">
 <![CDATA[
 new DataTable('#example', {
 	colReorder: true,
