@@ -228,7 +228,7 @@ export function move(dt: Api, from: number[], to: number): void {
 	// the search applies to, which needs to be updated, but also there is a
 	// `columns` array for each property which must also be updated.
 	util.object.each(settings.searches, (key, search) => {
-		let columns = transposeArray(search.columns, reverseIndexes);
+		let columns = transposeArray(search.columns ?? [], reverseIndexes);
 
 		// In case there is an overlap between those which have been reordered
 		// and those still to be done, we need to use a name that indicates that
