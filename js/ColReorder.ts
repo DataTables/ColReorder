@@ -161,9 +161,6 @@ export default class ColReorder {
 		let origTr = origCell.parent();
 		let origThead = origTr.parent();
 		let origTable = origThead.parent();
-		// DataTables' lightweight `Dom.clone()` defaults to a *shallow* clone (unlike jQuery's
-        // `.clone()`, which this code was originally written against and which always deep-clones
-        // descendant nodes). Without `true` here, the dragged header placeholder is an empty <th>.
         let cloneCell = origCell.clone(true);
 
 		// This is a slightly odd combination of jQuery and DOM, but it is the
