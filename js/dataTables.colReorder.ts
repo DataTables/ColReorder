@@ -105,7 +105,7 @@ DataTable.ColReorder = ColReorder;
 // Called when DataTables is going to load a state. That might be
 // before the table is ready (state saving) or after (state restoring).
 // Also note that it happens _before_ preInit (below).
-Dom.s(document).on('stateLoadInit.dt', function (e, settings: Context, state) {
+Dom.on('stateLoadInit.dt', function (e, settings: Context, state) {
 	if (e.namespace !== 'dt') {
 		return;
 	}
@@ -143,7 +143,7 @@ Dom.s(document).on('stateLoadInit.dt', function (e, settings: Context, state) {
 	}
 });
 
-Dom.s(document).on('preInit.dt', function (e, settings) {
+Dom.on('preInit.dt', function (e, settings) {
 	if (e.namespace !== 'dt') {
 		return;
 	}

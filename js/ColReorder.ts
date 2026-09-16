@@ -4,8 +4,8 @@ import './interface';
 import { IDefaults, IDropZone, ISettings } from './interface';
 
 // Sanity check
-if (!DataTable.versionCheck('3')) {
-	throw 'Warning: ColReorder requires DataTables 3 or newer';
+if (!DataTable.versionCheck('3.1')) {
+	throw 'Warning: ColReorder requires DataTables 3.1 or newer';
 }
 
 /**
